@@ -212,6 +212,21 @@
       cursor: pointer;
     }
     
+    .help-modal-reset {
+      text-align: center;
+      padding: 0 20px 20px 20px;
+    }
+    
+    .help-modal-reset a {
+      font-size: var(--text-xs);
+      color: var(--text-light-muted);
+      text-decoration: none;
+    }
+    
+    .help-modal-reset a:hover {
+      text-decoration: underline;
+    }
+    
     .brand-tagline {
       font-size: var(--text-xs);
       color: var(--text-light-muted);
@@ -859,6 +874,14 @@
     .footer-hint a {
       color: var(--accent-warm-dim);
       text-decoration: none;
+    }
+    
+    .footer-copyright {
+      text-align: center;
+      padding: var(--space-lg) 0 var(--space-xl);
+      font-size: var(--text-xs);
+      color: var(--text-light-muted);
+      opacity: 0.6;
     }
     
     /* Loading state */
@@ -1775,6 +1798,10 @@
     <footer class="footer-hint">
       Showing objects above 25° altitude
     </footer>
+    
+    <footer class="footer-copyright">
+      © 2026 Vantage
+    </footer>
   </div>
 
   <!-- Help Modal -->
@@ -1798,6 +1825,9 @@
       </div>
       <div class="help-modal-footer">
         <button class="help-modal-btn" onclick="closeHelpModal()">Got it</button>
+      </div>
+      <div class="help-modal-reset">
+        <a href="#" onclick="resetAllData(event)">Reset all data</a>
       </div>
     </div>
   </div>
@@ -2930,6 +2960,10 @@
           let adjustedSet = setTime;
           let adjustedRise = riseTime;
           
+          // If transit is in the past but set is in the future, transit already happened
+          // (This handles the case where it's after midnight and transit was before midnight)
+          const transitInPast = transitTime < now;
+          
           if (setTime < now) {
             // Object has set, show tomorrow's rise
             adjustedRise = riseTime + 86400000;
@@ -2940,8 +2974,8 @@
           if (adjustedRise > now && obj.altitude < 0) {
             // Below horizon, show rise time
             timingText = `Rises <strong>${VantageAstro.formatTime(new Date(adjustedRise))}</strong>`;
-          } else if (adjustedTransit > now) {
-            // Transit is in future
+          } else if (adjustedTransit > now && !transitInPast) {
+            // Transit is in future (and wasn't already in the past before adjustment)
             timingText = `Peaks <strong>${VantageAstro.formatTime(new Date(adjustedTransit))}</strong> · Sets <strong>${VantageAstro.formatTime(new Date(adjustedSet))}</strong>`;
           } else if (adjustedSet > now) {
             // Past peak but still up
@@ -3496,6 +3530,14 @@
     function closeHelpModal(event) {
       if (!event || event.target === event.currentTarget) {
         document.getElementById('helpModal').classList.remove('open');
+      }
+    }
+    
+    function resetAllData(event) {
+      event.preventDefault();
+      if (confirm('This will clear all your saved locations, seen objects, and settings. Continue?')) {
+        localStorage.removeItem('vantage-state');
+        location.reload();
       }
     }
     
