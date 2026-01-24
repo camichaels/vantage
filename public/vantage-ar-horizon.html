@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Vantage – Horizon Setup</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-overlay: rgba(26, 31, 46, 0.85);
+      --bg-panel: rgba(26, 31, 46, 0.95);
+      --text-light: #f0ede6;
+      --text-muted: #8a8680;
+      --accent-warm: #d4a574;
+      --accent-info: #7a9cb8;
+      --accent-danger: rgba(184, 122, 122, 0.6);
+      --mask-color: rgba(184, 122, 122, 0.35);
+      --horizon-line: #d4a574;
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body: 'DM Sans', -apple-system, sans-serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    body {
+      width: 100%;
+      min-height: 100%;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      font-family: var(--font-body);
+      background: #000;
+    }
+    
+    /* Rotate prompt for portrait */
+    .rotate-prompt {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg-panel);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .rotate-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+      color: var(--accent-warm);
+      animation: rotate-hint 2s ease-in-out infinite;
+    }
+    
+    @keyframes rotate-hint {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(90deg); }
+    }
+    
+    .rotate-prompt h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+    
+    .rotate-prompt p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    @media (orientation: portrait) {
+      .rotate-prompt {
+        display: flex;
+      }
+      .ar-container {
+        display: none;
+      }
+    }
+    
+    /* Main AR container */
+    .ar-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Camera feed */
+    .camera-layer {
+      position: absolute;
+      inset: 0;
+      background: #111;
+    }
+    
+    .camera-layer video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .camera-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      background: linear-gradient(180deg, #1a1f2e 0%, #0d0f15 100%);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .camera-placeholder svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    .enable-btn {
+      margin-top: 16px;
+      padding: 12px 28px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 10px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    
+    /* Settings menu */
+    .settings-menu {
+      position: absolute;
+      top: 70px;
+      right: calc(16px + env(safe-area-inset-right, 0px));
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    
+    .settings-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-panel);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text-light);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .settings-toggle svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .settings-panel {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .settings-menu.open .settings-panel {
+      display: flex;
+    }
+    
+    .permission-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--bg-panel);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    
+    .permission-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .permission-btn.granted {
+      border-color: #6b9b6b;
+      background: rgba(107, 155, 107, 0.2);
+    }
+    
+    .permission-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    
+    .permission-btn.granted svg {
+      color: #6b9b6b;
+    }
+    
+    /* Overlay layer for horizon visualization */
+    .overlay-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    
+    .overlay-layer canvas {
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* Top bar */
+    .top-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: linear-gradient(180deg, var(--bg-overlay) 0%, transparent 100%);
+      z-index: 10;
+    }
+    
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      cursor: pointer;
+      padding: 8px 12px;
+      margin: -8px -12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    
+    .back-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .back-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .top-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--text-light);
+    }
+    
+    .help-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    
+    .help-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    .help-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    /* Compass */
+    .compass-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .compass-ring {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-overlay);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .compass-needle {
+      width: 3px;
+      height: 18px;
+      position: relative;
+      transition: transform 0.15s ease-out;
+    }
+    
+    .compass-needle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: #c66;
+      border-radius: 2px 2px 0 0;
+    }
+    
+    .compass-needle::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: var(--text-light);
+      border-radius: 0 0 2px 2px;
+    }
+    
+    .compass-direction {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-light);
+      min-width: 20px;
+    }
+
+    /* Bottom controls */
+    .bottom-panel {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 24px;
+      padding-bottom: calc(20px + env(safe-area-inset-bottom));
+      background: linear-gradient(0deg, var(--bg-overlay) 0%, transparent 100%);
+      z-index: 10;
+    }
+    
+    .horizon-control {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .horizon-label {
+      display: flex;
+      flex-direction: column;
+      min-width: 100px;
+    }
+    
+    .horizon-label-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .horizon-label-value {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--accent-warm);
+    }
+    
+    .horizon-slider-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .horizon-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
+      outline: none;
+    }
+    
+    .horizon-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      background: var(--accent-warm);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    .horizon-slider::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      background: var(--accent-warm);
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    .slider-min, .slider-max {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .apply-btn {
+      padding: 14px 32px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    
+    .apply-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+    }
+    
+    .apply-btn:active {
+      transform: translateY(0);
+    }
+    
+    /* Center crosshair */
+    .center-crosshair {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      pointer-events: none;
+    }
+    
+    .center-crosshair svg {
+      width: 48px;
+      height: 48px;
+      color: var(--text-light);
+      opacity: 0.85;
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.7));
+    }
+    
+    /* Instructions overlay */
+    .instructions-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+    }
+    
+    .instructions-overlay.visible {
+      display: flex;
+    }
+    
+    .instructions-content {
+      max-width: 500px;
+    }
+    
+    .instructions-content h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--text-light);
+      margin-bottom: 20px;
+    }
+    
+    .instructions-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .instruction-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      text-align: left;
+    }
+    
+    .step-number {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-warm);
+      color: #1a1a1a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    
+    .step-text {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      padding-top: 4px;
+    }
+    
+    .got-it-btn {
+      padding: 14px 48px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Rotate prompt for portrait mode -->
+  <div class="rotate-prompt">
+    <svg class="rotate-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="4" y="2" width="16" height="20" rx="2"/>
+      <line x1="12" y1="18" x2="12" y2="18"/>
+    </svg>
+    <h2>Rotate Your Phone</h2>
+    <p>Hold your phone in landscape orientation for the best horizon setup experience.</p>
+  </div>
+  
+  <!-- Main AR view -->
+  <div class="ar-container">
+    <!-- Camera feed -->
+    <div class="camera-layer">
+      <video id="cameraFeed" autoplay playsinline></video>
+      <div class="camera-placeholder" id="cameraPlaceholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <span>Camera access needed for AR view</span>
+        <button class="enable-btn" onclick="startCamera()">Enable Camera</button>
+      </div>
+    </div>
+    
+    <!-- Settings menu (collapsible) -->
+    <div class="settings-menu" id="settingsMenu">
+      <button class="settings-toggle" onclick="toggleSettings()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="1"/>
+          <circle cx="12" cy="5" r="1"/>
+          <circle cx="12" cy="19" r="1"/>
+        </svg>
+      </button>
+      <div class="settings-panel" id="settingsPanel">
+        <button class="permission-btn" id="cameraPermBtn" onclick="startCamera()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span>Camera</span>
+        </button>
+        <button class="permission-btn" id="motionPermBtn" onclick="toggleMotion()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+          <span>Motion</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Overlay canvas for horizon line and mask -->
+    <div class="overlay-layer">
+      <canvas id="overlayCanvas"></canvas>
+    </div>
+    
+    <!-- Center crosshair -->
+    <div class="center-crosshair">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <circle cx="12" cy="12" r="8"/>
+        <line x1="12" y1="2" x2="12" y2="6"/>
+        <line x1="12" y1="18" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="6" y2="12"/>
+        <line x1="18" y1="12" x2="22" y2="12"/>
+      </svg>
+    </div>
+    
+    <!-- Top bar -->
+    <div class="top-bar">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <span class="top-title"></span>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <!-- Compass -->
+        <div class="compass-indicator">
+          <div class="compass-ring">
+            <div class="compass-needle" id="compassNeedle"></div>
+          </div>
+          <span class="compass-direction" id="compassDirection">N</span>
+        </div>
+        <button class="help-btn" onclick="showInstructions()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9 9a3 3 0 1 1 4 2.83c-.5.29-1 .88-1 1.67v.5"/>
+            <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Debug output (temporary) -->
+    <div class="debug-output" id="debugOutput" style="position: absolute; top: 80px; right: 20px; background: rgba(0,0,0,0.7); color: #0f0; font-family: monospace; font-size: 11px; padding: 8px 12px; border-radius: 8px; z-index: 100; display: none;">
+      <div>α: <span id="dbgAlpha">-</span></div>
+      <div>β: <span id="dbgBeta">-</span></div>
+      <div>γ: <span id="dbgGamma">-</span></div>
+      <div>tilt: <span id="dbgTilt">-</span></div>
+      <div>compass: <span id="dbgCompass">-</span></div>
+      <div>webkit: <span id="dbgWebkit">-</span></div>
+    </div>
+    
+    <!-- Compass -->
+    <!-- Bottom controls -->
+    <div class="bottom-panel">
+      <div class="horizon-control">
+        <div class="horizon-label">
+          <span class="horizon-label-title">Min Altitude</span>
+          <span class="horizon-label-value" id="horizonValue">25°</span>
+        </div>
+        <div class="horizon-slider-container">
+          <span class="slider-min">0°</span>
+          <input type="range" class="horizon-slider" id="horizonSlider" min="0" max="50" value="25" oninput="updateHorizon(this.value)">
+          <span class="slider-max">50°</span>
+        </div>
+        <button class="apply-btn" onclick="applyHorizon()">Apply</button>
+      </div>
+    </div>
+    
+    <!-- Instructions overlay -->
+    <div class="instructions-overlay" id="instructionsOverlay">
+      <div class="instructions-content">
+        <h2>Set Your Horizon</h2>
+        <div class="instructions-steps">
+          <div class="instruction-step">
+            <span class="step-number">1</span>
+            <span class="step-text">Point your phone at the horizon where you typically observe. The camera shows what's in front of you.</span>
+          </div>
+          <div class="instruction-step">
+            <span class="step-number">2</span>
+            <span class="step-text">The <strong style="color: var(--accent-warm);">orange line</strong> shows your minimum altitude. Objects below this line will be filtered out.</span>
+          </div>
+          <div class="instruction-step">
+            <span class="step-number">3</span>
+            <span class="step-text">Adjust the slider until the line sits just above your trees, buildings, or hills.</span>
+          </div>
+          <div class="instruction-step">
+            <span class="step-number">4</span>
+            <span class="step-text">Tap <strong>Apply</strong> to save your horizon setting.</span>
+          </div>
+        </div>
+        <button class="got-it-btn" onclick="hideInstructions()">Got it</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // State
+    let currentHorizon = 25;
+    let phoneTilt = 0; // degrees from horizontal (0 = pointing at horizon, 90 = pointing at zenith)
+    let compassHeading = 0;
+    let smoothedHeading = 0;
+    let cameraActive = false;
+    const SMOOTHING_FACTOR = 0.2;
+    
+    // DOM elements
+    const canvas = document.getElementById('overlayCanvas');
+    const ctx = canvas.getContext('2d');
+    const video = document.getElementById('cameraFeed');
+    const placeholder = document.getElementById('cameraPlaceholder');
+    
+    // Resize canvas to match window
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawOverlay();
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    // Draw the horizon overlay
+    function drawOverlay() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const centerY = canvas.height / 2;
+      const leftPadding = 100; // For Dynamic Island
+      
+      // If pointing below horizon, show warning
+      if (phoneTilt < 0) {
+        ctx.fillStyle = 'rgba(184, 122, 122, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#f0ede6';
+        ctx.font = '500 18px "DM Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Point camera toward horizon or sky', canvas.width / 2, canvas.height / 2);
+        ctx.font = '400 14px "DM Sans", sans-serif';
+        ctx.fillStyle = '#8a8680';
+        ctx.fillText('Tilt phone up to see altitude overlay', canvas.width / 2, canvas.height / 2 + 28);
+        return;
+      }
+      
+      // Calculate where the horizon line should be based on phone tilt and selected horizon angle
+      const degreesPerPixel = 60 / canvas.height; // Assume ~60° vertical FOV
+      const horizonOffset = (phoneTilt - currentHorizon) / degreesPerPixel;
+      const horizonY = centerY + horizonOffset;
+      
+      // Draw masked area (below horizon) - from the line to bottom of screen
+      ctx.fillStyle = 'rgba(184, 122, 122, 0.35)';
+      ctx.fillRect(0, horizonY, canvas.width, canvas.height - horizonY);
+      
+      // Draw horizon line
+      ctx.strokeStyle = '#d4a574';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(0, horizonY);
+      ctx.lineTo(canvas.width, horizonY);
+      ctx.stroke();
+      
+      // Draw horizon label - with padding for Dynamic Island
+      ctx.fillStyle = '#d4a574';
+      ctx.font = '500 14px "DM Sans", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`${currentHorizon}° minimum altitude`, leftPadding, horizonY - 10);
+      
+      // Draw degree markers on left side - with extra padding for Dynamic Island
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '400 11px "DM Sans", sans-serif';
+      ctx.textAlign = 'right';
+      
+      for (let deg = 0; deg <= 90; deg += 15) {
+        if (deg === currentHorizon) continue; // Skip the main horizon line
+        const y = centerY + (phoneTilt - deg) / degreesPerPixel;
+        if (y > 60 && y < canvas.height - 40) {
+          ctx.beginPath();
+          ctx.moveTo(leftPadding + 20, y);
+          ctx.lineTo(canvas.width - 80, y);
+          ctx.stroke();
+          ctx.fillText(`${deg}°`, leftPadding + 12, y + 4);
+        }
+      }
+    }
+    
+    // Update horizon from slider
+    function updateHorizon(value) {
+      currentHorizon = parseInt(value);
+      document.getElementById('horizonValue').textContent = `${currentHorizon}°`;
+      drawOverlay();
+    }
+    
+    // Start camera
+    async function startCamera() {
+      if (cameraActive) {
+        // Stop camera
+        const stream = video.srcObject;
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+        video.srcObject = null;
+        placeholder.style.display = 'flex';
+        cameraActive = false;
+        document.getElementById('cameraPermBtn').classList.remove('granted');
+        document.getElementById('cameraPermBtn').querySelector('span').textContent = 'Camera';
+        return;
+      }
+      
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: 'environment',
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          }
+        });
+        video.srcObject = stream;
+        placeholder.style.display = 'none';
+        cameraActive = true;
+        
+        // Mark permission as granted
+        document.getElementById('cameraPermBtn').classList.add('granted');
+        document.getElementById('cameraPermBtn').querySelector('span').textContent = 'Camera ✓';
+      } catch (err) {
+        console.error('Camera error:', err);
+        alert('Could not access camera: ' + err.message);
+      }
+    }
+    
+    // Check if device has motion sensors
+    function hasMotionSensors() {
+      return typeof DeviceOrientationEvent !== 'undefined';
+    }
+    
+    // Settings menu toggle
+    function toggleSettings() {
+      document.getElementById('settingsMenu').classList.toggle('open');
+    }
+    
+    // Close settings when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.settings-menu')) {
+        document.getElementById('settingsMenu').classList.remove('open');
+      }
+    });
+    
+    // Motion state
+    let motionActive = false;
+    
+    // Toggle motion on/off
+    async function toggleMotion() {
+      if (motionActive) {
+        // Turn off motion
+        window.removeEventListener('deviceorientation', handleOrientation);
+        motionActive = false;
+        document.getElementById('motionPermBtn').classList.remove('granted');
+        document.getElementById('motionPermBtn').querySelector('span').textContent = 'Motion';
+        phoneTilt = 0;
+        drawOverlay();
+        return;
+      }
+      
+      // Turn on motion - request permission if needed
+      if (typeof DeviceOrientationEvent !== 'undefined' && 
+          typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const permission = await DeviceOrientationEvent.requestPermission();
+          if (permission === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation);
+            motionActive = true;
+            document.getElementById('motionPermBtn').classList.add('granted');
+            document.getElementById('motionPermBtn').querySelector('span').textContent = 'Motion ✓';
+          } else {
+            alert('Motion permission denied.');
+          }
+        } catch (err) {
+          console.error('Motion permission error:', err);
+          alert('Could not request motion permission: ' + err.message);
+        }
+      } else {
+        // Non-iOS - check if motion is available
+        if (typeof DeviceOrientationEvent === 'undefined') {
+          alert('Motion sensors not available on this device.');
+          return;
+        }
+        
+        window.addEventListener('deviceorientation', handleOrientation);
+        motionActive = true;
+        document.getElementById('motionPermBtn').classList.add('granted');
+        document.getElementById('motionPermBtn').querySelector('span').textContent = 'Motion ✓';
+      }
+    }
+
+    // Smoothing for compass
+    // (smoothedHeading defined in state above)
+    
+    // Device orientation for tilt
+    function handleOrientation(event) {
+      const alpha = event.alpha || 0;  // compass direction (0-360)
+      const beta = event.beta || 0;    // front-to-back tilt (-180 to 180)
+      const gamma = event.gamma || 0;  // left-to-right tilt (-90 to 90)
+      
+      // Debug output
+      const dbg = document.getElementById('debugOutput');
+      if (dbg) {
+        dbg.style.display = 'block';
+        document.getElementById('dbgAlpha').textContent = alpha.toFixed(1);
+        document.getElementById('dbgBeta').textContent = beta.toFixed(1);
+        document.getElementById('dbgGamma').textContent = gamma.toFixed(1);
+      }
+      
+      // Based on actual phone data (landscape orientation):
+      // - Horizon: |gamma| ≈ 90, |beta| near 180
+      // - 45° up: |gamma| ≈ 45
+      // - Zenith: |gamma| ≈ 0
+      // 
+      // tilt = 90 - |gamma| gives us 0° at horizon, 90° at zenith
+      // Below horizon: |beta| < 90
+      
+      let tilt;
+      const absGamma = Math.abs(gamma);
+      const absBeta = Math.abs(beta);
+      
+      if (window.innerWidth > window.innerHeight) {
+        // Landscape mode
+        tilt = 90 - absGamma;
+        
+        // Detect below horizon: beta near 0 (not near ±180)
+        if (absBeta < 90) {
+          // Below horizon - make tilt negative
+          tilt = -tilt;
+        }
+        
+        // Clamp to 0-90 range (don't try to detect past zenith, just clamp)
+        tilt = Math.max(-45, Math.min(90, tilt));
+      } else {
+        // Portrait mode  
+        tilt = beta - 90;
+        tilt = Math.max(-45, Math.min(90, tilt));
+      }
+      
+      // Update debug
+      if (dbg) {
+        document.getElementById('dbgTilt').textContent = tilt.toFixed(1);
+      }
+      
+      phoneTilt = tilt;
+      
+      // Handle compass - use webkitCompassHeading if available (Safari iOS)
+      // This is tilt-compensated by Apple's sensor fusion
+      let newHeading = null;
+      let webkitValue = 'N/A';
+      
+      if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
+        // Safari iOS - tilt-compensated heading
+        // But it's relative to TOP of phone, not camera direction
+        // In landscape-right (home button on left), camera points 90° clockwise from top
+        newHeading = event.webkitCompassHeading;
+        webkitValue = event.webkitCompassHeading.toFixed(1);
+        
+        // Adjust for landscape orientation
+        if (window.innerWidth > window.innerHeight) {
+          // In landscape, add 90° to get camera direction
+          // (which way we rotated determines if we add or subtract)
+          if (gamma > 0) {
+            // Landscape-left (home button on right)
+            newHeading = (newHeading + 90) % 360;
+          } else {
+            // Landscape-right (home button on left)
+            newHeading = (newHeading - 90 + 360) % 360;
+          }
+        }
+      } else if (event.alpha !== null) {
+        // Fallback to raw alpha (won't be tilt-compensated)
+        newHeading = 360 - event.alpha; // alpha is reversed from compass convention
+        webkitValue = 'unavailable';
+      }
+      
+      // Update debug with compass info
+      if (dbg) {
+        document.getElementById('dbgWebkit').textContent = webkitValue;
+        document.getElementById('dbgCompass').textContent = newHeading !== null ? newHeading.toFixed(1) : '-';
+      }
+      
+      if (newHeading !== null) {
+        // Smooth the heading to reduce jitter
+        let diff = newHeading - smoothedHeading;
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+        
+        smoothedHeading += diff * SMOOTHING_FACTOR;
+        
+        // Normalize to 0-360
+        if (smoothedHeading < 0) smoothedHeading += 360;
+        if (smoothedHeading >= 360) smoothedHeading -= 360;
+        
+        compassHeading = smoothedHeading;
+        
+        // Update compass UI
+        const needle = document.getElementById('compassNeedle');
+        const direction = document.getElementById('compassDirection');
+        if (needle) {
+          needle.style.transform = `rotate(${compassHeading}deg)`;
+        }
+        if (direction) {
+          const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+          const index = Math.round(compassHeading / 45) % 8;
+          direction.textContent = directions[index];
+        }
+      }
+      
+      drawOverlay();
+    }
+    
+    // Simulate tilt with mouse/touch for desktop testing
+    let isMouseDown = false;
+    
+    document.addEventListener('mousedown', (e) => {
+      // Only start drag if clicking on main area (not buttons/controls)
+      if (e.target.closest('.bottom-panel') || 
+          e.target.closest('.top-bar') || 
+          e.target.closest('.settings-menu') ||
+          e.target.closest('.instructions-overlay')) {
+        return;
+      }
+      isMouseDown = true;
+      updateTiltFromMouse(e);
+    });
+    
+    document.addEventListener('mouseup', () => {
+      isMouseDown = false;
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (!isMouseDown) return;
+      updateTiltFromMouse(e);
+    });
+    
+    function updateTiltFromMouse(e) {
+      // Map Y position to tilt (top = 90°, bottom = 0°)
+      phoneTilt = 90 - (e.clientY / window.innerHeight) * 90;
+      phoneTilt = Math.max(0, Math.min(90, phoneTilt));
+      document.getElementById('tiltValue').textContent = `${Math.round(phoneTilt)}°`;
+      document.getElementById('tiltFill').style.height = `${(phoneTilt / 90) * 100}%`;
+      document.getElementById('tiltMarker').style.bottom = `${(phoneTilt / 90) * 100}%`;
+      drawOverlay();
+    }
+    
+    // Apply horizon and go back
+    function applyHorizon() {
+      // In real app, this would save to localStorage and return to main app
+      try {
+        localStorage.setItem('vantage-horizon', currentHorizon);
+      } catch (e) {
+        // localStorage might fail in private browsing
+      }
+      alert(`Horizon set to ${currentHorizon}°\n\nIn the full app, this would return you to the main view.`);
+    }
+    
+    function goBack() {
+      // In real app, navigate back
+      if (confirm('Discard changes and go back?')) {
+        window.history.back();
+      }
+    }
+    
+    function showInstructions() {
+      document.getElementById('instructionsOverlay').classList.add('visible');
+    }
+    
+    function hideInstructions() {
+      document.getElementById('instructionsOverlay').classList.remove('visible');
+      // Don't auto-request permissions here - let user tap the buttons
+    }
+    
+    // Initialize
+    // Load saved horizon if exists
+    try {
+      const savedHorizon = localStorage.getItem('vantage-horizon');
+      if (savedHorizon) {
+        currentHorizon = parseInt(savedHorizon);
+        document.getElementById('horizonSlider').value = currentHorizon;
+        document.getElementById('horizonValue').textContent = `${currentHorizon}°`;
+      }
+      
+      // Show instructions on first visit
+      const hasSeenInstructions = localStorage.getItem('vantage-ar-instructions-seen');
+      if (!hasSeenInstructions) {
+        showInstructions();
+        localStorage.setItem('vantage-ar-instructions-seen', 'true');
+      }
+    } catch (e) {
+      // localStorage fails in private browsing - just show instructions
+      showInstructions();
+    }
+    
+    drawOverlay();
+  </script>
+</body>
+</html>

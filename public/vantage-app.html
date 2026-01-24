@@ -1,0 +1,3751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Vantage</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #1a1f2e;
+      --bg-secondary: #242a3d;
+      --bg-card: #2a3148;
+      --bg-card-hover: #323a54;
+      --bg-control: #2a3148;
+      
+      --text-dark: #1a1a1a;
+      --text-light: #f0ede6;
+      --text-light-secondary: #c8c4bc;
+      --text-light-muted: #8a8680;
+      
+      --accent-warm: #d4a574;
+      --accent-warm-dim: #b08a5c;
+      --accent-success: #7ab892;
+      --accent-info: #7a9cb8;
+      --accent-warning: #c9a227;
+      --accent-danger: #b87a7a;
+      
+      --border-subtle: rgba(240, 237, 230, 0.1);
+      --border-card: rgba(240, 237, 230, 0.15);
+      
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+      
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body: 'DM Sans', -apple-system, sans-serif;
+      
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+      
+      --transition-fast: 150ms ease;
+      --transition-base: 250ms ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-dark);
+      min-height: 100vh;
+      min-height: 100dvh;
+      line-height: 1.5;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 0%, rgba(212, 165, 116, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(122, 156, 184, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 430px;
+      margin: 0 auto;
+      padding: var(--space-lg);
+      padding-bottom: calc(var(--space-2xl) + env(safe-area-inset-bottom));
+    }
+    
+    /* Header */
+    .header {
+      margin-bottom: var(--space-xl);
+    }
+    
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+    
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-sm);
+    }
+    
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      color: var(--text-light);
+      letter-spacing: -0.01em;
+    }
+    
+    .header-help-btn {
+      background: none;
+      border: none;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #a09a92;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .header-help-btn svg {
+      width: 28px;
+      height: 28px;
+    }
+    
+    /* Help modal */
+    .help-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .help-modal-overlay.open {
+      display: flex;
+    }
+    
+    .help-modal {
+      background: #1a1f2e;
+      border-radius: 16px;
+      max-width: 400px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .help-modal-header {
+      padding: 20px 20px 0 20px;
+    }
+    
+    .help-modal-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: #f0ede6;
+      margin: 0;
+    }
+    
+    .help-modal-body {
+      padding: 16px 20px;
+    }
+    
+    .help-modal-body h4 {
+      font-size: 0.9rem;
+      color: #f0ede6;
+      margin: 16px 0 6px 0;
+    }
+    
+    .help-modal-body h4:first-child {
+      margin-top: 0;
+    }
+    
+    .help-modal-body p {
+      font-size: 0.85rem;
+      color: #a09a92;
+      margin: 0;
+      line-height: 1.5;
+    }
+    
+    .help-modal-footer {
+      padding: 16px 20px 20px 20px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .help-modal-btn {
+      padding: 12px 48px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 10px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .brand-tagline {
+      font-size: var(--text-xs);
+      color: var(--text-light-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    /* Context bar */
+    .context {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    /* Dropdown selector styles */
+    .dropdown-selector {
+      position: relative;
+    }
+    
+    .dropdown-trigger {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 4px 8px 4px 0;
+      border-radius: 6px;
+      transition: var(--transition-fast);
+    }
+    
+    .dropdown-trigger:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    
+    .context-icon {
+      width: 14px;
+      height: 14px;
+      color: var(--text-light-muted);
+      flex-shrink: 0;
+    }
+    
+    .dropdown-trigger-text {
+      font-size: var(--text-sm);
+      color: var(--text-light-secondary);
+      flex: 1;
+    }
+    
+    .dropdown-trigger-chevron {
+      width: 12px;
+      height: 12px;
+      color: var(--text-light-muted);
+      opacity: 0.5;
+      transition: var(--transition-fast);
+    }
+    
+    .dropdown-selector.open .dropdown-trigger-chevron {
+      transform: rotate(180deg);
+    }
+    
+    .trigger-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 6px;
+      padding: 2px 6px;
+      background: rgba(122, 156, 184, 0.15);
+      border-radius: 4px;
+      font-size: var(--text-xs);
+      color: var(--accent-info);
+      font-weight: 500;
+    }
+    
+    /* Dropdown panel */
+    .dropdown-panel {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: -8px;
+      right: -8px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      z-index: 100;
+      overflow: hidden;
+    }
+    
+    .dropdown-selector.open .dropdown-panel {
+      display: block;
+    }
+    
+    .dropdown-section {
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    
+    .dropdown-section:last-child {
+      border-bottom: none;
+    }
+    
+    .dropdown-label {
+      font-size: var(--text-xs);
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: var(--space-xs) var(--space-md);
+      margin-bottom: 2px;
+    }
+    
+    .dropdown-option {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    
+    .dropdown-option:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+    
+    .dropdown-option-icon {
+      width: 18px;
+      height: 18px;
+      color: #666;
+      flex-shrink: 0;
+    }
+    
+    .dropdown-option-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .dropdown-option-name {
+      font-size: var(--text-sm);
+      color: #1a1a1a;
+      font-weight: 500;
+    }
+    
+    .dropdown-option-detail {
+      font-size: var(--text-xs);
+      color: #666;
+    }
+    
+    .dropdown-option-check {
+      width: 16px;
+      height: 16px;
+      color: var(--accent-success);
+      opacity: 0;
+      flex-shrink: 0;
+    }
+    
+    .dropdown-option.selected .dropdown-option-check {
+      opacity: 1;
+    }
+    
+    .delete-location-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.4;
+      transition: var(--transition-fast);
+      flex-shrink: 0;
+    }
+    
+    .delete-location-btn:hover {
+      background: rgba(184, 122, 122, 0.15);
+      opacity: 1;
+    }
+    
+    .delete-location-btn svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent-danger);
+    }
+    
+    /* Time options */
+    .time-options {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      padding: var(--space-sm) var(--space-md);
+    }
+    
+    .time-option {
+      padding: 8px 4px;
+      background: rgba(0, 0, 0, 0.04);
+      border: none;
+      border-radius: 8px;
+      color: #666;
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      text-align: center;
+    }
+    
+    .time-option:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: #1a1a1a;
+    }
+    
+    .time-option.selected {
+      background: var(--accent-info);
+      color: white;
+    }
+    
+    .time-option.now.selected {
+      background: var(--accent-warm);
+    }
+    
+    /* Filter controls */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    
+    .filter-label {
+      font-size: var(--text-sm);
+      color: #9a958d;
+    }
+    
+    .filter-select {
+      flex: 1;
+      max-width: 200px;
+      padding: 8px 32px 8px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239a958d' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+    
+    .filter-select:focus {
+      outline: none;
+      border-color: rgba(196, 166, 128, 0.5);
+    }
+    
+    .filter-select option {
+      background: var(--bg-primary);
+      color: var(--text-light);
+    }
+    
+    .show-all-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 0;
+      margin-bottom: var(--space-md);
+      color: #9a958d;
+      font-size: var(--text-sm);
+      cursor: pointer;
+    }
+    
+    .show-all-toggle input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid #5a564f;
+      border-radius: 4px;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .show-all-toggle input[type="checkbox"]:checked {
+      background: rgba(196, 166, 128, 0.25);
+      border-color: var(--accent-warm);
+    }
+    
+    .show-all-toggle input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 5px;
+      height: 9px;
+      border: solid var(--accent-warm);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    
+    /* Info cards */
+    .info-card {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      border-radius: 10px;
+      margin-bottom: var(--space-md);
+    }
+    
+    .info-card-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    
+    .info-card-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .info-card-headline {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-light);
+      margin-bottom: 2px;
+    }
+    
+    .info-card-details {
+      font-size: var(--text-sm);
+      color: var(--text-light-secondary);
+    }
+    
+    .weather-card.good {
+      background: rgba(122, 184, 146, 0.15);
+      border: 1px solid rgba(122, 184, 146, 0.3);
+    }
+    .weather-card.good .info-card-icon { color: var(--accent-success); }
+    
+    .weather-card.fair {
+      background: rgba(212, 165, 116, 0.12);
+      border: 1px solid rgba(212, 165, 116, 0.25);
+    }
+    .weather-card.fair .info-card-icon { color: var(--accent-warm); }
+    
+    .weather-card.poor {
+      background: rgba(184, 122, 122, 0.12);
+      border: 1px solid rgba(184, 122, 122, 0.25);
+    }
+    .weather-card.poor .info-card-icon { color: var(--accent-danger); }
+    
+    .moon-card {
+      background: rgba(212, 165, 116, 0.12);
+      border: 1px solid rgba(212, 165, 116, 0.25);
+      margin-bottom: var(--space-xl);
+    }
+    .moon-card .info-card-icon { color: var(--accent-warm); }
+    
+    .darkness-card {
+      background: rgba(122, 156, 184, 0.12);
+      border: 1px solid rgba(122, 156, 184, 0.25);
+    }
+    .darkness-card .info-card-icon { color: var(--accent-info); }
+    
+    .highlights-card {
+      background: rgba(212, 180, 131, 0.12);
+      border: 1px solid rgba(212, 180, 131, 0.25);
+    }
+    .highlights-card .info-card-icon { color: var(--accent-warm); }
+    
+    /* Section header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: var(--space-md);
+    }
+    
+    .section-title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      color: var(--text-light);
+    }
+    
+    .section-count {
+      font-size: var(--text-sm);
+      color: var(--text-light-muted);
+    }
+    
+    /* Object list */
+    .object-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    
+    .object-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .object-card.top-pick {
+      border-color: rgba(212, 165, 116, 0.3);
+    }
+    
+    .object-card.top-pick::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--accent-warm);
+    }
+    
+    .object-card-content {
+      padding: var(--space-md);
+    }
+    
+    .top-pick-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: 2px var(--space-sm);
+      background: rgba(212, 165, 116, 0.2);
+      color: var(--accent-warm);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      border-radius: 4px;
+      margin-bottom: var(--space-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .top-pick-label svg {
+      width: 12px;
+      height: 12px;
+    }
+    
+    .object-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .object-name {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      color: #f0ede6;
+      margin-bottom: 2px;
+    }
+    
+    .object-catalog {
+      font-size: var(--text-xs);
+      color: #8a8680;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .object-type-badge {
+      padding: var(--space-xs) var(--space-sm);
+      background: rgba(122, 156, 184, 0.15);
+      color: var(--accent-info);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      border-radius: 6px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    
+    .object-type-badge.galaxy { background: rgba(184, 122, 170, 0.15); color: #b87aaa; }
+    .object-type-badge.nebula { background: rgba(122, 184, 146, 0.15); color: var(--accent-success); }
+    .object-type-badge.open_cluster { background: rgba(212, 165, 116, 0.15); color: var(--accent-warm); }
+    .object-type-badge.globular_cluster { background: rgba(201, 162, 39, 0.15); color: var(--accent-warning); }
+    .object-type-badge.planetary_nebula { background: rgba(122, 156, 184, 0.15); color: var(--accent-info); }
+    .object-type-badge.supernova_remnant { background: rgba(184, 122, 122, 0.15); color: var(--accent-danger); }
+    
+    .object-stats {
+      display: flex;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+    
+    .stat-value {
+      font-size: var(--text-base);
+      font-weight: 500;
+      color: #f0ede6;
+    }
+    
+    .stat-label {
+      font-size: var(--text-xs);
+      color: #8a8680;
+    }
+    
+    .object-image-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--bg-primary);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 24 24' fill='none' stroke='%23444' stroke-width='1'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 2a10 10 0 0 0-7.07 17.07'/%3E%3Cpath d='M2 12h4M18 12h4M12 2v4M12 18v4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 8px;
+      margin-bottom: var(--space-md);
+      overflow: hidden;
+    }
+    
+    .object-image-container.hidden {
+      display: none;
+    }
+    
+    .object-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .object-image-credit {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: var(--space-xs) var(--space-sm);
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      font-size: 10px;
+      color: rgba(255,255,255,0.5);
+    }
+    
+    .compass-hint {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .compass-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--accent-info);
+    }
+    
+    .compass-text {
+      font-size: var(--text-sm);
+      color: #c8c4bc;
+    }
+    
+    .compass-text strong {
+      color: #f0ede6;
+    }
+    
+    .timing-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      margin-bottom: var(--space-sm);
+      font-size: var(--text-sm);
+      color: #9a958d;
+    }
+    
+    .timing-info svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent-warm);
+      flex-shrink: 0;
+    }
+    
+    .timing-info strong {
+      color: #c8c4bc;
+    }
+    
+    .object-description {
+      font-size: 0.8rem;
+      color: #8a8680;
+      margin: 6px 0 0 0;
+      line-height: 1.4;
+    }
+    
+    .object-reason {
+      font-size: var(--text-sm);
+      color: #c8c4bc;
+    }
+    
+    .object-reason strong {
+      color: var(--accent-warm);
+    }
+    
+    .object-actions {
+      display: flex;
+      padding: var(--space-md);
+      gap: var(--space-sm);
+      border-top: 1px solid var(--border-subtle);
+    }
+    
+    .action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      color: #c8c4bc;
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    
+    .action-btn:hover {
+      background: var(--bg-card-hover);
+    }
+    
+    .action-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .action-btn.active {
+      background: rgba(122, 184, 146, 0.2);
+      border-color: rgba(122, 184, 146, 0.35);
+      color: var(--accent-success);
+    }
+    
+    .object-card.seen {
+      opacity: 0.55;
+    }
+    
+    .footer-hint {
+      text-align: center;
+      padding-top: var(--space-xl);
+      font-size: var(--text-sm);
+      color: var(--text-light-muted);
+    }
+    
+    .footer-hint a {
+      color: var(--accent-warm-dim);
+      text-decoration: none;
+    }
+    
+    /* Loading state */
+    .loading {
+      text-align: center;
+      padding: var(--space-2xl);
+      color: var(--text-light-secondary);
+    }
+    
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-2xl);
+      color: var(--text-light-secondary);
+    }
+    
+    .empty-state h3 {
+      font-family: var(--font-display);
+      color: var(--text-light);
+      margin-bottom: var(--space-sm);
+    }
+    
+    /* Modal styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    
+    .modal-overlay.open {
+      display: flex;
+    }
+    
+    .modal-sheet {
+      background: white;
+      border-radius: 16px 16px 0 0;
+      width: 100%;
+      max-width: 430px;
+      max-height: 85vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      color: var(--text-dark);
+    }
+    
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 50%;
+      font-size: 20px;
+      color: #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-body {
+      padding: var(--space-lg);
+      overflow-y: auto;
+      flex: 1;
+    }
+    
+    .search-input-wrapper {
+      position: relative;
+      margin-bottom: var(--space-md);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: #999;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 12px 40px 12px 40px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--text-dark);
+      background: #f8f8f8;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-info);
+      background: white;
+    }
+    
+    .search-spinner {
+      display: none;
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ddd;
+      border-top-color: var(--accent-info);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    .search-spinner.active {
+      display: block;
+    }
+    
+    @keyframes spin {
+      to { transform: translateY(-50%) rotate(360deg); }
+    }
+    
+    .search-results {
+      margin-bottom: var(--space-md);
+    }
+    
+    .search-result {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      margin: 0 calc(-1 * var(--space-md));
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    
+    .search-result:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+    
+    .search-result-icon {
+      width: 18px;
+      height: 18px;
+      color: #666;
+      flex-shrink: 0;
+    }
+    
+    .search-result-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .search-result-name {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+    
+    .search-result-detail {
+      font-size: var(--text-xs);
+      color: #666;
+    }
+    
+    .search-no-results {
+      padding: var(--space-md);
+      text-align: center;
+      color: #666;
+      font-size: var(--text-sm);
+    }
+    
+    .coords-section {
+      margin-top: var(--space-md);
+    }
+    
+    .coords-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+      color: #999;
+      font-size: var(--text-sm);
+    }
+    
+    .coords-divider::before,
+    .coords-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+    
+    .coords-inputs {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    
+    .coord-field {
+      flex: 1;
+    }
+    
+    .coord-field label {
+      display: block;
+      font-size: var(--text-xs);
+      color: #666;
+      margin-bottom: 4px;
+    }
+    
+    .coord-field input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      color: var(--text-dark);
+    }
+    
+    .coord-field input:focus {
+      outline: none;
+      border-color: var(--accent-info);
+    }
+    
+    .coords-submit {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent-info);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    
+    .coords-submit:hover {
+      background: #6a8ca8;
+    }
+    
+    .save-location-section {
+      margin-top: var(--space-lg);
+    }
+    
+    .current-location-display {
+      padding: var(--space-sm) var(--space-md);
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 8px;
+      margin-bottom: var(--space-md);
+      font-size: var(--text-sm);
+      color: var(--text-dark);
+    }
+    
+    .save-location-btn {
+      width: 100%;
+      padding: 12px;
+      background: white;
+      color: var(--accent-info);
+      border: 1px solid var(--accent-info);
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+    }
+    
+    .save-location-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .save-location-btn:hover {
+      background: rgba(122, 156, 184, 0.1);
+    }
+    /* Horizon Setup Modal */
+    .horizon-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #0d0f15;
+      z-index: 2000;
+    }
+    
+    .horizon-modal.active {
+      display: block;
+    }
+    
+    .horizon-view {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: linear-gradient(180deg, #1a1f2e 0%, #0d0f15 100%);
+    }
+    
+    .horizon-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .horizon-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    
+    .horizon-placeholder {
+      display: none;
+    }
+    
+    .horizon-right-controls {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 25;
+    }
+    
+    .horizon-ctrl-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 12px;
+      min-width: 90px;
+      background: rgba(13, 15, 21, 0.85);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: #a09a92;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    
+    .horizon-ctrl-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .horizon-ctrl-btn.active {
+      border-color: rgba(107, 155, 107, 0.5);
+      background: rgba(107, 155, 107, 0.15);
+      color: #8bbb8b;
+    }
+    
+    .horizon-help-popup {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 120px;
+      background: rgba(13, 15, 21, 0.95);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 12px 14px;
+      z-index: 20;
+      display: none;
+    }
+    
+    .horizon-help-popup.visible {
+      display: block;
+    }
+    
+    .horizon-help-popup p {
+      font-size: 0.8rem;
+      color: #c0b8ae;
+      margin: 0;
+      line-height: 1.4;
+    }
+    
+    .horizon-crosshair {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      pointer-events: none;
+    }
+    
+    .horizon-crosshair svg {
+      width: 56px;
+      height: 56px;
+      color: #f0ede6;
+      opacity: 0.9;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
+    }
+    
+    .horizon-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+      background: rgba(13, 15, 21, 0.9);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+    }
+    
+    .horizon-slider-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    
+    .horizon-slider-label {
+      font-size: 0.65rem;
+      color: #6b6560;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    
+    .horizon-slider-value {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: #d4a574;
+      min-width: 40px;
+    }
+    
+    .horizon-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      outline: none;
+    }
+    
+    .horizon-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-warm);
+      cursor: pointer;
+    }
+    
+    .horizon-save-btn {
+      padding: 10px 24px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 8px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    
+    .horizon-rotate-prompt {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: #0d0f15;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .horizon-rotate-prompt.active {
+      display: flex;
+    }
+    
+    .horizon-rotate-prompt .rotate-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      animation: rotatePhone 2s ease-in-out infinite;
+    }
+    
+    @keyframes rotatePhone {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(90deg); }
+    }
+    
+    .horizon-rotate-prompt h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: #f0ede6;
+      margin: 0 0 8px 0;
+    }
+    
+    .horizon-rotate-prompt p {
+      color: #a09a92;
+      margin: 0 0 24px 0;
+    }
+    
+    .horizon-rotate-prompt .horizon-cancel-btn {
+      padding: 12px 32px;
+      background: transparent;
+      border: 1px solid #6b6560;
+      border-radius: 10px;
+      color: #a09a92;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    
+    .horizon-toast {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(107, 155, 107, 0.95);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      z-index: 3000;
+      animation: toastFade 2s ease-in-out;
+    }
+    
+    .horizon-toast.show {
+      display: block;
+    }
+    
+    @keyframes toastFade {
+      0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="brand">
+          <h1 class="brand-name">Vantage</h1>
+        </div>
+        <button class="header-help-btn" onclick="openHelpModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9 9a3 3 0 1 1 4 2.83c-.5.29-1 .88-1 1.67v.5"/>
+            <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="context">
+        <!-- Location selector -->
+        <div class="dropdown-selector" id="locationSelector">
+          <div class="dropdown-trigger" onclick="toggleDropdown('locationSelector')">
+            <svg class="context-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span class="dropdown-trigger-text" id="locationText">Set location</span>
+            <svg class="dropdown-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <div class="dropdown-panel">
+            <div class="dropdown-section">
+              <div class="dropdown-option" onclick="useCurrentLocation()">
+                <svg class="dropdown-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-info);">
+                  <circle cx="12" cy="12" r="10"/>
+                  <circle cx="12" cy="12" r="3"/>
+                  <line x1="12" y1="2" x2="12" y2="6"/>
+                  <line x1="12" y1="18" x2="12" y2="22"/>
+                  <line x1="2" y1="12" x2="6" y2="12"/>
+                  <line x1="18" y1="12" x2="22" y2="12"/>
+                </svg>
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name" style="color: var(--accent-info);">Use current location</div>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-section" id="savedLocationsSection">
+              <div class="dropdown-label">Saved locations</div>
+              <div id="savedLocationsList"></div>
+            </div>
+            <div class="dropdown-section">
+              <div class="dropdown-option" onclick="openLocationSearch()">
+                <svg class="dropdown-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">Search or enter coordinates...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Time selector -->
+        <div class="dropdown-selector" id="timeSelector">
+          <div class="dropdown-trigger" onclick="toggleDropdown('timeSelector')">
+            <svg class="context-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="dropdown-trigger-text" id="timeText">Loading...</span>
+            <span class="trigger-badge" id="timeOffsetBadge" style="display: none;">+1h</span>
+            <svg class="dropdown-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <div class="dropdown-panel">
+            <div class="dropdown-section">
+              <div class="dropdown-label">View sky at</div>
+              <div class="time-options">
+                <button class="time-option now selected" onclick="selectTime(0)">Now</button>
+                <button class="time-option" onclick="selectTime(1)">+1h</button>
+                <button class="time-option" onclick="selectTime(2)">+2h</button>
+                <button class="time-option" onclick="selectTime(3)">+3h</button>
+                <button class="time-option" onclick="selectTime(4)">+4h</button>
+                <button class="time-option" onclick="selectTime(5)">+5h</button>
+                <button class="time-option" onclick="selectTime(6)">+6h</button>
+                <button class="time-option" onclick="selectTime(7)">+7h</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Equipment selector -->
+        <div class="dropdown-selector" id="equipmentSelector">
+          <div class="dropdown-trigger" onclick="toggleDropdown('equipmentSelector')">
+            <svg class="context-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+            </svg>
+            <span class="dropdown-trigger-text" id="equipmentText">Smart telescope</span>
+            <svg class="dropdown-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <div class="dropdown-panel">
+            <div class="dropdown-section">
+              <div class="dropdown-label">Equipment type</div>
+              <div class="dropdown-option selected" onclick="selectEquipment('smart')">
+                <svg class="dropdown-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">Smart telescope</div>
+                  <div class="dropdown-option-detail">Seestar, Dwarf, eVscope</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-option" onclick="selectEquipment('visual')">
+                <svg class="dropdown-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">Visual telescope</div>
+                  <div class="dropdown-option-detail">Eyepiece observing</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-option" onclick="selectEquipment('binoculars')">
+                <svg class="dropdown-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="6" cy="6" r="3"/>
+                  <circle cx="18" cy="6" r="3"/>
+                  <path d="M6 9v9a2 2 0 0 0 2 2h1"/>
+                  <path d="M18 9v9a2 2 0 0 1-2 2h-1"/>
+                </svg>
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">Binoculars</div>
+                  <div class="dropdown-option-detail">Wide field viewing</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-option" onclick="selectEquipment('naked')">
+                <svg class="dropdown-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" opacity="0.2"/>
+                </svg>
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">Naked eye</div>
+                  <div class="dropdown-option-detail">No equipment</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Minimum altitude selector -->
+        <div class="dropdown-selector" id="altitudeSelector">
+          <div class="dropdown-trigger" onclick="toggleDropdown('altitudeSelector')">
+            <svg class="context-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 20h20"/>
+              <path d="M5 20l5-12 4 7 3-5 5 10"/>
+            </svg>
+            <span class="dropdown-trigger-text" id="altitudeText">Horizon: 25°</span>
+            <svg class="dropdown-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <div class="dropdown-panel">
+            <div class="dropdown-section">
+              <div class="dropdown-label">Minimum altitude</div>
+              <div class="dropdown-option" onclick="openHorizonModal(); toggleDropdown('altitudeSelector');" style="border-bottom: 1px solid var(--bg-tertiary); margin-bottom: 8px; padding-bottom: 12px;">
+                <div class="dropdown-option-content">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px;">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                  <div>
+                    <div class="dropdown-option-name">Use Camera</div>
+                    <div class="dropdown-option-detail">Set horizon using AR view</div>
+                  </div>
+                </div>
+              </div>
+              <div class="dropdown-option" onclick="selectAltitude(0)">
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">0°</div>
+                  <div class="dropdown-option-detail">Clear horizon, no obstructions</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-option" onclick="selectAltitude(15)">
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">15°</div>
+                  <div class="dropdown-option-detail">Open horizon, few obstructions</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-option" onclick="selectAltitude(20)">
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">20°</div>
+                  <div class="dropdown-option-detail">Some trees or buildings</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-option selected" onclick="selectAltitude(25)">
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">25°</div>
+                  <div class="dropdown-option-detail">Typical backyard (default)</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-option" onclick="selectAltitude(30)">
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">30°</div>
+                  <div class="dropdown-option-detail">Taller trees or nearby hills</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-option" onclick="selectAltitude(35)">
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">35°</div>
+                  <div class="dropdown-option-detail">Significant obstructions</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-option" onclick="selectAltitude(40)">
+                <div class="dropdown-option-content">
+                  <div class="dropdown-option-name">40°</div>
+                  <div class="dropdown-option-detail">Heavy obstruction / urban canyon</div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Info cards container -->
+    <div id="infoCards"></div>
+    
+    <!-- Location Search Modal -->
+    <div class="modal-overlay" id="locationModal" onclick="closeLocationModal(event)">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h3 class="modal-title">Set Location</h3>
+          <button class="modal-close" onclick="closeLocationModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" class="search-input" id="locationSearchInput" 
+                   placeholder="Search city or place..." 
+                   oninput="handleLocationSearch(this.value)">
+            <div class="search-spinner" id="searchSpinner"></div>
+          </div>
+          
+          <div id="searchResults" class="search-results"></div>
+          
+          <div class="coords-section">
+            <div class="coords-divider">
+              <span>or enter coordinates</span>
+            </div>
+            <div class="coords-inputs">
+              <div class="coord-field">
+                <label>Latitude</label>
+                <input type="number" step="0.0001" id="latInput" placeholder="37.52">
+              </div>
+              <div class="coord-field">
+                <label>Longitude</label>
+                <input type="number" step="0.0001" id="lonInput" placeholder="-122.28">
+              </div>
+            </div>
+            <button class="coords-submit" onclick="useManualCoords()">Use these coordinates</button>
+          </div>
+          
+          <div class="save-location-section" id="saveLocationSection" style="display: none;">
+            <div class="coords-divider">
+              <span>current location</span>
+            </div>
+            <div class="current-location-display" id="currentLocationDisplay"></div>
+            <button class="save-location-btn" onclick="saveCurrentLocation()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/>
+                <polyline points="7 3 7 8 15 8"/>
+              </svg>
+              Save to my locations
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Object list -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Recommended</h2>
+        <span class="section-count" id="objectCount" onclick="toggleShowAll()">Loading...</span>
+      </div>
+      
+      <div class="filter-row">
+        <label class="filter-label">Show</label>
+        <select class="filter-select" id="filterSelect" onchange="setFilter(this.value)">
+          <option value="all">All objects</option>
+          <option value="galaxy">Galaxies</option>
+          <option value="nebula">Nebulae</option>
+          <option value="cluster">Clusters</option>
+          <option value="planet">Planets</option>
+        </select>
+      </div>
+      
+      <label class="show-all-toggle">
+        <input type="checkbox" id="includeSeenToggle" onchange="toggleIncludeSeen()" checked>
+        Include objects I've seen
+      </label>
+      
+      <div class="object-list" id="objectList">
+        <div class="loading">Calculating positions...</div>
+      </div>
+    </section>
+    
+    <footer class="footer-hint">
+      Showing objects above 25° altitude
+    </footer>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="help-modal-overlay" id="helpModal" onclick="closeHelpModal(event)">
+    <div class="help-modal" onclick="event.stopPropagation()">
+      <div class="help-modal-header">
+        <h3 class="help-modal-title">Welcome to Vantage</h3>
+      </div>
+      <div class="help-modal-body">
+        <h4>What is this?</h4>
+        <p>Vantage recommends celestial objects you can see right now based on your location, time, and local conditions.</p>
+        
+        <h4>Reading the cards</h4>
+        <p>Each card shows an object's altitude (how high in the sky), magnitude (brightness — lower is brighter), and size compared to the full moon.</p>
+        
+        <h4>Setting your horizon</h4>
+        <p>Use "Horizon" to set how much sky is blocked by trees or buildings. Objects below this angle won't be shown.</p>
+        
+        <h4>Time slider</h4>
+        <p>Use "Now" to see what's visible later tonight. Weather and sky conditions update to match.</p>
+      </div>
+      <div class="help-modal-footer">
+        <button class="help-modal-btn" onclick="closeHelpModal()">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Horizon Setup Modal -->
+  <div class="horizon-modal" id="horizonModal">
+    <div class="horizon-view">
+      <video class="horizon-video" id="horizonVideo" autoplay playsinline></video>
+      <canvas class="horizon-canvas" id="horizonCanvas"></canvas>
+      
+      <!-- Right side controls -->
+      <div class="horizon-right-controls">
+        <button class="horizon-ctrl-btn" onclick="closeHorizonModal()">Cancel</button>
+        <button class="horizon-ctrl-btn" id="horizonHelpBtn" onclick="toggleHorizonHelp()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9 9a3 3 0 1 1 4 2.83c-.5.29-1 .88-1 1.67v.5"/>
+            <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+          </svg>
+        </button>
+        <button class="horizon-ctrl-btn" id="horizonCameraBtn" onclick="toggleHorizonCamera()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          Camera
+        </button>
+      </div>
+      
+      <!-- Help popup -->
+      <div class="horizon-help-popup" id="horizonHelpPopup">
+        <p>Turn in a full circle while pointing at the horizon. Find where trees or buildings block the most sky, then set the line to match.</p>
+      </div>
+      
+      <div class="horizon-crosshair">
+        <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="28" cy="28" r="14"/>
+          <line x1="28" y1="8" x2="28" y2="18"/>
+          <line x1="28" y1="38" x2="28" y2="48"/>
+          <line x1="8" y1="28" x2="18" y2="28"/>
+          <line x1="38" y1="28" x2="48" y2="28"/>
+        </svg>
+      </div>
+      
+      <div class="horizon-controls">
+        <div class="horizon-slider-container">
+          <span class="horizon-slider-label">MIN ALT</span>
+          <span class="horizon-slider-value" id="horizonSliderValue">25°</span>
+          <input type="range" class="horizon-slider" id="horizonSlider" 
+                 min="0" max="50" value="25" 
+                 oninput="updateHorizonSlider(this.value)">
+        </div>
+        <button class="horizon-save-btn" onclick="applyHorizon()">Save</button>
+      </div>
+      
+      <div class="horizon-rotate-prompt" id="horizonRotatePrompt">
+        <svg class="rotate-icon" viewBox="0 0 24 24" fill="none" stroke="#d4a574" stroke-width="1.5">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+          <line x1="12" y1="18" x2="12" y2="18" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h3>Rotate to Landscape</h3>
+        <p>Turn your phone sideways for the best view of the horizon</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast notification -->
+  <div class="horizon-toast" id="horizonToast">✓ Horizon saved</div>
+
+  <!-- === MODULE: vantage-config.js === -->
+  <script>
+    const VantageConfig = {
+      // Default location
+      DEFAULT_LOCATION: { latitude: 37.52, longitude: -122.28, name: 'Belmont, CA' },
+      
+      // Observing defaults
+      DEFAULT_MIN_ALTITUDE: 25,
+      DEFAULT_EQUIPMENT: 'smart',
+      
+      // API endpoints
+      WEATHER_API: 'https://api.open-meteo.com/v1/forecast',
+      GEOCODE_API: 'https://nominatim.openstreetmap.org',
+      
+      // Scoring thresholds
+      TOP_PICK_MIN_SCORE: 70,
+      OBSERVABLE_MIN_SCORE: 20,
+      
+      // UI settings
+      MAX_OBJECTS_DISPLAYED: 10,
+      SEARCH_DEBOUNCE_MS: 500,
+      TIME_UPDATE_INTERVAL_MS: 60000
+    };
+  </script>
+  <!-- === END MODULE === -->
+  
+  <!-- === MODULE: vantage-astro.js === -->
+  <script>
+    const VantageAstro = {
+      DEG_TO_RAD: Math.PI / 180,
+      RAD_TO_DEG: 180 / Math.PI,
+      
+      toRad(deg) { return deg * this.DEG_TO_RAD; },
+      toDeg(rad) { return rad * this.RAD_TO_DEG; },
+      
+      normalize360(angle) {
+        while (angle < 0) angle += 360;
+        while (angle >= 360) angle -= 360;
+        return angle;
+      },
+      
+      toJulianDate(date) {
+        return date.getTime() / 86400000 + 2440587.5;
+      },
+      
+      toJulianCentury(jd) {
+        return (jd - 2451545.0) / 36525.0;
+      },
+      
+      getGMST(date) {
+        const jd = this.toJulianDate(date);
+        const T = this.toJulianCentury(jd);
+        let gmst = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 
+                   0.000387933 * T * T - T * T * T / 38710000.0;
+        return this.normalize360(gmst);
+      },
+      
+      getLST(date, longitude) {
+        return this.normalize360(this.getGMST(date) + longitude);
+      },
+      
+      getAltAz(ra, dec, date, latitude, longitude) {
+        const lst = this.getLST(date, longitude);
+        let ha = lst - ra;
+        ha = this.normalize360(ha);
+        if (ha > 180) ha -= 360;
+        
+        const haRad = this.toRad(ha);
+        const decRad = this.toRad(dec);
+        const latRad = this.toRad(latitude);
+        
+        const sinAlt = Math.sin(decRad) * Math.sin(latRad) + 
+                       Math.cos(decRad) * Math.cos(latRad) * Math.cos(haRad);
+        const altitude = this.toDeg(Math.asin(sinAlt));
+        
+        const cosAz = (Math.sin(decRad) - Math.sin(latRad) * sinAlt) / 
+                      (Math.cos(latRad) * Math.cos(this.toRad(altitude)));
+        let azimuth = this.toDeg(Math.acos(Math.max(-1, Math.min(1, cosAz))));
+        
+        if (Math.sin(haRad) > 0) azimuth = 360 - azimuth;
+        
+        return { altitude, azimuth };
+      },
+      
+      getSimpleDirection(azimuth) {
+        const directions = ['North', 'Northeast', 'East', 'Southeast', 
+                            'South', 'Southwest', 'West', 'Northwest'];
+        return directions[Math.round(azimuth / 45) % 8];
+      },
+      
+      getMoonPosition(date) {
+        const jd = this.toJulianDate(date);
+        const T = this.toJulianCentury(jd);
+        
+        const L = this.normalize360(218.3164477 + 481267.88123421 * T);
+        const M = this.normalize360(134.9633964 + 477198.8675055 * T);
+        const F = this.normalize360(93.2720950 + 483202.0175233 * T);
+        const D = this.normalize360(297.8501921 + 445267.1114034 * T);
+        const Ms = this.normalize360(357.5291092 + 35999.0502909 * T);
+        
+        const longitude = L + 
+          6.289 * Math.sin(this.toRad(M)) +
+          1.274 * Math.sin(this.toRad(2 * D - M)) +
+          0.658 * Math.sin(this.toRad(2 * D)) +
+          0.214 * Math.sin(this.toRad(2 * M)) -
+          0.186 * Math.sin(this.toRad(Ms));
+        
+        const latitude = 5.128 * Math.sin(this.toRad(F)) +
+          0.281 * Math.sin(this.toRad(M + F)) +
+          0.278 * Math.sin(this.toRad(M - F));
+        
+        const obliquity = 23.44;
+        const lonRad = this.toRad(longitude);
+        const latRad = this.toRad(latitude);
+        const oblRad = this.toRad(obliquity);
+        
+        const ra = this.toDeg(Math.atan2(
+          Math.sin(lonRad) * Math.cos(oblRad) - Math.tan(latRad) * Math.sin(oblRad),
+          Math.cos(lonRad)
+        ));
+        
+        const dec = this.toDeg(Math.asin(
+          Math.sin(latRad) * Math.cos(oblRad) + 
+          Math.cos(latRad) * Math.sin(oblRad) * Math.sin(lonRad)
+        ));
+        
+        const synodicMonth = 29.530588853;
+        const knownNewMoon = 2451550.1;
+        const age = (jd - knownNewMoon) % synodicMonth;
+        const phaseAngle = (age / synodicMonth) * 360;
+        const illumination = (1 - Math.cos(this.toRad(phaseAngle))) / 2 * 100;
+        
+        let phaseName;
+        if (age < 1.85) phaseName = 'New moon';
+        else if (age < 7.38) phaseName = 'Waxing crescent';
+        else if (age < 9.23) phaseName = 'First quarter';
+        else if (age < 14.77) phaseName = 'Waxing gibbous';
+        else if (age < 16.61) phaseName = 'Full moon';
+        else if (age < 22.15) phaseName = 'Waning gibbous';
+        else if (age < 24.00) phaseName = 'Last quarter';
+        else phaseName = 'Waning crescent';
+        
+        return {
+          ra: this.normalize360(ra), dec,
+          phase: phaseName,
+          illumination: Math.round(illumination),
+          age: Math.round(age * 10) / 10
+        };
+      },
+      
+      getAngularSeparation(ra1, dec1, ra2, dec2) {
+        const ra1Rad = this.toRad(ra1), dec1Rad = this.toRad(dec1);
+        const ra2Rad = this.toRad(ra2), dec2Rad = this.toRad(dec2);
+        const cosD = Math.sin(dec1Rad) * Math.sin(dec2Rad) + 
+                     Math.cos(dec1Rad) * Math.cos(dec2Rad) * Math.cos(ra1Rad - ra2Rad);
+        return this.toDeg(Math.acos(Math.max(-1, Math.min(1, cosD))));
+      },
+      
+      getSunPosition(date) {
+        const jd = this.toJulianDate(date);
+        const T = this.toJulianCentury(jd);
+        const L = this.normalize360(280.46646 + 36000.76983 * T);
+        const M = this.normalize360(357.52911 + 35999.05029 * T);
+        const C = (1.914602 - 0.004817 * T) * Math.sin(this.toRad(M)) +
+                  0.019993 * Math.sin(this.toRad(2 * M));
+        const longitude = L + C;
+        const obliquity = 23.439 - 0.00000036 * (jd - 2451545.0);
+        const lonRad = this.toRad(longitude), oblRad = this.toRad(obliquity);
+        const ra = this.toDeg(Math.atan2(Math.cos(oblRad) * Math.sin(lonRad), Math.cos(lonRad)));
+        const dec = this.toDeg(Math.asin(Math.sin(oblRad) * Math.sin(lonRad)));
+        return { ra: this.normalize360(ra), dec };
+      },
+      
+      getDarknessStatus(date, latitude, longitude) {
+        const sun = this.getSunPosition(date);
+        const altAz = this.getAltAz(sun.ra, sun.dec, date, latitude, longitude);
+        const sunAlt = altAz.altitude;
+        
+        let description, isDark;
+        if (sunAlt > -0.833) { description = 'Daytime'; isDark = false; }
+        else if (sunAlt > -6) { description = 'Civil twilight'; isDark = false; }
+        else if (sunAlt > -12) { description = 'Nautical twilight'; isDark = false; }
+        else if (sunAlt > -18) { description = 'Astronomical twilight'; isDark = true; }
+        else { description = 'Astronomical night'; isDark = true; }
+        
+        return { isDark, sunAltitude: sunAlt, description };
+      },
+      
+      formatTime(date) {
+        return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      },
+      
+      // Planet position calculations using simplified orbital elements
+      getPlanetPosition(planet, date) {
+        const jd = this.toJulianDate(date);
+        const T = this.toJulianCentury(jd);
+        const d = jd - 2451545.0; // Days since J2000
+        
+        // Orbital elements for each planet (simplified)
+        const elements = {
+          mercury: { N: 48.3313 + 3.24587e-5 * d, i: 7.0047 + 5.00e-8 * d, w: 29.1241 + 1.01444e-5 * d, a: 0.387098, e: 0.205635 + 5.59e-10 * d, M: 168.6562 + 4.0923344368 * d },
+          venus: { N: 76.6799 + 2.46590e-5 * d, i: 3.3946 + 2.75e-8 * d, w: 54.8910 + 1.38374e-5 * d, a: 0.723330, e: 0.006773 - 1.302e-9 * d, M: 48.0052 + 1.6021302244 * d },
+          mars: { N: 49.5574 + 2.11081e-5 * d, i: 1.8497 - 1.78e-8 * d, w: 286.5016 + 2.92961e-5 * d, a: 1.523688, e: 0.093405 + 2.516e-9 * d, M: 18.6021 + 0.5240207766 * d },
+          jupiter: { N: 100.4542 + 2.76854e-5 * d, i: 1.3030 - 1.557e-7 * d, w: 273.8777 + 1.64505e-5 * d, a: 5.20256, e: 0.048498 + 4.469e-9 * d, M: 19.8950 + 0.0830853001 * d },
+          saturn: { N: 113.6634 + 2.38980e-5 * d, i: 2.4886 - 1.081e-7 * d, w: 339.3939 + 2.97661e-5 * d, a: 9.55475, e: 0.055546 - 9.499e-9 * d, M: 316.9670 + 0.0334442282 * d },
+          uranus: { N: 74.0005 + 1.3978e-5 * d, i: 0.7733 + 1.9e-8 * d, w: 96.6612 + 3.0565e-5 * d, a: 19.18171, e: 0.047318 + 7.45e-9 * d, M: 142.5905 + 0.011725806 * d },
+          neptune: { N: 131.7806 + 3.0173e-5 * d, i: 1.7700 - 2.55e-7 * d, w: 272.8461 - 6.027e-6 * d, a: 30.05826, e: 0.008606 + 2.15e-9 * d, M: 260.2471 + 0.005995147 * d }
+        };
+        
+        const el = elements[planet];
+        if (!el) return null;
+        
+        // Normalize angles
+        const N = this.normalize360(el.N);
+        const w = this.normalize360(el.w);
+        const M = this.normalize360(el.M);
+        
+        // Solve Kepler's equation for eccentric anomaly
+        let E = M + this.toDeg(el.e) * Math.sin(this.toRad(M)) * (1 + el.e * Math.cos(this.toRad(M)));
+        for (let iter = 0; iter < 10; iter++) {
+          const dE = (E - this.toDeg(el.e) * Math.sin(this.toRad(E)) - M) / (1 - el.e * Math.cos(this.toRad(E)));
+          E -= dE;
+          if (Math.abs(dE) < 0.0001) break;
+        }
+        
+        // Planet's heliocentric coordinates
+        const xv = el.a * (Math.cos(this.toRad(E)) - el.e);
+        const yv = el.a * Math.sqrt(1 - el.e * el.e) * Math.sin(this.toRad(E));
+        const v = this.toDeg(Math.atan2(yv, xv));
+        const r = Math.sqrt(xv * xv + yv * yv);
+        
+        // Heliocentric ecliptic coordinates
+        const xh = r * (Math.cos(this.toRad(N)) * Math.cos(this.toRad(v + w)) - Math.sin(this.toRad(N)) * Math.sin(this.toRad(v + w)) * Math.cos(this.toRad(el.i)));
+        const yh = r * (Math.sin(this.toRad(N)) * Math.cos(this.toRad(v + w)) + Math.cos(this.toRad(N)) * Math.sin(this.toRad(v + w)) * Math.cos(this.toRad(el.i)));
+        const zh = r * Math.sin(this.toRad(v + w)) * Math.sin(this.toRad(el.i));
+        
+        // Earth's position (simplified)
+        const Me = this.normalize360(356.0470 + 0.9856002585 * d);
+        const we = 282.9404 + 4.70935e-5 * d;
+        const ee = 0.016709 - 1.151e-9 * d;
+        const ae = 1.0;
+        let Ee = Me + this.toDeg(ee) * Math.sin(this.toRad(Me)) * (1 + ee * Math.cos(this.toRad(Me)));
+        for (let iter = 0; iter < 10; iter++) {
+          const dE = (Ee - this.toDeg(ee) * Math.sin(this.toRad(Ee)) - Me) / (1 - ee * Math.cos(this.toRad(Ee)));
+          Ee -= dE;
+          if (Math.abs(dE) < 0.0001) break;
+        }
+        const xve = ae * (Math.cos(this.toRad(Ee)) - ee);
+        const yve = ae * Math.sqrt(1 - ee * ee) * Math.sin(this.toRad(Ee));
+        const ve = this.toDeg(Math.atan2(yve, xve));
+        const re = Math.sqrt(xve * xve + yve * yve);
+        const lonSun = ve + we;
+        const xs = re * Math.cos(this.toRad(lonSun));
+        const ys = re * Math.sin(this.toRad(lonSun));
+        
+        // Geocentric ecliptic coordinates
+        const xg = xh + xs;
+        const yg = yh + ys;
+        const zg = zh;
+        
+        // Convert to equatorial
+        const obliquity = 23.4393 - 3.563e-7 * d;
+        const xe = xg;
+        const ye = yg * Math.cos(this.toRad(obliquity)) - zg * Math.sin(this.toRad(obliquity));
+        const ze = yg * Math.sin(this.toRad(obliquity)) + zg * Math.cos(this.toRad(obliquity));
+        
+        const ra = this.normalize360(this.toDeg(Math.atan2(ye, xe)));
+        const dec = this.toDeg(Math.atan2(ze, Math.sqrt(xe * xe + ye * ye)));
+        const dist = Math.sqrt(xg * xg + yg * yg + zg * zg);
+        
+        // Calculate apparent magnitude (approximate)
+        const mags = { mercury: -0.36, venus: -4.4, mars: -1.5, jupiter: -2.7, saturn: -0.5, uranus: 5.5, neptune: 7.8 };
+        const baseMag = mags[planet] || 0;
+        
+        return { ra, dec, distance: dist, magnitude: baseMag };
+      },
+      
+      // Get rise, transit, set times for an object
+      getRiseTransitSet(ra, dec, date, latitude, longitude, minAltitude = 0) {
+        // Find transit time (when object crosses meridian)
+        const lst0 = this.getLST(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0), longitude);
+        let transitLST = ra;
+        let transitHours = (transitLST - lst0) / 15;
+        if (transitHours < 0) transitHours += 24;
+        if (transitHours > 24) transitHours -= 24;
+        
+        const transitTime = new Date(date);
+        transitTime.setHours(0, 0, 0, 0);
+        transitTime.setTime(transitTime.getTime() + transitHours * 3600000);
+        
+        // Calculate hour angle at rise/set
+        const latRad = this.toRad(latitude);
+        const decRad = this.toRad(dec);
+        const altRad = this.toRad(minAltitude);
+        
+        const cosH = (Math.sin(altRad) - Math.sin(latRad) * Math.sin(decRad)) / 
+                     (Math.cos(latRad) * Math.cos(decRad));
+        
+        // Check if object is circumpolar or never rises
+        if (cosH < -1) {
+          // Circumpolar - always above horizon
+          return { transit: transitTime, rise: null, set: null, circumpolar: true, neverRises: false };
+        }
+        if (cosH > 1) {
+          // Never rises above minAltitude
+          return { transit: null, rise: null, set: null, circumpolar: false, neverRises: true };
+        }
+        
+        const H = this.toDeg(Math.acos(cosH)) / 15; // Hour angle in hours
+        
+        const riseTime = new Date(transitTime.getTime() - H * 3600000);
+        const setTime = new Date(transitTime.getTime() + H * 3600000);
+        
+        return { transit: transitTime, rise: riseTime, set: setTime, circumpolar: false, neverRises: false };
+      }
+    };
+  </script>
+  <!-- === END MODULE === -->
+  
+  <!-- === MODULE: vantage-scoring.js === -->
+  <script>
+    const VantageScoring = {
+      equipmentProfiles: {
+        smart: {
+          name: 'Smart telescope',
+          weights: { altitude: 1.0, magnitude: 0.6, size: 1.2, moonDistance: 0.8 },
+          magnitudeLimit: 12, minSize: 2, idealSizeMin: 10, idealSizeMax: 120
+        },
+        visual: {
+          name: 'Visual telescope',
+          weights: { altitude: 1.0, magnitude: 1.5, size: 0.8, moonDistance: 1.2 },
+          magnitudeLimit: 10, minSize: 1, idealSizeMin: 5, idealSizeMax: 60
+        },
+        binoculars: {
+          name: 'Binoculars',
+          weights: { altitude: 1.0, magnitude: 1.8, size: 1.5, moonDistance: 0.7 },
+          magnitudeLimit: 8, minSize: 10, idealSizeMin: 30, idealSizeMax: 300
+        },
+        naked: {
+          name: 'Naked eye',
+          weights: { altitude: 1.2, magnitude: 2.0, size: 0.5, moonDistance: 0.5 },
+          magnitudeLimit: 5, minSize: 0, idealSizeMin: 0, idealSizeMax: 1000
+        }
+      },
+      
+      scoreObject(object, conditions, equipment = 'smart', minAltitude = 25) {
+        const profile = this.equipmentProfiles[equipment];
+        const weights = profile.weights;
+        let score = 100;
+        let factors = [];
+        
+        const altitude = conditions.altitude;
+        if (altitude < 0) return { score: 0, factors: ['Below horizon'], observable: false };
+        if (altitude < minAltitude) return { score: 0, factors: ['Below minimum altitude'], observable: false };
+        if (altitude < minAltitude + 10) { score -= 20 * weights.altitude; factors.push('Getting low'); }
+        else if (altitude > 60) { score += 15 * weights.altitude; factors.push('High in the sky'); }
+        else if (altitude > 45) { score += 5 * weights.altitude; factors.push('Well positioned'); }
+        
+        const mag = object.magnitude;
+        if (mag > profile.magnitudeLimit) { score -= 50 * weights.magnitude; factors.push('Too faint'); }
+        else if (mag < 4) { score += 20 * weights.magnitude; factors.push('Very bright'); }
+        else if (mag < 6) { score += 10 * weights.magnitude; factors.push('Bright'); }
+        else if (mag > 9) { score -= 15 * weights.magnitude; }
+        
+        const size = object.size.major;
+        if (size >= profile.idealSizeMin && size <= profile.idealSizeMax) {
+          score += 15 * weights.size; factors.push('Great for your gear');
+        }
+        
+        if (conditions.moonDistance !== undefined) {
+          const moonDist = conditions.moonDistance;
+          const moonFactor = (conditions.moonIllumination || 0) / 100;
+          if (moonDist < 30 && moonFactor > 0.5) {
+            score -= 25 * weights.moonDistance * moonFactor;
+            factors.push('Near bright moon');
+          } else if (moonDist > 90) {
+            score += 5 * weights.moonDistance;
+          }
+        }
+        
+        // Type bonuses for smart telescope
+        if (equipment === 'smart') {
+          if (object.type === 'nebula' || object.type === 'supernova_remnant') {
+            score += 15; factors.push('Great for stacking');
+          } else if (object.type === 'galaxy') {
+            score += 10;
+          }
+        }
+        
+        // Seen status tracked but not penalized (toggle controls visibility)
+        
+        return {
+          score: Math.max(0, Math.min(100, Math.round(score))),
+          factors, observable: altitude >= 25 && score > 20, altitude
+        };
+      },
+      
+      rankObjects(catalog, location, date, equipment, userPrefs, minAltitude = 25) {
+        const { latitude, longitude } = location;
+        const moon = VantageAstro.getMoonPosition(date);
+        
+        return catalog.map(obj => {
+          const altAz = VantageAstro.getAltAz(obj.ra, obj.dec, date, latitude, longitude);
+          const moonDistance = VantageAstro.getAngularSeparation(obj.ra, obj.dec, moon.ra, moon.dec);
+          
+          const conditions = {
+            altitude: altAz.altitude, azimuth: altAz.azimuth, moonDistance,
+            moonIllumination: moon.illumination,
+            seen: userPrefs?.seen?.has(obj.id)
+          };
+          
+          const scoreResult = this.scoreObject(obj, conditions, equipment, minAltitude);
+          
+          return {
+            ...obj, ...scoreResult,
+            azimuth: altAz.azimuth,
+            direction: VantageAstro.getSimpleDirection(altAz.azimuth),
+            moonDistance: Math.round(moonDistance)
+          };
+        }).filter(obj => obj.observable).sort((a, b) => b.score - a.score);
+      }
+    };
+  </script>
+  <!-- === END MODULE === -->
+  
+  <!-- === MODULE: vantage-catalog.js === -->
+  <script>
+    const catalog = [
+      {"id": "m1", "names": ["Crab Nebula"], "catalog": ["M1", "NGC 1952"], "type": "supernova_remnant", "constellation": "Taurus", "ra": 83.63, "dec": 22.02, "magnitude": 8.4, "size": {"major": 6, "minor": 6}, "description": "Supernova remnant from 1054 AD", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Crab_Nebula.jpg/800px-Crab_Nebula.jpg"},
+      {"id": "m2", "names": [], "catalog": ["M2", "NGC 7089"], "type": "globular_cluster", "constellation": "Aquarius", "ra": 323.36, "dec": -0.82, "magnitude": 6.5, "size": {"major": 16, "minor": 16}, "description": "Rich globular with 150,000 stars", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Messier_2_Hubble_WikiSky.jpg/800px-Messier_2_Hubble_WikiSky.jpg"},
+      {"id": "m3", "names": [], "catalog": ["M3", "NGC 5272"], "type": "globular_cluster", "constellation": "Canes Venatici", "ra": 205.55, "dec": 28.38, "magnitude": 6.2, "size": {"major": 18, "minor": 18}, "description": "One of the brightest globulars", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Messier_3_Hubble_WikiSky.jpg/800px-Messier_3_Hubble_WikiSky.jpg"},
+      {"id": "m4", "names": [], "catalog": ["M4", "NGC 6121"], "type": "globular_cluster", "constellation": "Scorpius", "ra": 245.9, "dec": -26.53, "magnitude": 5.9, "size": {"major": 26, "minor": 26}, "description": "Nearest globular cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Messier_4_Hubble_WikiSky.jpg/800px-Messier_4_Hubble_WikiSky.jpg"},
+      {"id": "m5", "names": [], "catalog": ["M5", "NGC 5904"], "type": "globular_cluster", "constellation": "Serpens", "ra": 229.64, "dec": 2.08, "magnitude": 5.7, "size": {"major": 23, "minor": 23}, "description": "Ancient globular, 13 billion years old", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Messier_5_Hubble_WikiSky.jpg/800px-Messier_5_Hubble_WikiSky.jpg"},
+      {"id": "m6", "names": ["Butterfly Cluster"], "catalog": ["M6", "NGC 6405"], "type": "open_cluster", "constellation": "Scorpius", "ra": 265.08, "dec": -32.22, "magnitude": 4.2, "size": {"major": 25, "minor": 25}, "description": "Butterfly-shaped cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Messier_object_006.jpg/800px-Messier_object_006.jpg"},
+      {"id": "m7", "names": ["Ptolemy Cluster"], "catalog": ["M7", "NGC 6475"], "type": "open_cluster", "constellation": "Scorpius", "ra": 268.47, "dec": -34.79, "magnitude": 3.3, "size": {"major": 80, "minor": 80}, "description": "Large bright cluster known since antiquity", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Messier_object_007.jpg/800px-Messier_object_007.jpg"},
+      {"id": "m8", "names": ["Lagoon Nebula"], "catalog": ["M8", "NGC 6523"], "type": "nebula", "constellation": "Sagittarius", "ra": 270.92, "dec": -24.38, "magnitude": 6.0, "size": {"major": 90, "minor": 90}, "description": "Giant star-forming region", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Lagoon_Nebula.jpg/800px-Lagoon_Nebula.jpg"},
+      {"id": "m9", "names": [], "catalog": ["M9", "NGC 6333"], "type": "globular_cluster", "constellation": "Ophiuchus", "ra": 259.8, "dec": -18.52, "magnitude": 7.7, "size": {"major": 12, "minor": 12}, "description": "Globular near galactic center", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Messier_9_Hubble_WikiSky.jpg/800px-Messier_9_Hubble_WikiSky.jpg"},
+      {"id": "m10", "names": [], "catalog": ["M10", "NGC 6254"], "type": "globular_cluster", "constellation": "Ophiuchus", "ra": 254.29, "dec": -4.1, "magnitude": 6.6, "size": {"major": 20, "minor": 20}, "description": "Bright loose globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Messier_10_Hubble_WikiSky.jpg/800px-Messier_10_Hubble_WikiSky.jpg"},
+      {"id": "m11", "names": ["Wild Duck Cluster"], "catalog": ["M11", "NGC 6705"], "type": "open_cluster", "constellation": "Scutum", "ra": 282.77, "dec": -6.27, "magnitude": 5.8, "size": {"major": 14, "minor": 14}, "description": "One of the richest open clusters", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Messier_object_011.jpg/800px-Messier_object_011.jpg"},
+      {"id": "m12", "names": [], "catalog": ["M12", "NGC 6218"], "type": "globular_cluster", "constellation": "Ophiuchus", "ra": 251.81, "dec": -1.95, "magnitude": 6.7, "size": {"major": 16, "minor": 16}, "description": "Loose globular similar to M10", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Messier_12_Hubble_WikiSky.jpg/800px-Messier_12_Hubble_WikiSky.jpg"},
+      {"id": "m13", "names": ["Great Hercules Cluster"], "catalog": ["M13", "NGC 6205"], "type": "globular_cluster", "constellation": "Hercules", "ra": 250.42, "dec": 36.46, "magnitude": 5.8, "size": {"major": 20, "minor": 20}, "description": "Finest northern globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Messier_13_Hubble_WikiSky.jpg/800px-Messier_13_Hubble_WikiSky.jpg"},
+      {"id": "m14", "names": [], "catalog": ["M14", "NGC 6402"], "type": "globular_cluster", "constellation": "Ophiuchus", "ra": 264.4, "dec": -3.25, "magnitude": 7.6, "size": {"major": 11, "minor": 11}, "description": "Slightly elliptical globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Messier_14_Hubble_WikiSky.jpg/800px-Messier_14_Hubble_WikiSky.jpg"},
+      {"id": "m15", "names": [], "catalog": ["M15", "NGC 7078"], "type": "globular_cluster", "constellation": "Pegasus", "ra": 322.49, "dec": 12.17, "magnitude": 6.2, "size": {"major": 18, "minor": 18}, "description": "Dense core, may contain black hole", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Messier_15_Hubble_WikiSky.jpg/800px-Messier_15_Hubble_WikiSky.jpg"},
+      {"id": "m16", "names": ["Eagle Nebula"], "catalog": ["M16", "NGC 6611"], "type": "nebula", "constellation": "Serpens", "ra": 274.7, "dec": -13.82, "magnitude": 6.0, "size": {"major": 35, "minor": 35}, "description": "Home to Pillars of Creation", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Eagle_Nebula_from_ESO.jpg/800px-Eagle_Nebula_from_ESO.jpg"},
+      {"id": "m17", "names": ["Omega Nebula"], "catalog": ["M17", "NGC 6618"], "type": "nebula", "constellation": "Sagittarius", "ra": 275.18, "dec": -16.18, "magnitude": 6.0, "size": {"major": 46, "minor": 46}, "description": "Bright distinctive emission nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Omega_Nebula.jpg/800px-Omega_Nebula.jpg"},
+      {"id": "m18", "names": [], "catalog": ["M18", "NGC 6613"], "type": "open_cluster", "constellation": "Sagittarius", "ra": 274.98, "dec": -17.13, "magnitude": 7.5, "size": {"major": 9, "minor": 9}, "description": "Small loose cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Messier_object_018.jpg/800px-Messier_object_018.jpg"},
+      {"id": "m19", "names": [], "catalog": ["M19", "NGC 6273"], "type": "globular_cluster", "constellation": "Ophiuchus", "ra": 255.66, "dec": -26.27, "magnitude": 6.8, "size": {"major": 17, "minor": 17}, "description": "Most oblate globular known", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Messier_19_Hubble_WikiSky.jpg/800px-Messier_19_Hubble_WikiSky.jpg"},
+      {"id": "m20", "names": ["Trifid Nebula"], "catalog": ["M20", "NGC 6514"], "type": "nebula", "constellation": "Sagittarius", "ra": 270.6, "dec": -23.03, "magnitude": 6.3, "size": {"major": 28, "minor": 28}, "description": "Three-lobed emission nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Trifid_Nebula.jpg/800px-Trifid_Nebula.jpg"},
+      {"id": "m21", "names": [], "catalog": ["M21", "NGC 6531"], "type": "open_cluster", "constellation": "Sagittarius", "ra": 271.05, "dec": -22.49, "magnitude": 6.5, "size": {"major": 13, "minor": 13}, "description": "Young cluster near Trifid", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Messier_object_021.jpg/800px-Messier_object_021.jpg"},
+      {"id": "m22", "names": ["Sagittarius Cluster"], "catalog": ["M22", "NGC 6656"], "type": "globular_cluster", "constellation": "Sagittarius", "ra": 279.1, "dec": -23.9, "magnitude": 5.1, "size": {"major": 32, "minor": 32}, "description": "One of the brightest globulars", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Messier_object_022.jpg/800px-Messier_object_022.jpg"},
+      {"id": "m23", "names": [], "catalog": ["M23", "NGC 6494"], "type": "open_cluster", "constellation": "Sagittarius", "ra": 269.26, "dec": -19.02, "magnitude": 6.9, "size": {"major": 27, "minor": 27}, "description": "Loose cluster with 150 stars", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Messier_object_023.jpg/800px-Messier_object_023.jpg"},
+      {"id": "m24", "names": ["Sagittarius Star Cloud"], "catalog": ["M24", "IC 4715"], "type": "star_cloud", "constellation": "Sagittarius", "ra": 274.73, "dec": -18.53, "magnitude": 4.6, "size": {"major": 90, "minor": 90}, "description": "Dense Milky Way star field", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Messier_object_024.jpg/800px-Messier_object_024.jpg"},
+      {"id": "m25", "names": [], "catalog": ["M25", "IC 4725"], "type": "open_cluster", "constellation": "Sagittarius", "ra": 277.9, "dec": -19.12, "magnitude": 4.6, "size": {"major": 32, "minor": 32}, "description": "Cluster with Cepheid variable", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Messier_object_025.jpg/800px-Messier_object_025.jpg"},
+      {"id": "m26", "names": [], "catalog": ["M26", "NGC 6694"], "type": "open_cluster", "constellation": "Scutum", "ra": 281.32, "dec": -9.38, "magnitude": 8.0, "size": {"major": 15, "minor": 15}, "description": "Compact cluster in Scutum", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Messier_object_026.jpg/800px-Messier_object_026.jpg"},
+      {"id": "m27", "names": ["Dumbbell Nebula"], "catalog": ["M27", "NGC 6853"], "type": "planetary_nebula", "constellation": "Vulpecula", "ra": 299.9, "dec": 22.72, "magnitude": 7.5, "size": {"major": 8, "minor": 8}, "description": "First planetary nebula discovered", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Messier_27_Dumbbell_Nebula.jpg/800px-Messier_27_Dumbbell_Nebula.jpg"},
+      {"id": "m28", "names": [], "catalog": ["M28", "NGC 6626"], "type": "globular_cluster", "constellation": "Sagittarius", "ra": 276.14, "dec": -24.87, "magnitude": 6.8, "size": {"major": 11, "minor": 11}, "description": "First millisecond pulsar found here", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Messier_28_Hubble_WikiSky.jpg/800px-Messier_28_Hubble_WikiSky.jpg"},
+      {"id": "m29", "names": [], "catalog": ["M29", "NGC 6913"], "type": "open_cluster", "constellation": "Cygnus", "ra": 305.97, "dec": 38.52, "magnitude": 7.1, "size": {"major": 7, "minor": 7}, "description": "Small cluster in Cygnus", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Messier_object_029.jpg/800px-Messier_object_029.jpg"},
+      {"id": "m30", "names": [], "catalog": ["M30", "NGC 7099"], "type": "globular_cluster", "constellation": "Capricornus", "ra": 325.09, "dec": -23.18, "magnitude": 7.2, "size": {"major": 12, "minor": 12}, "description": "Core-collapsed globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Messier_30_Hubble_WikiSky.jpg/800px-Messier_30_Hubble_WikiSky.jpg"},
+      {"id": "m31", "names": ["Andromeda Galaxy"], "catalog": ["M31", "NGC 224"], "type": "galaxy", "constellation": "Andromeda", "ra": 10.68, "dec": 41.27, "magnitude": 3.4, "size": {"major": 178, "minor": 178}, "description": "Nearest major galaxy, 2.5 million ly", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Andromeda_Galaxy_(with_h-alpha).jpg/800px-Andromeda_Galaxy_(with_h-alpha).jpg"},
+      {"id": "m32", "names": [], "catalog": ["M32", "NGC 221"], "type": "galaxy", "constellation": "Andromeda", "ra": 10.67, "dec": 40.87, "magnitude": 8.1, "size": {"major": 8, "minor": 8}, "description": "Compact satellite of Andromeda", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/M32_from_Hubble.jpg/800px-M32_from_Hubble.jpg"},
+      {"id": "m33", "names": ["Triangulum Galaxy"], "catalog": ["M33", "NGC 598"], "type": "galaxy", "constellation": "Triangulum", "ra": 23.46, "dec": 30.66, "magnitude": 5.7, "size": {"major": 71, "minor": 71}, "description": "Third largest in Local Group", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Triangulum_Galaxy_M33.jpg/800px-Triangulum_Galaxy_M33.jpg"},
+      {"id": "m34", "names": [], "catalog": ["M34", "NGC 1039"], "type": "open_cluster", "constellation": "Perseus", "ra": 40.52, "dec": 42.78, "magnitude": 5.5, "size": {"major": 35, "minor": 35}, "description": "Bright scattered cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Messier_object_034.jpg/800px-Messier_object_034.jpg"},
+      {"id": "m35", "names": [], "catalog": ["M35", "NGC 2168"], "type": "open_cluster", "constellation": "Gemini", "ra": 92.25, "dec": 24.33, "magnitude": 5.3, "size": {"major": 28, "minor": 28}, "description": "Large cluster in Gemini", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Messier_object_035.jpg/800px-Messier_object_035.jpg"},
+      {"id": "m36", "names": [], "catalog": ["M36", "NGC 1960"], "type": "open_cluster", "constellation": "Auriga", "ra": 84.08, "dec": 34.13, "magnitude": 6.3, "size": {"major": 12, "minor": 12}, "description": "Young Auriga cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Messier_object_036.jpg/800px-Messier_object_036.jpg"},
+      {"id": "m37", "names": [], "catalog": ["M37", "NGC 2099"], "type": "open_cluster", "constellation": "Auriga", "ra": 88.07, "dec": 32.55, "magnitude": 6.2, "size": {"major": 24, "minor": 24}, "description": "Richest Auriga cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Messier_object_037.jpg/800px-Messier_object_037.jpg"},
+      {"id": "m38", "names": ["Starfish Cluster"], "catalog": ["M38", "NGC 1912"], "type": "open_cluster", "constellation": "Auriga", "ra": 82.17, "dec": 35.83, "magnitude": 7.4, "size": {"major": 21, "minor": 21}, "description": "Cross-shaped cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Messier_object_038.jpg/800px-Messier_object_038.jpg"},
+      {"id": "m39", "names": [], "catalog": ["M39", "NGC 7092"], "type": "open_cluster", "constellation": "Cygnus", "ra": 323.05, "dec": 48.43, "magnitude": 5.5, "size": {"major": 32, "minor": 32}, "description": "Loose nearby cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Messier_object_039.jpg/800px-Messier_object_039.jpg"},
+      {"id": "m40", "names": ["Winnecke 4"], "catalog": ["M40"], "type": "double_star", "constellation": "Ursa Major", "ra": 185.55, "dec": 58.08, "magnitude": 8.4, "size": {"major": 1, "minor": 1}, "description": "Double star, Messier mistake", "image": ""},
+      {"id": "m41", "names": [], "catalog": ["M41", "NGC 2287"], "type": "open_cluster", "constellation": "Canis Major", "ra": 101.5, "dec": -20.73, "magnitude": 4.5, "size": {"major": 38, "minor": 38}, "description": "Bright cluster south of Sirius", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Messier_object_041.jpg/800px-Messier_object_041.jpg"},
+      {"id": "m42", "names": ["Orion Nebula"], "catalog": ["M42", "NGC 1976"], "type": "nebula", "constellation": "Orion", "ra": 83.82, "dec": -5.39, "magnitude": 4.0, "size": {"major": 85, "minor": 85}, "description": "The brightest nebula in the sky", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg/800px-Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg"},
+      {"id": "m43", "names": ["De Mairan's Nebula"], "catalog": ["M43", "NGC 1982"], "type": "nebula", "constellation": "Orion", "ra": 83.89, "dec": -5.27, "magnitude": 9.0, "size": {"major": 20, "minor": 20}, "description": "Part of Orion complex", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Messier_object_043.jpg/800px-Messier_object_043.jpg"},
+      {"id": "m44", "names": ["Beehive Cluster"], "catalog": ["M44", "NGC 2632"], "type": "open_cluster", "constellation": "Cancer", "ra": 130.03, "dec": 19.67, "magnitude": 3.7, "size": {"major": 95, "minor": 95}, "description": "Large naked-eye cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Messier_object_044.jpg/800px-Messier_object_044.jpg"},
+      {"id": "m45", "names": ["Pleiades"], "catalog": ["M45"], "type": "open_cluster", "constellation": "Taurus", "ra": 56.6, "dec": 24.12, "magnitude": 1.6, "size": {"major": 110, "minor": 110}, "description": "The most famous star cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Pleiades_large.jpg/800px-Pleiades_large.jpg"},
+      {"id": "m46", "names": [], "catalog": ["M46", "NGC 2437"], "type": "open_cluster", "constellation": "Puppis", "ra": 115.45, "dec": -14.82, "magnitude": 6.1, "size": {"major": 27, "minor": 27}, "description": "Rich cluster with planetary nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Messier_object_046.jpg/800px-Messier_object_046.jpg"},
+      {"id": "m47", "names": [], "catalog": ["M47", "NGC 2422"], "type": "open_cluster", "constellation": "Puppis", "ra": 114.15, "dec": -14.48, "magnitude": 4.2, "size": {"major": 30, "minor": 30}, "description": "Bright loose cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Messier_object_047.jpg/800px-Messier_object_047.jpg"},
+      {"id": "m48", "names": [], "catalog": ["M48", "NGC 2548"], "type": "open_cluster", "constellation": "Hydra", "ra": 123.43, "dec": -5.75, "magnitude": 5.5, "size": {"major": 54, "minor": 54}, "description": "Large scattered cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Messier_object_048.jpg/800px-Messier_object_048.jpg"},
+      {"id": "m49", "names": [], "catalog": ["M49", "NGC 4472"], "type": "galaxy", "constellation": "Virgo", "ra": 187.45, "dec": 8.0, "magnitude": 8.4, "size": {"major": 10, "minor": 10}, "description": "Brightest Virgo Cluster galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Messier_49_Hubble_WikiSky.jpg/800px-Messier_49_Hubble_WikiSky.jpg"},
+      {"id": "m50", "names": [], "catalog": ["M50", "NGC 2323"], "type": "open_cluster", "constellation": "Monoceros", "ra": 105.69, "dec": -8.35, "magnitude": 5.9, "size": {"major": 16, "minor": 16}, "description": "Heart-shaped cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Messier_object_050.jpg/800px-Messier_object_050.jpg"},
+      {"id": "m51", "names": ["Whirlpool Galaxy"], "catalog": ["M51", "NGC 5194"], "type": "galaxy", "constellation": "Canes Venatici", "ra": 202.47, "dec": 47.2, "magnitude": 8.4, "size": {"major": 11, "minor": 11}, "description": "Classic spiral with companion", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Whirlpool_Galaxy.jpg/800px-Whirlpool_Galaxy.jpg"},
+      {"id": "m52", "names": [], "catalog": ["M52", "NGC 7654"], "type": "open_cluster", "constellation": "Cassiopeia", "ra": 351.2, "dec": 61.58, "magnitude": 5.0, "size": {"major": 13, "minor": 13}, "description": "Rich Cassiopeia cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Messier_object_052.jpg/800px-Messier_object_052.jpg"},
+      {"id": "m53", "names": [], "catalog": ["M53", "NGC 5024"], "type": "globular_cluster", "constellation": "Coma Berenices", "ra": 198.23, "dec": 18.17, "magnitude": 7.6, "size": {"major": 13, "minor": 13}, "description": "Remote globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Messier_53_Hubble_WikiSky.jpg/800px-Messier_53_Hubble_WikiSky.jpg"},
+      {"id": "m54", "names": [], "catalog": ["M54", "NGC 6715"], "type": "globular_cluster", "constellation": "Sagittarius", "ra": 283.76, "dec": -30.48, "magnitude": 7.6, "size": {"major": 12, "minor": 12}, "description": "Belongs to Sagittarius Dwarf Galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Messier_54_Hubble_WikiSky.jpg/800px-Messier_54_Hubble_WikiSky.jpg"},
+      {"id": "m55", "names": [], "catalog": ["M55", "NGC 6809"], "type": "globular_cluster", "constellation": "Sagittarius", "ra": 295.0, "dec": -30.97, "magnitude": 6.3, "size": {"major": 19, "minor": 19}, "description": "Large loose globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Messier_object_055.jpg/800px-Messier_object_055.jpg"},
+      {"id": "m56", "names": [], "catalog": ["M56", "NGC 6779"], "type": "globular_cluster", "constellation": "Lyra", "ra": 289.15, "dec": 30.18, "magnitude": 8.3, "size": {"major": 9, "minor": 9}, "description": "Small globular in Lyra", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Messier_56_Hubble_WikiSky.jpg/800px-Messier_56_Hubble_WikiSky.jpg"},
+      {"id": "m57", "names": ["Ring Nebula"], "catalog": ["M57", "NGC 6720"], "type": "planetary_nebula", "constellation": "Lyra", "ra": 283.4, "dec": 33.03, "magnitude": 8.8, "size": {"major": 1.4, "minor": 1.4}, "description": "Famous ring-shaped nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/M57_The_Ring_Nebula.jpg/800px-M57_The_Ring_Nebula.jpg"},
+      {"id": "m58", "names": [], "catalog": ["M58", "NGC 4579"], "type": "galaxy", "constellation": "Virgo", "ra": 189.43, "dec": 11.82, "magnitude": 9.7, "size": {"major": 6, "minor": 6}, "description": "Barred spiral in Virgo", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Messier_58_Hubble_WikiSky.jpg/800px-Messier_58_Hubble_WikiSky.jpg"},
+      {"id": "m59", "names": [], "catalog": ["M59", "NGC 4621"], "type": "galaxy", "constellation": "Virgo", "ra": 190.51, "dec": 11.65, "magnitude": 9.6, "size": {"major": 5, "minor": 5}, "description": "Elliptical in Virgo", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Messier_59_Hubble_WikiSky.jpg/800px-Messier_59_Hubble_WikiSky.jpg"},
+      {"id": "m60", "names": [], "catalog": ["M60", "NGC 4649"], "type": "galaxy", "constellation": "Virgo", "ra": 190.92, "dec": 11.55, "magnitude": 8.8, "size": {"major": 7, "minor": 7}, "description": "Giant elliptical", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Messier_60_Hubble_WikiSky.jpg/800px-Messier_60_Hubble_WikiSky.jpg"},
+      {"id": "m61", "names": [], "catalog": ["M61", "NGC 4303"], "type": "galaxy", "constellation": "Virgo", "ra": 185.48, "dec": 4.47, "magnitude": 9.7, "size": {"major": 6, "minor": 6}, "description": "Face-on spiral, supernova host", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Messier_61_Hubble_WikiSky.jpg/800px-Messier_61_Hubble_WikiSky.jpg"},
+      {"id": "m62", "names": [], "catalog": ["M62", "NGC 6266"], "type": "globular_cluster", "constellation": "Ophiuchus", "ra": 255.3, "dec": -30.11, "magnitude": 6.5, "size": {"major": 15, "minor": 15}, "description": "Asymmetric globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Messier_62_Hubble_WikiSky.jpg/800px-Messier_62_Hubble_WikiSky.jpg"},
+      {"id": "m63", "names": ["Sunflower Galaxy"], "catalog": ["M63", "NGC 5055"], "type": "galaxy", "constellation": "Canes Venatici", "ra": 198.96, "dec": 42.03, "magnitude": 8.6, "size": {"major": 13, "minor": 13}, "description": "Flocculent spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Messier_63.jpg/800px-Messier_63.jpg"},
+      {"id": "m64", "names": ["Black Eye Galaxy"], "catalog": ["M64", "NGC 4826"], "type": "galaxy", "constellation": "Coma Berenices", "ra": 194.18, "dec": 21.68, "magnitude": 8.5, "size": {"major": 10, "minor": 10}, "description": "Dark dust band at nucleus", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Blackeyegalaxy.jpg/800px-Blackeyegalaxy.jpg"},
+      {"id": "m65", "names": [], "catalog": ["M65", "NGC 3623"], "type": "galaxy", "constellation": "Leo", "ra": 169.73, "dec": 13.09, "magnitude": 9.3, "size": {"major": 10, "minor": 10}, "description": "Leo Triplet member", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/M65.jpg/800px-M65.jpg"},
+      {"id": "m66", "names": [], "catalog": ["M66", "NGC 3627"], "type": "galaxy", "constellation": "Leo", "ra": 170.06, "dec": 12.99, "magnitude": 8.9, "size": {"major": 9, "minor": 9}, "description": "Largest in Leo Triplet", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/M66.jpg/800px-M66.jpg"},
+      {"id": "m67", "names": [], "catalog": ["M67", "NGC 2682"], "type": "open_cluster", "constellation": "Cancer", "ra": 132.83, "dec": 11.82, "magnitude": 6.1, "size": {"major": 30, "minor": 30}, "description": "One of oldest open clusters", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Messier_object_067.jpg/800px-Messier_object_067.jpg"},
+      {"id": "m68", "names": [], "catalog": ["M68", "NGC 4590"], "type": "globular_cluster", "constellation": "Hydra", "ra": 189.87, "dec": -26.74, "magnitude": 7.8, "size": {"major": 11, "minor": 11}, "description": "Southern globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Messier_68_Hubble_WikiSky.jpg/800px-Messier_68_Hubble_WikiSky.jpg"},
+      {"id": "m69", "names": [], "catalog": ["M69", "NGC 6637"], "type": "globular_cluster", "constellation": "Sagittarius", "ra": 277.85, "dec": -32.35, "magnitude": 7.6, "size": {"major": 9, "minor": 9}, "description": "Near galactic center", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Messier_69_Hubble_WikiSky.jpg/800px-Messier_69_Hubble_WikiSky.jpg"},
+      {"id": "m70", "names": [], "catalog": ["M70", "NGC 6681"], "type": "globular_cluster", "constellation": "Sagittarius", "ra": 280.8, "dec": -32.29, "magnitude": 7.9, "size": {"major": 8, "minor": 8}, "description": "Core-collapsed", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Messier_70_Hubble_WikiSky.jpg/800px-Messier_70_Hubble_WikiSky.jpg"},
+      {"id": "m71", "names": [], "catalog": ["M71", "NGC 6838"], "type": "globular_cluster", "constellation": "Sagitta", "ra": 298.44, "dec": 18.78, "magnitude": 8.2, "size": {"major": 7, "minor": 7}, "description": "Loose sparse globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Messier_71_Hubble_WikiSky.jpg/800px-Messier_71_Hubble_WikiSky.jpg"},
+      {"id": "m72", "names": [], "catalog": ["M72", "NGC 6981"], "type": "globular_cluster", "constellation": "Aquarius", "ra": 313.37, "dec": -12.54, "magnitude": 9.3, "size": {"major": 6, "minor": 6}, "description": "Distant faint globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Messier_72_Hubble_WikiSky.jpg/800px-Messier_72_Hubble_WikiSky.jpg"},
+      {"id": "m73", "names": [], "catalog": ["M73", "NGC 6994"], "type": "asterism", "constellation": "Aquarius", "ra": 314.75, "dec": -12.63, "magnitude": 9.0, "size": {"major": 3, "minor": 3}, "description": "Four unrelated stars", "image": ""},
+      {"id": "m74", "names": ["Phantom Galaxy"], "catalog": ["M74", "NGC 628"], "type": "galaxy", "constellation": "Pisces", "ra": 24.17, "dec": 15.78, "magnitude": 9.4, "size": {"major": 10, "minor": 10}, "description": "Grand design spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Messier_74_by_HST.jpg/800px-Messier_74_by_HST.jpg"},
+      {"id": "m75", "names": [], "catalog": ["M75", "NGC 6864"], "type": "globular_cluster", "constellation": "Sagittarius", "ra": 301.52, "dec": -21.92, "magnitude": 8.5, "size": {"major": 6, "minor": 6}, "description": "Concentrated distant globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Messier_75_Hubble_WikiSky.jpg/800px-Messier_75_Hubble_WikiSky.jpg"},
+      {"id": "m76", "names": ["Little Dumbbell"], "catalog": ["M76", "NGC 650"], "type": "planetary_nebula", "constellation": "Perseus", "ra": 25.58, "dec": 51.58, "magnitude": 10.1, "size": {"major": 3, "minor": 3}, "description": "Faintest Messier object", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/M76-LittleDumbbell.jpg/800px-M76-LittleDumbbell.jpg"},
+      {"id": "m77", "names": ["Cetus A"], "catalog": ["M77", "NGC 1068"], "type": "galaxy", "constellation": "Cetus", "ra": 40.67, "dec": -0.01, "magnitude": 8.9, "size": {"major": 7, "minor": 7}, "description": "Active Seyfert galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/M77_nucleus_Hubble_Space_Telescope.jpg/800px-M77_nucleus_Hubble_Space_Telescope.jpg"},
+      {"id": "m78", "names": [], "catalog": ["M78", "NGC 2068"], "type": "nebula", "constellation": "Orion", "ra": 86.65, "dec": 0.08, "magnitude": 8.3, "size": {"major": 8, "minor": 8}, "description": "Brightest reflection nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Messier_78.jpg/800px-Messier_78.jpg"},
+      {"id": "m79", "names": [], "catalog": ["M79", "NGC 1904"], "type": "globular_cluster", "constellation": "Lepus", "ra": 81.04, "dec": -24.52, "magnitude": 7.7, "size": {"major": 9, "minor": 9}, "description": "Winter globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Messier_79_Hubble_WikiSky.jpg/800px-Messier_79_Hubble_WikiSky.jpg"},
+      {"id": "m80", "names": [], "catalog": ["M80", "NGC 6093"], "type": "globular_cluster", "constellation": "Scorpius", "ra": 244.26, "dec": -22.98, "magnitude": 7.3, "size": {"major": 10, "minor": 10}, "description": "Dense globular, 1860 nova", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Messier_80_Hubble_WikiSky.jpg/800px-Messier_80_Hubble_WikiSky.jpg"},
+      {"id": "m81", "names": ["Bode's Galaxy"], "catalog": ["M81", "NGC 3031"], "type": "galaxy", "constellation": "Ursa Major", "ra": 148.89, "dec": 69.07, "magnitude": 6.9, "size": {"major": 27, "minor": 27}, "description": "Grand design spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/M81.jpg/800px-M81.jpg"},
+      {"id": "m82", "names": ["Cigar Galaxy"], "catalog": ["M82", "NGC 3034"], "type": "galaxy", "constellation": "Ursa Major", "ra": 148.97, "dec": 69.68, "magnitude": 8.4, "size": {"major": 11, "minor": 11}, "description": "Starburst galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/M82_HST_ACS_2006-14-a-large_web.jpg/800px-M82_HST_ACS_2006-14-a-large_web.jpg"},
+      {"id": "m83", "names": ["Southern Pinwheel"], "catalog": ["M83", "NGC 5236"], "type": "galaxy", "constellation": "Hydra", "ra": 204.25, "dec": -29.87, "magnitude": 7.6, "size": {"major": 13, "minor": 13}, "description": "Barred spiral, supernova factory", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/M83.jpg/800px-M83.jpg"},
+      {"id": "m84", "names": [], "catalog": ["M84", "NGC 4374"], "type": "galaxy", "constellation": "Virgo", "ra": 186.27, "dec": 12.89, "magnitude": 9.1, "size": {"major": 6, "minor": 6}, "description": "Lenticular in Virgo core", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Messier_84_Hubble_WikiSky.jpg/800px-Messier_84_Hubble_WikiSky.jpg"},
+      {"id": "m85", "names": [], "catalog": ["M85", "NGC 4382"], "type": "galaxy", "constellation": "Coma Berenices", "ra": 186.35, "dec": 18.19, "magnitude": 9.1, "size": {"major": 7, "minor": 7}, "description": "Lenticular galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Messier_85_Hubble_WikiSky.jpg/800px-Messier_85_Hubble_WikiSky.jpg"},
+      {"id": "m86", "names": [], "catalog": ["M86", "NGC 4406"], "type": "galaxy", "constellation": "Virgo", "ra": 186.55, "dec": 12.95, "magnitude": 8.9, "size": {"major": 9, "minor": 9}, "description": "Blueshifted, approaching us", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Messier_86_Hubble_WikiSky.jpg/800px-Messier_86_Hubble_WikiSky.jpg"},
+      {"id": "m87", "names": ["Virgo A"], "catalog": ["M87", "NGC 4486"], "type": "galaxy", "constellation": "Virgo", "ra": 187.71, "dec": 12.39, "magnitude": 8.6, "size": {"major": 8, "minor": 8}, "description": "Giant elliptical, famous black hole", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/M87_jet.jpg/800px-M87_jet.jpg"},
+      {"id": "m88", "names": [], "catalog": ["M88", "NGC 4501"], "type": "galaxy", "constellation": "Coma Berenices", "ra": 188.02, "dec": 14.42, "magnitude": 9.6, "size": {"major": 7, "minor": 7}, "description": "Multi-armed spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Messier_object_088.jpg/800px-Messier_object_088.jpg"},
+      {"id": "m89", "names": [], "catalog": ["M89", "NGC 4552"], "type": "galaxy", "constellation": "Virgo", "ra": 188.92, "dec": 12.56, "magnitude": 9.8, "size": {"major": 5, "minor": 5}, "description": "Perfectly circular elliptical", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Messier_89_Hubble_WikiSky.jpg/800px-Messier_89_Hubble_WikiSky.jpg"},
+      {"id": "m90", "names": [], "catalog": ["M90", "NGC 4569"], "type": "galaxy", "constellation": "Virgo", "ra": 189.21, "dec": 13.16, "magnitude": 9.5, "size": {"major": 10, "minor": 10}, "description": "Truncated star formation", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Messier_object_090.jpg/800px-Messier_object_090.jpg"},
+      {"id": "m91", "names": [], "catalog": ["M91", "NGC 4548"], "type": "galaxy", "constellation": "Coma Berenices", "ra": 188.86, "dec": 14.5, "magnitude": 10.2, "size": {"major": 5, "minor": 5}, "description": "Barred spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Messier_91_HST.jpg/800px-Messier_91_HST.jpg"},
+      {"id": "m92", "names": [], "catalog": ["M92", "NGC 6341"], "type": "globular_cluster", "constellation": "Hercules", "ra": 259.28, "dec": 43.14, "magnitude": 6.4, "size": {"major": 14, "minor": 14}, "description": "Often overlooked, rivals M13", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Messier_92_Hubble_WikiSky.jpg/800px-Messier_92_Hubble_WikiSky.jpg"},
+      {"id": "m93", "names": [], "catalog": ["M93", "NGC 2447"], "type": "open_cluster", "constellation": "Puppis", "ra": 116.14, "dec": -23.85, "magnitude": 6.0, "size": {"major": 22, "minor": 22}, "description": "Triangular cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Messier_object_093.jpg/800px-Messier_object_093.jpg"},
+      {"id": "m94", "names": ["Cat's Eye Galaxy"], "catalog": ["M94", "NGC 4736"], "type": "galaxy", "constellation": "Canes Venatici", "ra": 192.72, "dec": 41.12, "magnitude": 8.2, "size": {"major": 14, "minor": 14}, "description": "Starburst ring galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Messier_94.jpg/800px-Messier_94.jpg"},
+      {"id": "m95", "names": [], "catalog": ["M95", "NGC 3351"], "type": "galaxy", "constellation": "Leo", "ra": 160.99, "dec": 11.7, "magnitude": 9.7, "size": {"major": 7, "minor": 7}, "description": "Barred spiral in Leo I", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Messier_95.jpg/800px-Messier_95.jpg"},
+      {"id": "m96", "names": [], "catalog": ["M96", "NGC 3368"], "type": "galaxy", "constellation": "Leo", "ra": 161.69, "dec": 11.82, "magnitude": 9.2, "size": {"major": 8, "minor": 8}, "description": "Largest in Leo I Group", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Spiral_Galaxy_M96.jpg/800px-Spiral_Galaxy_M96.jpg"},
+      {"id": "m97", "names": ["Owl Nebula"], "catalog": ["M97", "NGC 3587"], "type": "planetary_nebula", "constellation": "Ursa Major", "ra": 168.7, "dec": 55.02, "magnitude": 9.9, "size": {"major": 3, "minor": 3}, "description": "Two dark 'eyes'", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/M97_Owl_Nebula.jpg/800px-M97_Owl_Nebula.jpg"},
+      {"id": "m98", "names": [], "catalog": ["M98", "NGC 4192"], "type": "galaxy", "constellation": "Coma Berenices", "ra": 183.45, "dec": 14.9, "magnitude": 10.1, "size": {"major": 10, "minor": 10}, "description": "Edge-on spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Messier_object_098.jpg/800px-Messier_object_098.jpg"},
+      {"id": "m99", "names": ["Coma Pinwheel"], "catalog": ["M99", "NGC 4254"], "type": "galaxy", "constellation": "Coma Berenices", "ra": 184.71, "dec": 14.42, "magnitude": 9.9, "size": {"major": 5, "minor": 5}, "description": "Asymmetric arms", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Messier_object_099.jpg/800px-Messier_object_099.jpg"},
+      {"id": "m100", "names": [], "catalog": ["M100", "NGC 4321"], "type": "galaxy", "constellation": "Coma Berenices", "ra": 185.73, "dec": 15.82, "magnitude": 9.3, "size": {"major": 7, "minor": 7}, "description": "Grand design face-on spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Messier_100.jpg/800px-Messier_100.jpg"},
+      {"id": "m101", "names": ["Pinwheel Galaxy"], "catalog": ["M101", "NGC 5457"], "type": "galaxy", "constellation": "Ursa Major", "ra": 210.8, "dec": 54.35, "magnitude": 7.9, "size": {"major": 29, "minor": 29}, "description": "Large face-on spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/M101_hires_STScI-PRC2006-10a.jpg/800px-M101_hires_STScI-PRC2006-10a.jpg"},
+      {"id": "m102", "names": ["Spindle Galaxy"], "catalog": ["M102", "NGC 5866"], "type": "galaxy", "constellation": "Draco", "ra": 226.62, "dec": 55.76, "magnitude": 9.9, "size": {"major": 6, "minor": 6}, "description": "Edge-on lenticular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Ngc5866_hst_big.png/800px-Ngc5866_hst_big.png"},
+      {"id": "m103", "names": [], "catalog": ["M103", "NGC 581"], "type": "open_cluster", "constellation": "Cassiopeia", "ra": 23.34, "dec": 60.65, "magnitude": 7.4, "size": {"major": 6, "minor": 6}, "description": "Fan-shaped cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Messier_object_103.jpg/800px-Messier_object_103.jpg"},
+      {"id": "m104", "names": ["Sombrero Galaxy"], "catalog": ["M104", "NGC 4594"], "type": "galaxy", "constellation": "Virgo", "ra": 190.0, "dec": -11.62, "magnitude": 8.0, "size": {"major": 9, "minor": 9}, "description": "Edge-on with dust lane", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/M104_ngc4594_sombrero_galaxy_hi-res.jpg/800px-M104_ngc4594_sombrero_galaxy_hi-res.jpg"},
+      {"id": "m105", "names": [], "catalog": ["M105", "NGC 3379"], "type": "galaxy", "constellation": "Leo", "ra": 161.96, "dec": 12.58, "magnitude": 9.3, "size": {"major": 5, "minor": 5}, "description": "Elliptical in Leo I", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Messier_105_Hubble_WikiSky.jpg/800px-Messier_105_Hubble_WikiSky.jpg"},
+      {"id": "m106", "names": [], "catalog": ["M106", "NGC 4258"], "type": "galaxy", "constellation": "Canes Venatici", "ra": 184.74, "dec": 47.3, "magnitude": 8.4, "size": {"major": 18, "minor": 18}, "description": "Seyfert with water maser", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Messier_106_by_Spitzer.jpg/800px-Messier_106_by_Spitzer.jpg"},
+      {"id": "m107", "names": [], "catalog": ["M107", "NGC 6171"], "type": "globular_cluster", "constellation": "Ophiuchus", "ra": 248.13, "dec": -13.05, "magnitude": 7.9, "size": {"major": 13, "minor": 13}, "description": "Loose sparse globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Messier_107_Hubble_WikiSky.jpg/800px-Messier_107_Hubble_WikiSky.jpg"},
+      {"id": "m108", "names": ["Surfboard Galaxy"], "catalog": ["M108", "NGC 3556"], "type": "galaxy", "constellation": "Ursa Major", "ra": 167.88, "dec": 55.67, "magnitude": 10.0, "size": {"major": 8, "minor": 8}, "description": "Edge-on near Owl Nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Messier_108_-_HST.jpg/800px-Messier_108_-_HST.jpg"},
+      {"id": "m109", "names": [], "catalog": ["M109", "NGC 3992"], "type": "galaxy", "constellation": "Ursa Major", "ra": 179.4, "dec": 53.38, "magnitude": 9.8, "size": {"major": 8, "minor": 8}, "description": "Barred spiral near Phecda", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Messier_109_-_HST.jpg/800px-Messier_109_-_HST.jpg"},
+      {"id": "m110", "names": [], "catalog": ["M110", "NGC 205"], "type": "galaxy", "constellation": "Andromeda", "ra": 10.09, "dec": 41.69, "magnitude": 8.5, "size": {"major": 22, "minor": 22}, "description": "Andromeda satellite", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Messier_110_Hubble_WikiSky.jpg/800px-Messier_110_Hubble_WikiSky.jpg"},
+      {"id": "ngc104", "names": ["47 Tucanae"], "catalog": ["NGC 104"], "type": "globular_cluster", "constellation": "Tucana", "ra": 6.02, "dec": -72.08, "magnitude": 4.1, "size": {"major": 31, "minor": 31}, "description": "Second finest globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Globular_Cluster_47_Tucanae.jpg/800px-Globular_Cluster_47_Tucanae.jpg"},
+      {"id": "ngc253", "names": ["Sculptor Galaxy"], "catalog": ["NGC 253"], "type": "galaxy", "constellation": "Sculptor", "ra": 11.89, "dec": -25.29, "magnitude": 7.2, "size": {"major": 28, "minor": 28}, "description": "Brightest Sculptor Group galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/NGC_253.jpg/800px-NGC_253.jpg"},
+      {"id": "ngc281", "names": ["Pacman Nebula"], "catalog": ["NGC 281"], "type": "nebula", "constellation": "Cassiopeia", "ra": 13.19, "dec": 56.62, "magnitude": 7.4, "size": {"major": 35, "minor": 35}, "description": "Pac-Man shaped nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/NGC_281_-_Pacman_Nebula.jpg/800px-NGC_281_-_Pacman_Nebula.jpg"},
+      {"id": "ngc457", "names": ["Owl Cluster"], "catalog": ["NGC 457"], "type": "open_cluster", "constellation": "Cassiopeia", "ra": 19.9, "dec": 58.28, "magnitude": 6.4, "size": {"major": 13, "minor": 13}, "description": "ET-shaped cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/NGC_457.jpg/800px-NGC_457.jpg"},
+      {"id": "ngc663", "names": [], "catalog": ["NGC 663"], "type": "open_cluster", "constellation": "Cassiopeia", "ra": 26.01, "dec": 61.22, "magnitude": 7.1, "size": {"major": 16, "minor": 16}, "description": "Rich Cassiopeia cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/NGC_663.jpg/800px-NGC_663.jpg"},
+      {"id": "ngc752", "names": [], "catalog": ["NGC 752"], "type": "open_cluster", "constellation": "Andromeda", "ra": 29.23, "dec": 37.78, "magnitude": 5.7, "size": {"major": 50, "minor": 50}, "description": "Large old cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/NGC_752.jpg/800px-NGC_752.jpg"},
+      {"id": "ngc869", "names": ["Double Cluster"], "catalog": ["NGC 869"], "type": "open_cluster", "constellation": "Perseus", "ra": 35.17, "dec": 57.13, "magnitude": 3.7, "size": {"major": 60, "minor": 60}, "description": "Famous cluster pair", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Double_Cluster.jpg/800px-Double_Cluster.jpg"},
+      {"id": "ngc891", "names": [], "catalog": ["NGC 891"], "type": "galaxy", "constellation": "Andromeda", "ra": 35.64, "dec": 42.35, "magnitude": 9.9, "size": {"major": 14, "minor": 14}, "description": "Edge-on Milky Way twin", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/NGC_891_Hubble.jpg/800px-NGC_891_Hubble.jpg"},
+      {"id": "ngc1499", "names": ["California Nebula"], "catalog": ["NGC 1499"], "type": "nebula", "constellation": "Perseus", "ra": 60.21, "dec": 36.62, "magnitude": 5.0, "size": {"major": 145, "minor": 145}, "description": "California-shaped nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/California_Nebula.jpg/800px-California_Nebula.jpg"},
+      {"id": "ngc2024", "names": ["Flame Nebula"], "catalog": ["NGC 2024"], "type": "nebula", "constellation": "Orion", "ra": 85.43, "dec": -1.85, "magnitude": 7.2, "size": {"major": 30, "minor": 30}, "description": "Near Alnitak in Orion", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Flame_Nebula_NGC_2024.jpg/800px-Flame_Nebula_NGC_2024.jpg"},
+      {"id": "ngc2070", "names": ["Tarantula Nebula"], "catalog": ["NGC 2070"], "type": "nebula", "constellation": "Dorado", "ra": 84.68, "dec": -69.1, "magnitude": 5.0, "size": {"major": 40, "minor": 40}, "description": "Giant nebula in LMC", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Tarantula_Nebula.jpg/800px-Tarantula_Nebula.jpg"},
+      {"id": "ngc2237", "names": ["Rosette Nebula"], "catalog": ["NGC 2237"], "type": "nebula", "constellation": "Monoceros", "ra": 98.0, "dec": 5.03, "magnitude": 9.0, "size": {"major": 80, "minor": 80}, "description": "Circular nebula with cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Rosette_Nebula.jpg/800px-Rosette_Nebula.jpg"},
+      {"id": "ngc2244", "names": [], "catalog": ["NGC 2244"], "type": "open_cluster", "constellation": "Monoceros", "ra": 97.98, "dec": 4.93, "magnitude": 4.8, "size": {"major": 24, "minor": 24}, "description": "Heart of Rosette Nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/NGC_2244_in_Monoceros.jpg/800px-NGC_2244_in_Monoceros.jpg"},
+      {"id": "ngc2264", "names": ["Christmas Tree"], "catalog": ["NGC 2264"], "type": "open_cluster", "constellation": "Monoceros", "ra": 100.24, "dec": 9.88, "magnitude": 4.1, "size": {"major": 20, "minor": 20}, "description": "Tree-shaped with Cone Nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Cone_Nebula_(NGC_2264)_Star-Forming_Pillar_of_Gas_and_Dust.jpg/800px-Cone_Nebula_(NGC_2264)_Star-Forming_Pillar_of_Gas_and_Dust.jpg"},
+      {"id": "ngc2392", "names": ["Eskimo Nebula"], "catalog": ["NGC 2392"], "type": "planetary_nebula", "constellation": "Gemini", "ra": 112.3, "dec": 20.91, "magnitude": 9.2, "size": {"major": 0.7, "minor": 0.7}, "description": "Double-shell planetary", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/NGC_2392.jpg/800px-NGC_2392.jpg"},
+      {"id": "ngc2403", "names": [], "catalog": ["NGC 2403"], "type": "galaxy", "constellation": "Camelopardalis", "ra": 114.21, "dec": 65.6, "magnitude": 8.5, "size": {"major": 22, "minor": 22}, "description": "Bright M81 Group spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/NGC_2403_(HST).jpg/800px-NGC_2403_(HST).jpg"},
+      {"id": "ngc2477", "names": [], "catalog": ["NGC 2477"], "type": "open_cluster", "constellation": "Puppis", "ra": 118.05, "dec": -38.55, "magnitude": 5.8, "size": {"major": 27, "minor": 27}, "description": "Finest Puppis cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/NGC_2477.jpg/800px-NGC_2477.jpg"},
+      {"id": "ngc2516", "names": [], "catalog": ["NGC 2516"], "type": "open_cluster", "constellation": "Carina", "ra": 119.52, "dec": -60.87, "magnitude": 3.8, "size": {"major": 30, "minor": 30}, "description": "Southern Beehive", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/NGC_2516.jpg/800px-NGC_2516.jpg"},
+      {"id": "ngc2841", "names": [], "catalog": ["NGC 2841"], "type": "galaxy", "constellation": "Ursa Major", "ra": 140.51, "dec": 50.98, "magnitude": 9.2, "size": {"major": 8, "minor": 8}, "description": "Flocculent spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/NGC_2841_HST.jpg/800px-NGC_2841_HST.jpg"},
+      {"id": "ngc2903", "names": [], "catalog": ["NGC 2903"], "type": "galaxy", "constellation": "Leo", "ra": 143.04, "dec": 21.5, "magnitude": 9.0, "size": {"major": 13, "minor": 13}, "description": "Barred spiral Messier missed", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/NGC_2903_HST.jpg/800px-NGC_2903_HST.jpg"},
+      {"id": "ngc3115", "names": ["Spindle Galaxy"], "catalog": ["NGC 3115"], "type": "galaxy", "constellation": "Sextans", "ra": 151.31, "dec": -7.72, "magnitude": 9.1, "size": {"major": 8, "minor": 8}, "description": "Edge-on lenticular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Ngc3115.jpg/800px-Ngc3115.jpg"},
+      {"id": "ngc3132", "names": ["Southern Ring"], "catalog": ["NGC 3132"], "type": "planetary_nebula", "constellation": "Vela", "ra": 151.76, "dec": -40.44, "magnitude": 9.9, "size": {"major": 1.4, "minor": 1.4}, "description": "Bright southern planetary", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/NGC_3132.jpg/800px-NGC_3132.jpg"},
+      {"id": "ngc3242", "names": ["Ghost of Jupiter"], "catalog": ["NGC 3242"], "type": "planetary_nebula", "constellation": "Hydra", "ra": 156.18, "dec": -18.64, "magnitude": 7.3, "size": {"major": 0.8, "minor": 0.8}, "description": "Jupiter-sized planetary", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/NGC_3242_HST.jpg/800px-NGC_3242_HST.jpg"},
+      {"id": "ngc3372", "names": ["Carina Nebula"], "catalog": ["NGC 3372"], "type": "nebula", "constellation": "Carina", "ra": 160.99, "dec": -59.87, "magnitude": 3.0, "size": {"major": 120, "minor": 120}, "description": "Largest bright nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Carina_Nebula.jpg/800px-Carina_Nebula.jpg"},
+      {"id": "ngc3628", "names": ["Hamburger Galaxy"], "catalog": ["NGC 3628"], "type": "galaxy", "constellation": "Leo", "ra": 170.07, "dec": 13.59, "magnitude": 9.5, "size": {"major": 15, "minor": 15}, "description": "Leo Triplet edge-on", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/The_Hamburger_Galaxy_NGC_3628.jpg/800px-The_Hamburger_Galaxy_NGC_3628.jpg"},
+      {"id": "ngc4038", "names": ["Antennae Galaxies"], "catalog": ["NGC 4038"], "type": "galaxy", "constellation": "Corvus", "ra": 180.47, "dec": -18.88, "magnitude": 10.3, "size": {"major": 5, "minor": 5}, "description": "Famous merging pair", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Antennae_Galaxies_reloaded.jpg/800px-Antennae_Galaxies_reloaded.jpg"},
+      {"id": "ngc4565", "names": ["Needle Galaxy"], "catalog": ["NGC 4565"], "type": "galaxy", "constellation": "Coma Berenices", "ra": 189.09, "dec": 25.99, "magnitude": 9.6, "size": {"major": 16, "minor": 16}, "description": "Perfect edge-on spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/NGC_4565.jpg/800px-NGC_4565.jpg"},
+      {"id": "ngc4631", "names": ["Whale Galaxy"], "catalog": ["NGC 4631"], "type": "galaxy", "constellation": "Canes Venatici", "ra": 190.53, "dec": 32.54, "magnitude": 9.2, "size": {"major": 15, "minor": 15}, "description": "Whale-shaped edge-on", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/NGC_4631_-_Hubble_Space_Telescope.jpg/800px-NGC_4631_-_Hubble_Space_Telescope.jpg"},
+      {"id": "ngc4755", "names": ["Jewel Box"], "catalog": ["NGC 4755"], "type": "open_cluster", "constellation": "Crux", "ra": 193.43, "dec": -60.35, "magnitude": 4.2, "size": {"major": 10, "minor": 10}, "description": "Colorful southern cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/A_Hubble_gem_-_the_Jewel_Box.jpg/800px-A_Hubble_gem_-_the_Jewel_Box.jpg"},
+      {"id": "ngc5128", "names": ["Centaurus A"], "catalog": ["NGC 5128"], "type": "galaxy", "constellation": "Centaurus", "ra": 201.37, "dec": -43.02, "magnitude": 6.8, "size": {"major": 26, "minor": 26}, "description": "Peculiar radio galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Centaurus_A_-_ESO_-_Potw1822a.tif/800px-Centaurus_A_-_ESO_-_Potw1822a.tif"},
+      {"id": "ngc5139", "names": ["Omega Centauri"], "catalog": ["NGC 5139"], "type": "globular_cluster", "constellation": "Centaurus", "ra": 201.7, "dec": -47.48, "magnitude": 3.9, "size": {"major": 36, "minor": 36}, "description": "Largest Milky Way globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Omega_Centauri_by_ESO.jpg/800px-Omega_Centauri_by_ESO.jpg"},
+      {"id": "ngc6397", "names": [], "catalog": ["NGC 6397"], "type": "globular_cluster", "constellation": "Ara", "ra": 265.18, "dec": -53.67, "magnitude": 5.7, "size": {"major": 26, "minor": 26}, "description": "One of closest globulars", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/NGC_6397_Hubble.jpg/800px-NGC_6397_Hubble.jpg"},
+      {"id": "ngc6543", "names": ["Cat's Eye Nebula"], "catalog": ["NGC 6543"], "type": "planetary_nebula", "constellation": "Draco", "ra": 269.64, "dec": 66.63, "magnitude": 8.1, "size": {"major": 0.4, "minor": 0.4}, "description": "Complex structure", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/NGC_6543.jpg/800px-NGC_6543.jpg"},
+      {"id": "ngc6633", "names": [], "catalog": ["NGC 6633"], "type": "open_cluster", "constellation": "Ophiuchus", "ra": 276.84, "dec": 6.62, "magnitude": 4.6, "size": {"major": 27, "minor": 27}, "description": "Large naked-eye cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/NGC_6633.jpg/800px-NGC_6633.jpg"},
+      {"id": "ngc6752", "names": [], "catalog": ["NGC 6752"], "type": "globular_cluster", "constellation": "Pavo", "ra": 287.72, "dec": -59.98, "magnitude": 5.4, "size": {"major": 20, "minor": 20}, "description": "Third brightest globular", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/NGC_6752.jpg/800px-NGC_6752.jpg"},
+      {"id": "ngc6826", "names": ["Blinking Planetary"], "catalog": ["NGC 6826"], "type": "planetary_nebula", "constellation": "Cygnus", "ra": 296.2, "dec": 50.53, "magnitude": 8.8, "size": {"major": 0.5, "minor": 0.5}, "description": "Appears to blink", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/NGC6826HSTFull.jpg/800px-NGC6826HSTFull.jpg"},
+      {"id": "ngc6888", "names": ["Crescent Nebula"], "catalog": ["NGC 6888"], "type": "nebula", "constellation": "Cygnus", "ra": 303.06, "dec": 38.35, "magnitude": 7.4, "size": {"major": 20, "minor": 20}, "description": "Wolf-Rayet bubble", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/NGC_6888.jpg/800px-NGC_6888.jpg"},
+      {"id": "ngc6946", "names": ["Fireworks Galaxy"], "catalog": ["NGC 6946"], "type": "galaxy", "constellation": "Cepheus", "ra": 308.72, "dec": 60.15, "magnitude": 8.8, "size": {"major": 11, "minor": 11}, "description": "Many supernovae recorded", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/NGC_6946.jpg/800px-NGC_6946.jpg"},
+      {"id": "ngc6960", "names": ["Western Veil"], "catalog": ["NGC 6960"], "type": "supernova_remnant", "constellation": "Cygnus", "ra": 312.75, "dec": 30.72, "magnitude": 7.0, "size": {"major": 70, "minor": 70}, "description": "Witch's Broom", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Veil_Nebula_-_NGC_6960.jpg/800px-Veil_Nebula_-_NGC_6960.jpg"},
+      {"id": "ngc6992", "names": ["Eastern Veil"], "catalog": ["NGC 6992"], "type": "supernova_remnant", "constellation": "Cygnus", "ra": 314.63, "dec": 31.72, "magnitude": 7.0, "size": {"major": 60, "minor": 60}, "description": "Brightest Veil section", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Veil_nebula.jpg/800px-Veil_nebula.jpg"},
+      {"id": "ngc7000", "names": ["North America"], "catalog": ["NGC 7000"], "type": "nebula", "constellation": "Cygnus", "ra": 314.75, "dec": 44.35, "magnitude": 4.0, "size": {"major": 120, "minor": 120}, "description": "Continent-shaped nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/North_America_nebula_4000.jpg/800px-North_America_nebula_4000.jpg"},
+      {"id": "ngc7009", "names": ["Saturn Nebula"], "catalog": ["NGC 7009"], "type": "planetary_nebula", "constellation": "Aquarius", "ra": 316.05, "dec": -11.36, "magnitude": 8.0, "size": {"major": 0.5, "minor": 0.5}, "description": "Saturn-like ansae", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Saturn_Nebula.jpg/800px-Saturn_Nebula.jpg"},
+      {"id": "ngc7023", "names": ["Iris Nebula"], "catalog": ["NGC 7023"], "type": "nebula", "constellation": "Cepheus", "ra": 315.42, "dec": 68.17, "magnitude": 6.8, "size": {"major": 18, "minor": 18}, "description": "Blue reflection nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/NGC_7023_-_Iris_Nebula.jpg/800px-NGC_7023_-_Iris_Nebula.jpg"},
+      {"id": "ngc7293", "names": ["Helix Nebula"], "catalog": ["NGC 7293"], "type": "planetary_nebula", "constellation": "Aquarius", "ra": 337.41, "dec": -20.84, "magnitude": 7.6, "size": {"major": 13, "minor": 13}, "description": "Nearest planetary, Eye of God", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Helix_Nebula_NGC_7293.jpg/800px-Helix_Nebula_NGC_7293.jpg"},
+      {"id": "ngc7331", "names": [], "catalog": ["NGC 7331"], "type": "galaxy", "constellation": "Pegasus", "ra": 339.27, "dec": 34.42, "magnitude": 9.5, "size": {"major": 11, "minor": 11}, "description": "Milky Way twin", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/NGC_7331_Hubble.jpg/800px-NGC_7331_Hubble.jpg"},
+      {"id": "ngc7635", "names": ["Bubble Nebula"], "catalog": ["NGC 7635"], "type": "nebula", "constellation": "Cassiopeia", "ra": 350.2, "dec": 61.2, "magnitude": 10.0, "size": {"major": 15, "minor": 15}, "description": "Stellar wind bubble", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Bubble_nebula.jpg/800px-Bubble_nebula.jpg"},
+      {"id": "ngc7662", "names": ["Blue Snowball"], "catalog": ["NGC 7662"], "type": "planetary_nebula", "constellation": "Andromeda", "ra": 351.98, "dec": 42.53, "magnitude": 8.3, "size": {"major": 0.5, "minor": 0.5}, "description": "Bright blue planetary", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/NGC_7662.jpg/800px-NGC_7662.jpg"},
+      {"id": "ngc7789", "names": ["Caroline's Rose"], "catalog": ["NGC 7789"], "type": "open_cluster", "constellation": "Cassiopeia", "ra": 359.33, "dec": 56.72, "magnitude": 6.7, "size": {"major": 16, "minor": 16}, "description": "Rich looping star chains", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/NGC_7789.jpg/800px-NGC_7789.jpg"},
+      {"id": "ic434", "names": ["Horsehead Nebula"], "catalog": ["IC 434"], "type": "nebula", "constellation": "Orion", "ra": 85.25, "dec": -2.46, "magnitude": 6.8, "size": {"major": 60, "minor": 60}, "description": "Famous dark nebula silhouette", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Barnard_33.jpg/800px-Barnard_33.jpg"},
+      {"id": "ic1396", "names": ["Elephant Trunk"], "catalog": ["IC 1396"], "type": "nebula", "constellation": "Cepheus", "ra": 324.75, "dec": 57.5, "magnitude": 3.5, "size": {"major": 170, "minor": 170}, "description": "Large nebula with dark globules", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/IC_1396.jpg/800px-IC_1396.jpg"},
+      {"id": "ic1805", "names": ["Heart Nebula"], "catalog": ["IC 1805"], "type": "nebula", "constellation": "Cassiopeia", "ra": 38.21, "dec": 61.47, "magnitude": 6.5, "size": {"major": 60, "minor": 60}, "description": "Heart-shaped nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Heart_Nebula.jpg/800px-Heart_Nebula.jpg"},
+      {"id": "ic1848", "names": ["Soul Nebula"], "catalog": ["IC 1848"], "type": "nebula", "constellation": "Cassiopeia", "ra": 43.0, "dec": 60.43, "magnitude": 6.5, "size": {"major": 60, "minor": 60}, "description": "Companion to Heart", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Soul_nebula.jpg/800px-Soul_nebula.jpg"},
+      {"id": "ic2118", "names": ["Witch Head"], "catalog": ["IC 2118"], "type": "nebula", "constellation": "Eridanus", "ra": 80.25, "dec": -7.2, "magnitude": 8.0, "size": {"major": 180, "minor": 180}, "description": "Lit by Rigel", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Witch_Head_Nebula.jpg/800px-Witch_Head_Nebula.jpg"},
+      {"id": "ic5070", "names": ["Pelican Nebula"], "catalog": ["IC 5070"], "type": "nebula", "constellation": "Cygnus", "ra": 312.75, "dec": 44.37, "magnitude": 8.0, "size": {"major": 60, "minor": 60}, "description": "Part of N America complex", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/IC5070.jpg/800px-IC5070.jpg"},
+      {"id": "ic5146", "names": ["Cocoon Nebula"], "catalog": ["IC 5146"], "type": "nebula", "constellation": "Cygnus", "ra": 328.4, "dec": 47.27, "magnitude": 7.2, "size": {"major": 12, "minor": 12}, "description": "Star-forming region", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/IC_5146.jpg/800px-IC_5146.jpg"},
+      {"id": "mel20", "names": ["Alpha Persei"], "catalog": ["Mel 20"], "type": "open_cluster", "constellation": "Perseus", "ra": 51.08, "dec": 49.0, "magnitude": 1.2, "size": {"major": 185, "minor": 185}, "description": "Naked-eye cluster around Mirfak", "image": ""},
+      {"id": "mel25", "names": ["Hyades"], "catalog": ["Mel 25"], "type": "open_cluster", "constellation": "Taurus", "ra": 66.75, "dec": 15.87, "magnitude": 0.5, "size": {"major": 330, "minor": 330}, "description": "Nearest open cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Hyades.jpg/800px-Hyades.jpg"},
+      {"id": "mel111", "names": ["Coma Star Cluster"], "catalog": ["Mel 111"], "type": "open_cluster", "constellation": "Coma Berenices", "ra": 186.0, "dec": 26.0, "magnitude": 1.8, "size": {"major": 275, "minor": 275}, "description": "Large sparse cluster", "image": ""},
+      {"id": "cr399", "names": ["Coathanger"], "catalog": ["Cr 399"], "type": "asterism", "constellation": "Vulpecula", "ra": 296.24, "dec": 20.18, "magnitude": 3.6, "size": {"major": 60, "minor": 60}, "description": "Distinctive shape asterism", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Coathanger_asterism.jpg/800px-Coathanger_asterism.jpg"},
+      {"id": "ngc1023", "names": [], "catalog": ["NGC 1023"], "type": "galaxy", "constellation": "Perseus", "ra": 40.1, "dec": 39.06, "magnitude": 9.4, "size": {"major": 9, "minor": 9}, "description": "Bright lenticular galaxy", "image": ""},
+      {"id": "ngc2683", "names": ["UFO Galaxy"], "catalog": ["NGC 2683"], "type": "galaxy", "constellation": "Lynx", "ra": 133.17, "dec": 33.42, "magnitude": 9.8, "size": {"major": 9, "minor": 9}, "description": "Edge-on spiral galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/NGC_2683_GALEX_WikiSky.jpg/800px-NGC_2683_GALEX_WikiSky.jpg"},
+      {"id": "ngc4244", "names": ["Silver Needle"], "catalog": ["NGC 4244"], "type": "galaxy", "constellation": "Canes Venatici", "ra": 184.37, "dec": 37.81, "magnitude": 10.4, "size": {"major": 17, "minor": 17}, "description": "Very thin edge-on spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/NGC_4244_-_HST.jpg/800px-NGC_4244_-_HST.jpg"},
+      {"id": "ngc4449", "names": [], "catalog": ["NGC 4449"], "type": "galaxy", "constellation": "Canes Venatici", "ra": 187.05, "dec": 44.09, "magnitude": 9.6, "size": {"major": 6, "minor": 6}, "description": "Irregular starburst galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/NGC_4449_I_HST2005.jpg/800px-NGC_4449_I_HST2005.jpg"},
+      {"id": "ngc4656", "names": ["Hockey Stick Galaxy"], "catalog": ["NGC 4656"], "type": "galaxy", "constellation": "Canes Venatici", "ra": 190.99, "dec": 32.17, "magnitude": 10.5, "size": {"major": 15, "minor": 15}, "description": "Warped companion to Whale Galaxy", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/NGC_4656.jpg/800px-NGC_4656.jpg"},
+      {"id": "ngc5907", "names": ["Splinter Galaxy"], "catalog": ["NGC 5907"], "type": "galaxy", "constellation": "Draco", "ra": 228.97, "dec": 56.33, "magnitude": 10.4, "size": {"major": 13, "minor": 13}, "description": "Extremely thin edge-on spiral", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/NGC_5907.jpg/800px-NGC_5907.jpg"},
+      {"id": "ngc6503", "names": [], "catalog": ["NGC 6503"], "type": "galaxy", "constellation": "Draco", "ra": 267.63, "dec": 70.15, "magnitude": 10.2, "size": {"major": 7, "minor": 7}, "description": "Lonely galaxy at Local Void edge", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/NGC_6503_-_HST.jpg/800px-NGC_6503_-_HST.jpg"},
+      {"id": "ngc7479", "names": [], "catalog": ["NGC 7479"], "type": "galaxy", "constellation": "Pegasus", "ra": 346.24, "dec": 12.32, "magnitude": 10.9, "size": {"major": 4, "minor": 4}, "description": "Barred spiral with prominent arms", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/NGC_7479.jpg/800px-NGC_7479.jpg"},
+      {"id": "ngc1502", "names": [], "catalog": ["NGC 1502"], "type": "open_cluster", "constellation": "Camelopardalis", "ra": 60.1, "dec": 62.33, "magnitude": 6.9, "size": {"major": 8, "minor": 8}, "description": "End of Kemble's Cascade", "image": ""},
+      {"id": "ngc1528", "names": [], "catalog": ["NGC 1528"], "type": "open_cluster", "constellation": "Perseus", "ra": 63.83, "dec": 51.22, "magnitude": 6.4, "size": {"major": 24, "minor": 24}, "description": "Rich open cluster", "image": ""},
+      {"id": "ngc1647", "names": [], "catalog": ["NGC 1647"], "type": "open_cluster", "constellation": "Taurus", "ra": 71.48, "dec": 19.12, "magnitude": 6.4, "size": {"major": 45, "minor": 45}, "description": "Large cluster near Aldebaran", "image": ""},
+      {"id": "ngc2158", "names": [], "catalog": ["NGC 2158"], "type": "open_cluster", "constellation": "Gemini", "ra": 91.86, "dec": 24.1, "magnitude": 8.6, "size": {"major": 5, "minor": 5}, "description": "Distant rich cluster near M35", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/NGC_2158.jpg/800px-NGC_2158.jpg"},
+      {"id": "ngc2362", "names": ["Tau CMa Cluster"], "catalog": ["NGC 2362"], "type": "open_cluster", "constellation": "Canis Major", "ra": 109.68, "dec": -24.95, "magnitude": 4.1, "size": {"major": 8, "minor": 8}, "description": "Compact cluster around bright star", "image": ""},
+      {"id": "ngc2419", "names": ["Intergalactic Wanderer"], "catalog": ["NGC 2419"], "type": "globular_cluster", "constellation": "Lynx", "ra": 114.54, "dec": 38.88, "magnitude": 10.4, "size": {"major": 6, "minor": 6}, "description": "Very remote globular cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/NGC_2419_Hubble.jpg/800px-NGC_2419_Hubble.jpg"},
+      {"id": "ngc3766", "names": ["Pearl Cluster"], "catalog": ["NGC 3766"], "type": "open_cluster", "constellation": "Centaurus", "ra": 174.48, "dec": -61.62, "magnitude": 5.3, "size": {"major": 12, "minor": 12}, "description": "Colorful southern cluster", "image": ""},
+      {"id": "ngc6231", "names": [], "catalog": ["NGC 6231"], "type": "open_cluster", "constellation": "Scorpius", "ra": 253.54, "dec": -41.82, "magnitude": 2.6, "size": {"major": 15, "minor": 15}, "description": "Brilliant young cluster in Scorpius tail", "image": ""},
+      {"id": "ngc6781", "names": [], "catalog": ["NGC 6781"], "type": "planetary_nebula", "constellation": "Aquila", "ra": 290.57, "dec": 6.54, "magnitude": 11.4, "size": {"major": 1.8, "minor": 1.8}, "description": "Large faint planetary nebula", "image": ""},
+      {"id": "ngc6818", "names": ["Little Gem Nebula"], "catalog": ["NGC 6818"], "type": "planetary_nebula", "constellation": "Sagittarius", "ra": 295.36, "dec": -14.14, "magnitude": 9.3, "size": {"major": 0.4, "minor": 0.4}, "description": "Small bright planetary nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/NGC_6818.jpg/800px-NGC_6818.jpg"},
+      {"id": "ngc7027", "names": [], "catalog": ["NGC 7027"], "type": "planetary_nebula", "constellation": "Cygnus", "ra": 316.76, "dec": 42.23, "magnitude": 8.5, "size": {"major": 0.3, "minor": 0.3}, "description": "Young dusty planetary nebula", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/NGC_7027.jpg/800px-NGC_7027.jpg"},
+      {"id": "ngc7129", "names": [], "catalog": ["NGC 7129"], "type": "nebula", "constellation": "Cepheus", "ra": 325.62, "dec": 66.12, "magnitude": 11.5, "size": {"major": 8, "minor": 8}, "description": "Reflection nebula with young cluster", "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/NGC_7129.jpg/800px-NGC_7129.jpg"},
+      {"id": "ic4665", "names": [], "catalog": ["IC 4665"], "type": "open_cluster", "constellation": "Ophiuchus", "ra": 266.55, "dec": 5.62, "magnitude": 4.2, "size": {"major": 41, "minor": 41}, "description": "Large sparse naked-eye cluster", "image": ""},
+      {"id": "stock2", "names": ["Muscleman Cluster"], "catalog": ["Stock 2"], "type": "open_cluster", "constellation": "Cassiopeia", "ra": 33.33, "dec": 59.48, "magnitude": 4.4, "size": {"major": 60, "minor": 60}, "description": "Large cluster near Double Cluster", "image": ""}
+    ];
+  </script>
+  <!-- === END MODULE === -->
+  
+  <!-- === MODULE: vantage-app.js (main application logic) === -->
+  <script>
+    // App State
+    const state = {
+      location: null,
+      savedLocations: [],
+      timeOffset: 0,
+      equipment: VantageConfig.DEFAULT_EQUIPMENT,
+      minAltitude: VantageConfig.DEFAULT_MIN_ALTITUDE,
+      seen: new Set(),
+      filter: 'all',
+      showAll: false,
+      includeSeen: true,
+    };
+    
+    // Weather data
+    let weatherHourlyData = null;
+    
+    async function fetchWeather() {
+      try {
+        const { latitude, longitude } = state.location;
+        // Fetch hourly forecast for next 24 hours
+        const url = `${VantageConfig.WEATHER_API}?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,cloud_cover,weather_code&temperature_unit=fahrenheit&timezone=auto&forecast_days=2`;
+        const response = await fetch(url);
+        const data = await response.json();
+        weatherHourlyData = data.hourly;
+        renderInfoCards();
+      } catch (e) {
+        console.error('Weather fetch failed:', e);
+        weatherHourlyData = null;
+      }
+    }
+    
+    function getWeatherForTime(obsTime) {
+      if (!weatherHourlyData) return null;
+      
+      // Format obsTime as local time string to match Open-Meteo's local time format
+      // Open-Meteo returns times like "2026-01-24T00:00" in local timezone
+      const year = obsTime.getFullYear();
+      const month = String(obsTime.getMonth() + 1).padStart(2, '0');
+      const day = String(obsTime.getDate()).padStart(2, '0');
+      const hour = String(obsTime.getHours()).padStart(2, '0');
+      const targetHour = `${year}-${month}-${day}T${hour}`;
+      
+      const index = weatherHourlyData.time.findIndex(t => t.startsWith(targetHour));
+      
+      if (index === -1) {
+        // Fallback: find closest time by comparing timestamps
+        const targetMs = obsTime.getTime();
+        let closestIndex = 0;
+        let closestDiff = Infinity;
+        weatherHourlyData.time.forEach((t, i) => {
+          const forecastTime = new Date(t).getTime();
+          const diff = Math.abs(forecastTime - targetMs);
+          if (diff < closestDiff) {
+            closestDiff = diff;
+            closestIndex = i;
+          }
+        });
+        return {
+          cloud_cover: weatherHourlyData.cloud_cover[closestIndex],
+          temperature_2m: weatherHourlyData.temperature_2m[closestIndex],
+          weather_code: weatherHourlyData.weather_code[closestIndex]
+        };
+      }
+      
+      return {
+        cloud_cover: weatherHourlyData.cloud_cover[index],
+        temperature_2m: weatherHourlyData.temperature_2m[index],
+        weather_code: weatherHourlyData.weather_code[index]
+      };
+    }
+    
+    function getWeatherDescription(code) {
+      const codes = {
+        0: 'Clear sky',
+        1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
+        45: 'Foggy', 48: 'Foggy',
+        51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle',
+        61: 'Light rain', 63: 'Rain', 65: 'Heavy rain',
+        71: 'Light snow', 73: 'Snow', 75: 'Heavy snow',
+        80: 'Rain showers', 81: 'Rain showers', 82: 'Heavy showers',
+        95: 'Thunderstorm'
+      };
+      return codes[code] || 'Unknown';
+    }
+    
+    function getWeatherRating(cloudCover, weatherCode) {
+      // Bad weather codes (rain, snow, fog)
+      if ([45, 48, 51, 53, 55, 61, 63, 65, 71, 73, 75, 80, 81, 82, 95].includes(weatherCode)) {
+        return 'poor';
+      }
+      if (cloudCover <= 20) return 'good';
+      if (cloudCover <= 50) return 'fair';
+      return 'poor';
+    }
+    
+    // Load from localStorage
+    function loadState() {
+      try {
+        const saved = localStorage.getItem('vantage-state');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.seen) state.seen = new Set(parsed.seen);
+          if (parsed.equipment) state.equipment = parsed.equipment;
+          if (parsed.minAltitude) state.minAltitude = parsed.minAltitude;
+          if (parsed.location) state.location = parsed.location;
+          if (parsed.savedLocations) state.savedLocations = parsed.savedLocations;
+        }
+      } catch (e) {}
+    }
+    
+    function saveState() {
+      try {
+        localStorage.setItem('vantage-state', JSON.stringify({
+          seen: Array.from(state.seen),
+          equipment: state.equipment,
+          minAltitude: state.minAltitude,
+          location: state.location,
+          savedLocations: state.savedLocations
+        }));
+      } catch (e) {}
+    }
+    
+    // Get observation time
+    function getObservationTime() {
+      const now = new Date();
+      now.setHours(now.getHours() + state.timeOffset);
+      return now;
+    }
+    
+    // Update time display
+    function updateTimeDisplay() {
+      const now = new Date();
+      const obsTime = getObservationTime();
+      const timeStr = VantageAstro.formatTime(obsTime);
+      
+      if (!state.location) {
+        document.getElementById('timeText').textContent = timeStr;
+      } else {
+        const darkness = VantageAstro.getDarknessStatus(obsTime, state.location.latitude, state.location.longitude);
+        document.getElementById('timeText').textContent = `${timeStr} · ${darkness.description}`;
+      }
+      
+      const badge = document.getElementById('timeOffsetBadge');
+      if (state.timeOffset > 0) {
+        badge.textContent = `+${state.timeOffset}h`;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+    
+    // Render info cards
+    function renderInfoCards() {
+      // Check if location is set
+      if (!state.location) {
+        document.getElementById('infoCards').innerHTML = `
+          <div class="info-card highlights-card">
+            <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <div class="info-card-content">
+              <div class="info-card-headline">Set your location</div>
+              <div class="info-card-details">Tap the location setting above to see tonight's sky</div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      
+      const obsTime = getObservationTime();
+      const { latitude, longitude } = state.location;
+      
+      const darkness = VantageAstro.getDarknessStatus(obsTime, latitude, longitude);
+      const moon = VantageAstro.getMoonPosition(obsTime);
+      const moonAltAz = VantageAstro.getAltAz(moon.ra, moon.dec, obsTime, latitude, longitude);
+      
+      let html = '';
+      
+      // Highlights card - build summary of tonight
+      const highlights = [];
+      
+      // Check which object types are well-represented
+      const tempRanked = VantageScoring.rankObjects(catalog, state.location, obsTime, state.equipment, { seen: state.seen }, state.minAltitude);
+      const galaxyCount = tempRanked.filter(o => o.type === 'galaxy').length;
+      const nebulaCount = tempRanked.filter(o => o.type.includes('nebula') || o.type === 'supernova_remnant').length;
+      const clusterCount = tempRanked.filter(o => o.type.includes('cluster')).length;
+      
+      if (galaxyCount >= 10) highlights.push('Great night for galaxies');
+      else if (nebulaCount >= 8) highlights.push('Good nebula viewing');
+      else if (clusterCount >= 10) highlights.push('Clusters well-placed');
+      else if (tempRanked.length > 30) highlights.push('Excellent variety tonight');
+      
+      // Check planets
+      const planetNames = ['jupiter', 'saturn', 'venus', 'mars'];
+      for (const pName of planetNames) {
+        const pos = VantageAstro.getPlanetPosition(pName, obsTime);
+        if (pos) {
+          const altAz = VantageAstro.getAltAz(pos.ra, pos.dec, obsTime, latitude, longitude);
+          if (altAz.altitude > 15) {
+            const displayName = pName.charAt(0).toUpperCase() + pName.slice(1);
+            highlights.push(`${displayName} visible`);
+            break; // Only show one planet highlight
+          }
+        }
+      }
+      
+      // Moon info
+      if (moon.illumination < 25) {
+        highlights.push('Dark skies (thin moon)');
+      } else if (moon.illumination > 75 && moonAltAz.altitude > 0) {
+        highlights.push('Bright moon up');
+      } else if (moonAltAz.altitude < 0 && moon.illumination > 50) {
+        highlights.push('Moon below horizon');
+      }
+      
+      if (highlights.length > 0) {
+        html += `
+          <div class="info-card highlights-card">
+            <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            <div class="info-card-content">
+              <div class="info-card-headline">Tonight's highlights</div>
+              <div class="info-card-details">${highlights.slice(0, 3).join(' · ')}</div>
+            </div>
+          </div>
+        `;
+      }
+      
+      // Weather card
+      const weatherData = getWeatherForTime(obsTime);
+      if (weatherData) {
+        const cloudCover = weatherData.cloud_cover;
+        const temp = Math.round(weatherData.temperature_2m);
+        const weatherCode = weatherData.weather_code;
+        const rating = getWeatherRating(cloudCover, weatherCode);
+        const description = getWeatherDescription(weatherCode);
+        
+        let headline, details;
+        if (rating === 'good') {
+          headline = 'Great conditions';
+          details = `${description}, ${cloudCover}% cloud cover · ${temp}°F`;
+        } else if (rating === 'fair') {
+          headline = 'Fair conditions';
+          details = `${description}, ${cloudCover}% cloud cover · ${temp}°F`;
+        } else {
+          headline = 'Poor conditions';
+          details = `${description}, ${cloudCover}% cloud cover · ${temp}°F`;
+        }
+        
+        html += `
+          <div class="info-card weather-card ${rating}">
+            <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              ${rating === 'good' ? 
+                '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>' :
+                '<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>'
+              }
+            </svg>
+            <div class="info-card-content">
+              <div class="info-card-headline">${headline}</div>
+              <div class="info-card-details">${details}</div>
+            </div>
+          </div>
+        `;
+      }
+      
+      // Darkness card (only show if not dark)
+      if (!darkness.isDark) {
+        html += `
+          <div class="info-card darkness-card">
+            <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+            </svg>
+            <div class="info-card-content">
+              <div class="info-card-headline">${darkness.description}</div>
+              <div class="info-card-details">Sun altitude: ${Math.round(darkness.sunAltitude)}° — wait for astronomical twilight for best viewing</div>
+            </div>
+          </div>
+        `;
+      }
+      
+      // Moon card
+      const moonUp = moonAltAz.altitude > 0;
+      const moonDir = VantageAstro.getSimpleDirection(moonAltAz.azimuth);
+      html += `
+        <div class="info-card moon-card">
+          <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <div class="info-card-content">
+            <div class="info-card-headline">${moon.phase} (${moon.illumination}%)</div>
+            <div class="info-card-details">${moonUp ? `Moon in the ${moonDir} at ${Math.round(moonAltAz.altitude)}° altitude` : 'Moon below horizon'}</div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('infoCards').innerHTML = html;
+    }
+    
+    // Render object list
+    function renderObjects() {
+      // Check if location is set
+      if (!state.location) {
+        document.getElementById('objectCount').textContent = '';
+        document.getElementById('objectList').innerHTML = `
+          <div class="empty-state">
+            <h3>Set your location</h3>
+            <p>Tap the location setting above to see what's visible tonight.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const obsTime = getObservationTime();
+      
+      // Build catalog with planets added dynamically
+      const planets = [
+        { id: 'mercury', names: ['Mercury'], catalog: [], type: 'planet', constellation: '', description: 'Innermost planet, elusive near Sun', size: { major: 0.2, minor: 0.2 }, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/800px-Mercury_in_true_color.jpg' },
+        { id: 'venus', names: ['Venus'], catalog: [], type: 'planet', constellation: '', description: 'Brilliant evening or morning star', size: { major: 1, minor: 1 }, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Venus_from_Mariner_10.jpg/800px-Venus_from_Mariner_10.jpg' },
+        { id: 'mars', names: ['Mars'], catalog: [], type: 'planet', constellation: '', description: 'The Red Planet, shows surface detail', size: { major: 0.4, minor: 0.4 }, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png/800px-Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png' },
+        { id: 'jupiter', names: ['Jupiter'], catalog: [], type: 'planet', constellation: '', description: 'King of planets, visible moons and bands', size: { major: 0.8, minor: 0.8 }, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/800px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg' },
+        { id: 'saturn', names: ['Saturn'], catalog: [], type: 'planet', constellation: '', description: 'Stunning rings visible in any telescope', size: { major: 0.7, minor: 0.7 }, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/800px-Saturn_during_Equinox.jpg' },
+        { id: 'uranus', names: ['Uranus'], catalog: [], type: 'planet', constellation: '', description: 'Blue-green ice giant, tiny disc', size: { major: 0.1, minor: 0.1 }, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Uranus_Voyager2_color_calibrated.png/800px-Uranus_Voyager2_color_calibrated.png' },
+        { id: 'neptune', names: ['Neptune'], catalog: [], type: 'planet', constellation: '', description: 'Distant blue world, requires telescope', size: { major: 0.1, minor: 0.1 }, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg/800px-Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg' }
+      ];
+      
+      // Calculate current positions for planets
+      planets.forEach(planet => {
+        const pos = VantageAstro.getPlanetPosition(planet.id, obsTime);
+        if (pos) {
+          planet.ra = pos.ra;
+          planet.dec = pos.dec;
+          planet.magnitude = pos.magnitude;
+        }
+      });
+      
+      const catalogWithPlanets = [...catalog, ...planets];
+      
+      let ranked = VantageScoring.rankObjects(
+        catalogWithPlanets, state.location, obsTime, state.equipment,
+        { seen: state.seen },
+        state.minAltitude
+      );
+      
+      // Apply type filter
+      ranked = ranked.filter(obj => matchesFilter(obj));
+      
+      // Separate seen and unseen
+      const unseenObjects = ranked.filter(obj => !state.seen.has(obj.id));
+      const seenObjects = ranked.filter(obj => state.seen.has(obj.id));
+      
+      // Build display list based on includeSeen toggle
+      let displayList;
+      const maxDisplay = state.showAll ? ranked.length : VantageConfig.MAX_OBJECTS_DISPLAYED;
+      
+      if (!state.includeSeen) {
+        // Only show unseen objects
+        displayList = unseenObjects.slice(0, maxDisplay);
+      } else {
+        // Show all objects sorted by score (ranked already sorted)
+        displayList = ranked.slice(0, maxDisplay);
+      }
+      
+      // Update count display
+      const totalVisible = state.includeSeen ? ranked.length : unseenObjects.length;
+      const filterLabel = state.filter === 'all' ? 'objects' : 
+        state.filter === 'galaxy' ? 'galaxies' :
+        state.filter === 'nebula' ? 'nebulae' :
+        state.filter === 'cluster' ? 'clusters' : 
+        state.filter === 'planet' ? 'planets' : 'objects';
+      
+      const countEl = document.getElementById('objectCount');
+      if (totalVisible > VantageConfig.MAX_OBJECTS_DISPLAYED) {
+        // More than 10 - show tappable count
+        if (state.showAll) {
+          countEl.textContent = `${totalVisible} ${filterLabel}`;
+        } else {
+          countEl.textContent = `${displayList.length} of ${totalVisible} ${filterLabel}`;
+        }
+        countEl.style.cursor = 'pointer';
+      } else {
+        // 10 or fewer - show simple count, not tappable
+        countEl.textContent = `${totalVisible} ${filterLabel}`;
+        countEl.style.cursor = 'default';
+      }
+      
+      if (displayList.length === 0) {
+        document.getElementById('objectList').innerHTML = `
+          <div class="empty-state">
+            <h3>No objects visible</h3>
+            <p>Try adjusting the time or checking back later tonight.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Mark top pick (from unseen if available, otherwise from all)
+      if (displayList.length > 0 && displayList[0].score >= VantageConfig.TOP_PICK_MIN_SCORE) {
+        displayList[0].topPick = true;
+      }
+      
+      const html = displayList.map(obj => {
+        const displayName = obj.names[0] || obj.catalog[0];
+        const catalogIds = obj.catalog.join(' · ');
+        const isSeen = state.seen.has(obj.id);
+        const typeClass = obj.type.replace('_', '_');
+        const typeDisplay = obj.type.replace('_', ' ');
+        
+        // Generate reason text
+        let reason = obj.factors.filter(f => !f.includes('Already')).slice(0, 2).join(' · ');
+        if (!reason) reason = 'Good observing conditions';
+        
+        // Calculate rise/transit/set times
+        const { latitude, longitude } = state.location;
+        const rts = VantageAstro.getRiseTransitSet(obj.ra, obj.dec, obsTime, latitude, longitude, 0);
+        
+        let timingText = '';
+        if (rts.circumpolar) {
+          timingText = 'Circumpolar (always visible)';
+        } else if (!rts.neverRises && rts.transit && rts.set) {
+          const now = obsTime.getTime();
+          const transitTime = rts.transit.getTime();
+          const setTime = rts.set.getTime();
+          const riseTime = rts.rise ? rts.rise.getTime() : 0;
+          
+          // Adjust times if they're in the past (add 24 hours for tomorrow)
+          let adjustedTransit = transitTime;
+          let adjustedSet = setTime;
+          let adjustedRise = riseTime;
+          
+          if (setTime < now) {
+            // Object has set, show tomorrow's rise
+            adjustedRise = riseTime + 86400000;
+            adjustedTransit = transitTime + 86400000;
+            adjustedSet = setTime + 86400000;
+          }
+          
+          if (adjustedRise > now && obj.altitude < 0) {
+            // Below horizon, show rise time
+            timingText = `Rises <strong>${VantageAstro.formatTime(new Date(adjustedRise))}</strong>`;
+          } else if (adjustedTransit > now) {
+            // Transit is in future
+            timingText = `Peaks <strong>${VantageAstro.formatTime(new Date(adjustedTransit))}</strong> · Sets <strong>${VantageAstro.formatTime(new Date(adjustedSet))}</strong>`;
+          } else if (adjustedSet > now) {
+            // Past peak but still up
+            timingText = `Sets <strong>${VantageAstro.formatTime(new Date(adjustedSet))}</strong>`;
+          }
+        }
+        
+        return `
+          <article class="object-card ${obj.topPick ? 'top-pick' : ''} ${isSeen ? 'seen' : ''}">
+            <div class="object-card-content">
+              ${obj.topPick ? `
+                <div class="top-pick-label">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                  Top pick
+                </div>
+              ` : ''}
+              <div class="object-header">
+                <div>
+                  <h3 class="object-name">${displayName}</h3>
+                  <span class="object-catalog">${catalogIds}</span>
+                  ${obj.description ? `<p class="object-description">${obj.description}</p>` : ''}
+                </div>
+                <span class="object-type-badge ${typeClass}">${typeDisplay}</span>
+              </div>
+              <div class="object-stats">
+                <div class="stat">
+                  <span class="stat-value">${Math.round(obj.altitude)}°</span>
+                  <span class="stat-label">Altitude</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">${obj.magnitude}</span>
+                  <span class="stat-label">Magnitude</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">${obj.size.major >= 30 ? (obj.size.major / 30).toFixed(1) + '×' : (obj.size.major / 30 * 100).toFixed(0) + '%'}</span>
+                  <span class="stat-label">vs Moon</span>
+                </div>
+              </div>
+              
+              ${obj.image ? `
+                <div class="object-image-container" id="img-${obj.id}">
+                  <img class="object-image" src="${obj.image}" alt="${displayName}" loading="lazy" onerror="document.getElementById('img-${obj.id}').style.display='none'">
+                </div>
+              ` : ''}
+              
+              <div class="compass-hint">
+                <svg class="compass-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                </svg>
+                <span class="compass-text">Look <strong>${obj.direction}</strong>, about <strong>${Math.round(obj.altitude)}° up</strong></span>
+              </div>
+              
+              ${timingText ? `
+              <div class="timing-info">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span>${timingText}</span>
+              </div>
+              ` : ''}
+              
+              <p class="object-reason"><strong>${reason}</strong></p>
+            </div>
+            
+            <div class="object-actions">
+              <button class="action-btn ${isSeen ? 'active' : ''}" onclick="toggleSeen('${obj.id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                ${isSeen ? 'Seen' : 'Mark as seen'}
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+      
+      document.getElementById('objectList').innerHTML = html;
+    }
+    
+    // Toggle functions
+    function toggleSeen(id) {
+      if (state.seen.has(id)) state.seen.delete(id);
+      else state.seen.add(id);
+      saveState();
+      renderObjects();
+    }
+    
+    // Filter and display controls
+    function setFilter(filter) {
+      state.filter = filter;
+      state.showAll = false; // Reset to top 10 on filter change
+      document.getElementById('filterSelect').value = filter;
+      renderObjects();
+    }
+    
+    function toggleShowAll() {
+      // Only toggle if there are more than MAX to show
+      state.showAll = !state.showAll;
+      renderObjects();
+    }
+    
+    function toggleIncludeSeen() {
+      state.includeSeen = document.getElementById('includeSeenToggle').checked;
+      renderObjects();
+    }
+    
+    function matchesFilter(obj) {
+      if (state.filter === 'all') return true;
+      const type = obj.type.toLowerCase();
+      switch (state.filter) {
+        case 'galaxy': return type === 'galaxy';
+        case 'nebula': return type.includes('nebula') || type === 'supernova_remnant';
+        case 'cluster': return type.includes('cluster');
+        case 'planet': return type === 'planet';
+        default: return true;
+      }
+    }
+    
+    // Time selection
+    function selectTime(hours) {
+      state.timeOffset = hours;
+      document.querySelectorAll('.time-option').forEach((btn) => {
+        const btnHours = btn.classList.contains('now') ? 0 : parseInt(btn.textContent.replace('+', '').replace('h', ''));
+        btn.classList.toggle('selected', btnHours === hours);
+      });
+      document.getElementById('timeSelector').classList.remove('open');
+      updateTimeDisplay();
+      renderInfoCards();
+      renderObjects();
+    }
+    
+    // Equipment selection
+    function selectEquipment(type) {
+      state.equipment = type;
+      const names = { smart: 'Smart telescope', visual: 'Visual telescope', binoculars: 'Binoculars', naked: 'Naked eye' };
+      document.getElementById('equipmentText').textContent = names[type];
+      
+      document.querySelectorAll('#equipmentSelector .dropdown-option').forEach(opt => {
+        opt.classList.toggle('selected', opt.onclick.toString().includes(`'${type}'`));
+      });
+      
+      document.getElementById('equipmentSelector').classList.remove('open');
+      saveState();
+      renderObjects();
+    }
+    
+    // Altitude selection
+    function selectAltitude(alt) {
+      state.minAltitude = alt;
+      document.getElementById('altitudeText').textContent = `Horizon: ${alt}°`;
+      
+      document.querySelectorAll('#altitudeSelector .dropdown-option').forEach(opt => {
+        opt.classList.toggle('selected', opt.onclick.toString().includes(`(${alt})`));
+      });
+      
+      document.getElementById('altitudeSelector').classList.remove('open');
+      saveState();
+      renderObjects();
+      updateFooter();
+    }
+    
+    // Update footer hint
+    function updateFooter() {
+      document.querySelector('.footer-hint').textContent = `Showing objects above ${state.minAltitude}° altitude`;
+    }
+    
+    // Dropdown management
+    function toggleDropdown(id) {
+      const selector = document.getElementById(id);
+      const wasOpen = selector.classList.contains('open');
+      document.querySelectorAll('.dropdown-selector').forEach(s => s.classList.remove('open'));
+      if (!wasOpen) {
+        selector.classList.add('open');
+        if (id === 'locationSelector') renderSavedLocations();
+      }
+    }
+    
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown-selector')) {
+        document.querySelectorAll('.dropdown-selector').forEach(s => s.classList.remove('open'));
+      }
+    });
+    
+    // Location functions
+    let searchTimeout = null;
+    
+    function updateLocationDisplay() {
+      const { name, latitude, longitude } = state.location;
+      const latStr = Math.abs(latitude).toFixed(2) + '°' + (latitude >= 0 ? 'N' : 'S');
+      const lonStr = Math.abs(longitude).toFixed(2) + '°' + (longitude >= 0 ? 'E' : 'W');
+      document.getElementById('locationText').textContent = `${name} · ${latStr}, ${lonStr}`;
+    }
+    
+    function renderSavedLocations() {
+      const list = document.getElementById('savedLocationsList');
+      const section = document.getElementById('savedLocationsSection');
+      
+      if (state.savedLocations.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      
+      section.style.display = 'block';
+      list.innerHTML = state.savedLocations.map((loc, i) => {
+        const isSelected = loc.latitude === state.location.latitude && 
+                          loc.longitude === state.location.longitude;
+        const latStr = Math.abs(loc.latitude).toFixed(2) + '°' + (loc.latitude >= 0 ? 'N' : 'S');
+        const lonStr = Math.abs(loc.longitude).toFixed(2) + '°' + (loc.longitude >= 0 ? 'E' : 'W');
+        
+        return `
+          <div class="dropdown-option ${isSelected ? 'selected' : ''}" onclick="selectSavedLocation(${i})">
+            <svg class="dropdown-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <div class="dropdown-option-content">
+              <div class="dropdown-option-name">${loc.name}</div>
+              <div class="dropdown-option-detail">${latStr}, ${lonStr}</div>
+            </div>
+            <button class="delete-location-btn" onclick="event.stopPropagation(); deleteSavedLocation(${i});" title="Remove">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function deleteSavedLocation(index) {
+      const loc = state.savedLocations[index];
+      
+      // Don't allow deleting if it's the currently selected location and it's the only one
+      if (state.savedLocations.length === 1) {
+        alert("Can't delete your only saved location");
+        return;
+      }
+      
+      // If deleting the current location, switch to another one first
+      const isCurrentLocation = loc.latitude === state.location.latitude && 
+                                loc.longitude === state.location.longitude;
+      
+      state.savedLocations.splice(index, 1);
+      
+      if (isCurrentLocation && state.savedLocations.length > 0) {
+        state.location = { ...state.savedLocations[0] };
+        updateLocationDisplay();
+        fetchWeather();
+        renderInfoCards();
+        renderObjects();
+      }
+      
+      saveState();
+      renderSavedLocations();
+    }
+    
+    function selectSavedLocation(index) {
+      state.location = { ...state.savedLocations[index] };
+      
+      // Use location-specific horizon if set
+      if (state.location.horizon !== undefined) {
+        state.minAltitude = state.location.horizon;
+        document.getElementById('altitudeText').textContent = `Horizon: ${state.minAltitude}°`;
+        document.querySelector('.footer-hint').textContent = `Showing objects above ${state.minAltitude}° altitude`;
+      }
+      
+      saveState();
+      updateLocationDisplay();
+      document.getElementById('locationSelector').classList.remove('open');
+      fetchWeather();
+      renderInfoCards();
+      renderObjects();
+    }
+    
+    function setLocation(latitude, longitude, name, shouldSave = false) {
+      state.location = { latitude, longitude, name };
+      
+      // Only add to saved locations if explicitly requested
+      if (shouldSave) {
+        const exists = state.savedLocations.some(loc => 
+          Math.abs(loc.latitude - latitude) < 0.01 && 
+          Math.abs(loc.longitude - longitude) < 0.01
+        );
+        if (!exists) {
+          state.savedLocations.push({ latitude, longitude, name });
+        }
+      }
+      
+      saveState();
+      updateLocationDisplay();
+      fetchWeather();
+      renderInfoCards();
+      renderObjects();
+    }
+    
+    function useCurrentLocation() {
+      document.getElementById('locationSelector').classList.remove('open');
+      
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser');
+        return;
+      }
+      
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          // Reverse geocode to get place name
+          try {
+            const name = await reverseGeocode(latitude, longitude);
+            setLocation(latitude, longitude, name);
+          } catch (e) {
+            setLocation(latitude, longitude, `${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`);
+          }
+        },
+        (error) => {
+          alert('Unable to get your location: ' + error.message);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+    
+    async function reverseGeocode(lat, lon) {
+      const url = `${VantageConfig.GEOCODE_API}/reverse?lat=${lat}&lon=${lon}&format=json`;
+      const response = await fetch(url, {
+        headers: { 'User-Agent': 'Vantage Astronomy App' }
+      });
+      const data = await response.json();
+      
+      const city = data.address.city || data.address.town || data.address.village || data.address.county;
+      const state = data.address.state;
+      
+      if (city && state) {
+        // Abbreviate US states
+        const stateAbbr = getStateAbbreviation(state) || state;
+        return `${city}, ${stateAbbr}`;
+      }
+      return data.display_name.split(',').slice(0, 2).join(',');
+    }
+    
+    function getStateAbbreviation(stateName) {
+      const states = {
+        'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
+        'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+        'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
+        'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+        'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+        'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+        'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
+        'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+        'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
+        'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
+      };
+      return states[stateName];
+    }
+    
+    function openLocationSearch() {
+      document.getElementById('locationSelector').classList.remove('open');
+      document.getElementById('locationModal').classList.add('open');
+      document.getElementById('locationSearchInput').value = '';
+      document.getElementById('searchResults').innerHTML = '';
+      document.getElementById('latInput').value = '';
+      document.getElementById('lonInput').value = '';
+      
+      // Show save option if current location isn't already saved
+      const isCurrentSaved = state.savedLocations.some(loc => 
+        Math.abs(loc.latitude - state.location.latitude) < 0.01 && 
+        Math.abs(loc.longitude - state.location.longitude) < 0.01
+      );
+      
+      const saveSection = document.getElementById('saveLocationSection');
+      if (!isCurrentSaved) {
+        saveSection.style.display = 'block';
+        document.getElementById('currentLocationDisplay').textContent = 
+          `${state.location.name} (${state.location.latitude.toFixed(2)}°, ${state.location.longitude.toFixed(2)}°)`;
+      } else {
+        saveSection.style.display = 'none';
+      }
+      
+      setTimeout(() => document.getElementById('locationSearchInput').focus(), 100);
+    }
+    
+    function saveCurrentLocation() {
+      const { latitude, longitude, name } = state.location;
+      const exists = state.savedLocations.some(loc => 
+        Math.abs(loc.latitude - latitude) < 0.01 && 
+        Math.abs(loc.longitude - longitude) < 0.01
+      );
+      
+      if (!exists) {
+        state.savedLocations.push({ latitude, longitude, name });
+        saveState();
+      }
+      
+      document.getElementById('saveLocationSection').style.display = 'none';
+      closeLocationModal();
+    }
+    
+    function closeLocationModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('locationModal').classList.remove('open');
+    }
+    
+    async function handleLocationSearch(query) {
+      clearTimeout(searchTimeout);
+      
+      if (query.length < 3) {
+        document.getElementById('searchResults').innerHTML = '';
+        return;
+      }
+      
+      document.getElementById('searchSpinner').classList.add('active');
+      
+      searchTimeout = setTimeout(async () => {
+        try {
+          const url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=5&addressdetails=1`;
+          const response = await fetch(url, {
+            headers: { 'User-Agent': 'Vantage Astronomy App' }
+          });
+          const results = await response.json();
+          
+          document.getElementById('searchSpinner').classList.remove('active');
+          
+          if (results.length === 0) {
+            document.getElementById('searchResults').innerHTML = `
+              <div class="search-no-results">No results found</div>
+            `;
+            return;
+          }
+          
+          document.getElementById('searchResults').innerHTML = results.map((r, i) => {
+            const lat = parseFloat(r.lat).toFixed(4);
+            const lon = parseFloat(r.lon).toFixed(4);
+            return `
+              <div class="search-result" onclick="selectSearchResult(${i})" data-lat="${r.lat}" data-lon="${r.lon}" data-name="${r.display_name.split(',')[0]}">
+                <svg class="search-result-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <div class="search-result-content">
+                  <div class="search-result-name">${r.display_name.split(',').slice(0, 2).join(', ')}</div>
+                  <div class="search-result-detail">${lat}°, ${lon}°</div>
+                </div>
+              </div>
+            `;
+          }).join('');
+          
+          // Store results for selection
+          window.searchResults = results;
+        } catch (e) {
+          document.getElementById('searchSpinner').classList.remove('active');
+          document.getElementById('searchResults').innerHTML = `
+            <div class="search-no-results">Search failed. Please try again.</div>
+          `;
+        }
+      }, VantageConfig.SEARCH_DEBOUNCE_MS);
+    }
+    
+    function selectSearchResult(index) {
+      const result = window.searchResults[index];
+      const lat = parseFloat(result.lat);
+      const lon = parseFloat(result.lon);
+      
+      // Build a nice name
+      const addr = result.address;
+      const city = addr.city || addr.town || addr.village || result.display_name.split(',')[0];
+      const stateOrCountry = addr.state ? (getStateAbbreviation(addr.state) || addr.state) : addr.country;
+      const name = stateOrCountry ? `${city}, ${stateOrCountry}` : city;
+      
+      setLocation(lat, lon, name);
+      closeLocationModal();
+    }
+    
+    function useManualCoords() {
+      const lat = parseFloat(document.getElementById('latInput').value);
+      const lon = parseFloat(document.getElementById('lonInput').value);
+      
+      if (isNaN(lat) || isNaN(lon)) {
+        alert('Please enter valid coordinates');
+        return;
+      }
+      
+      if (lat < -90 || lat > 90) {
+        alert('Latitude must be between -90 and 90');
+        return;
+      }
+      
+      if (lon < -180 || lon > 180) {
+        alert('Longitude must be between -180 and 180');
+        return;
+      }
+      
+      // Try to reverse geocode, fall back to coordinates as name
+      reverseGeocode(lat, lon)
+        .then(name => {
+          setLocation(lat, lon, name);
+          closeLocationModal();
+        })
+        .catch(() => {
+          setLocation(lat, lon, `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`);
+          closeLocationModal();
+        });
+    }
+    
+    // Initialize
+    loadState();
+    updateTimeDisplay();
+    updateLocationDisplay();
+    fetchWeather(); // Fetch weather data
+    renderInfoCards();
+    renderObjects();
+    updateFooter();
+    
+    // Update UI to reflect loaded state
+    document.getElementById('altitudeText').textContent = `Horizon: ${state.minAltitude}°`;
+    document.querySelectorAll('#altitudeSelector .dropdown-option').forEach(opt => {
+      opt.classList.toggle('selected', opt.onclick.toString().includes(`(${state.minAltitude})`));
+    });
+    const equipNames = { smart: 'Smart telescope', visual: 'Visual telescope', binoculars: 'Binoculars', naked: 'Naked eye' };
+    document.getElementById('equipmentText').textContent = equipNames[state.equipment];
+    document.querySelectorAll('#equipmentSelector .dropdown-option').forEach(opt => {
+      opt.classList.toggle('selected', opt.onclick.toString().includes(`'${state.equipment}'`));
+    });
+    
+    // Update time display periodically
+    setInterval(updateTimeDisplay, VantageConfig.TIME_UPDATE_INTERVAL_MS);
+    
+    // === HORIZON SETUP ===
+    let horizonCameraActive = false;
+    let horizonVideo = null;
+    let horizonCanvas = null;
+    let horizonCtx = null;
+    let horizonTilt = 0;
+    let horizonValue = 25;
+    
+    // Help modal
+    function openHelpModal() {
+      document.getElementById('helpModal').classList.add('open');
+    }
+    
+    function closeHelpModal(event) {
+      if (!event || event.target === event.currentTarget) {
+        document.getElementById('helpModal').classList.remove('open');
+      }
+    }
+    
+    function openHorizonModal() {
+      document.getElementById('horizonModal').classList.add('active');
+      horizonVideo = document.getElementById('horizonVideo');
+      horizonCanvas = document.getElementById('horizonCanvas');
+      horizonCtx = horizonCanvas.getContext('2d');
+      
+      // Set current value
+      horizonValue = state.location.horizon || state.minAltitude;
+      document.getElementById('horizonSlider').value = horizonValue;
+      document.getElementById('horizonSliderValue').textContent = `${horizonValue}°`;
+      
+      // Reset controls
+      document.getElementById('horizonCameraBtn').classList.remove('active');
+      document.getElementById('horizonHelpPopup').classList.remove('visible');
+      
+      // Setup canvas
+      resizeHorizonCanvas();
+      window.addEventListener('resize', resizeHorizonCanvas);
+      
+      // Check orientation
+      checkHorizonOrientation();
+      window.addEventListener('resize', checkHorizonOrientation);
+      
+      // Request motion permission and start listening
+      requestHorizonMotion();
+      
+      // Draw initial overlay
+      drawHorizonOverlay();
+    }
+    
+    function closeHorizonModal() {
+      document.getElementById('horizonModal').classList.remove('active');
+      
+      // Stop camera if active
+      if (horizonVideo && horizonVideo.srcObject) {
+        horizonVideo.srcObject.getTracks().forEach(track => track.stop());
+        horizonVideo.srcObject = null;
+      }
+      horizonCameraActive = false;
+      document.getElementById('horizonCameraBtn').classList.remove('active');
+      
+      window.removeEventListener('resize', resizeHorizonCanvas);
+      window.removeEventListener('resize', checkHorizonOrientation);
+      window.removeEventListener('deviceorientation', handleHorizonOrientation);
+    }
+    
+    function resizeHorizonCanvas() {
+      if (!horizonCanvas) return;
+      horizonCanvas.width = window.innerWidth;
+      horizonCanvas.height = window.innerHeight;
+      drawHorizonOverlay();
+    }
+    
+    function checkHorizonOrientation() {
+      const isLandscape = window.innerWidth > window.innerHeight;
+      document.getElementById('horizonRotatePrompt').classList.toggle('active', !isLandscape);
+    }
+    
+    async function toggleHorizonCamera() {
+      if (horizonCameraActive) {
+        // Turn off
+        if (horizonVideo && horizonVideo.srcObject) {
+          horizonVideo.srcObject.getTracks().forEach(track => track.stop());
+          horizonVideo.srcObject = null;
+        }
+        horizonCameraActive = false;
+        document.getElementById('horizonCameraBtn').classList.remove('active');
+      } else {
+        // Turn on
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: 'environment',
+              width: { ideal: 1920 },
+              height: { ideal: 1080 }
+            }
+          });
+          horizonVideo.srcObject = stream;
+          horizonCameraActive = true;
+          document.getElementById('horizonCameraBtn').classList.add('active');
+        } catch (err) {
+          console.error('Camera error:', err);
+        }
+      }
+    }
+    
+    function toggleHorizonHelp() {
+      const popup = document.getElementById('horizonHelpPopup');
+      popup.classList.toggle('visible');
+    }
+    
+    // Close help popup when tapping elsewhere
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#horizonHelpBtn') && !e.target.closest('#horizonHelpPopup')) {
+        document.getElementById('horizonHelpPopup')?.classList.remove('visible');
+      }
+    });
+    
+    async function requestHorizonMotion() {
+      if (typeof DeviceOrientationEvent !== 'undefined' && 
+          typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const permission = await DeviceOrientationEvent.requestPermission();
+          if (permission === 'granted') {
+            window.addEventListener('deviceorientation', handleHorizonOrientation);
+          }
+        } catch (err) {
+          console.error('Motion permission error:', err);
+        }
+      } else if (typeof DeviceOrientationEvent !== 'undefined') {
+        window.addEventListener('deviceorientation', handleHorizonOrientation);
+      }
+    }
+    
+    function handleHorizonOrientation(event) {
+      const gamma = event.gamma || 0;
+      const beta = event.beta || 0;
+      const absGamma = Math.abs(gamma);
+      const absBeta = Math.abs(beta);
+      
+      if (window.innerWidth > window.innerHeight) {
+        // Landscape mode
+        horizonTilt = 90 - absGamma;
+        
+        // Below horizon detection
+        if (absBeta < 90) {
+          horizonTilt = -horizonTilt;
+        }
+        
+        // Clamp
+        horizonTilt = Math.max(-45, Math.min(90, horizonTilt));
+      } else {
+        horizonTilt = beta - 90;
+        horizonTilt = Math.max(-45, Math.min(90, horizonTilt));
+      }
+      
+      drawHorizonOverlay();
+    }
+    
+    function drawHorizonOverlay() {
+      if (!horizonCtx || !horizonCanvas) return;
+      
+      const ctx = horizonCtx;
+      const canvas = horizonCanvas;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const centerY = canvas.height / 2;
+      const leftPadding = 24;
+      
+      // Below horizon warning - only show if significantly below (more than 10° down)
+      if (horizonTilt < -10) {
+        ctx.fillStyle = 'rgba(140, 90, 90, 0.6)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#f0ede6';
+        ctx.font = '500 18px "DM Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Point camera toward horizon or sky', canvas.width / 2, canvas.height / 2);
+        ctx.font = '400 14px "DM Sans", sans-serif';
+        ctx.fillStyle = '#a09a92';
+        ctx.fillText('Tilt phone up to see altitude overlay', canvas.width / 2, canvas.height / 2 + 28);
+        return;
+      }
+      
+      // Calculate horizon line position
+      const degreesPerPixel = 60 / canvas.height;
+      const horizonOffset = (horizonTilt - horizonValue) / degreesPerPixel;
+      const horizonY = centerY + horizonOffset;
+      
+      // Draw masked area (below horizon) - darker
+      ctx.fillStyle = 'rgba(140, 90, 90, 0.5)';
+      ctx.fillRect(0, horizonY, canvas.width, canvas.height - horizonY);
+      
+      // Draw horizon line (thicker)
+      ctx.strokeStyle = '#d4a574';
+      ctx.lineWidth = 4;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(0, horizonY);
+      ctx.lineTo(canvas.width, horizonY);
+      ctx.stroke();
+      
+      // Draw horizon label
+      ctx.fillStyle = '#d4a574';
+      ctx.font = '600 14px "DM Sans", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`${horizonValue}° min`, leftPadding, horizonY - 10);
+      
+      // Draw degree markers (thicker lines, bigger text)
+      ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 6]);
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = '500 13px "DM Sans", sans-serif';
+      ctx.textAlign = 'right';
+      
+      for (let deg = 0; deg <= 90; deg += 15) {
+        if (deg === horizonValue) continue;
+        const y = centerY + (horizonTilt - deg) / degreesPerPixel;
+        if (y > 50 && y < canvas.height - 50) {
+          ctx.beginPath();
+          ctx.moveTo(leftPadding + 24, y);
+          ctx.lineTo(canvas.width - 20, y);
+          ctx.stroke();
+          ctx.fillText(`${deg}°`, leftPadding + 16, y + 5);
+        }
+      }
+    }
+    
+    function updateHorizonSlider(value) {
+      horizonValue = parseInt(value);
+      document.getElementById('horizonSliderValue').textContent = `${horizonValue}°`;
+      drawHorizonOverlay();
+    }
+    
+    function applyHorizon() {
+      // Save horizon to current location
+      state.location.horizon = horizonValue;
+      state.minAltitude = horizonValue;
+      
+      // Update saved locations array
+      const locIndex = state.savedLocations.findIndex(loc => 
+        loc.latitude === state.location.latitude && 
+        loc.longitude === state.location.longitude
+      );
+      if (locIndex >= 0) {
+        state.savedLocations[locIndex].horizon = horizonValue;
+      }
+      
+      saveState();
+      closeHorizonModal();
+      
+      // Update all UI elements
+      document.getElementById('altitudeText').textContent = `Horizon: ${horizonValue}°`;
+      document.querySelector('.footer-hint').textContent = `Showing objects above ${horizonValue}° altitude`;
+      
+      // Update dropdown selection
+      document.querySelectorAll('#altitudeSelector .dropdown-option').forEach(opt => {
+        opt.classList.remove('selected');
+        if (opt.textContent.includes(`${horizonValue}°`) && !opt.textContent.includes('Camera')) {
+          opt.classList.add('selected');
+        }
+      });
+      
+      renderObjects();
+      
+      // Show toast
+      const toast = document.getElementById('horizonToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+  </script>
+  <!-- === END MODULE === -->
+</body>
+</html>

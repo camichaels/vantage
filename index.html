@@ -1445,7 +1445,7 @@
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
               <circle cx="12" cy="10" r="3"/>
             </svg>
-            <span class="dropdown-trigger-text" id="locationText">Belmont, CA · 37.52°N, 122.28°W</span>
+            <span class="dropdown-trigger-text" id="locationText">Set location</span>
             <svg class="dropdown-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="6 9 12 15 18 9"/>
             </svg>
@@ -2494,10 +2494,8 @@
   <script>
     // App State
     const state = {
-      location: { ...VantageConfig.DEFAULT_LOCATION },
-      savedLocations: [
-        { ...VantageConfig.DEFAULT_LOCATION }
-      ],
+      location: null,
+      savedLocations: [],
       timeOffset: 0,
       equipment: VantageConfig.DEFAULT_EQUIPMENT,
       minAltitude: VantageConfig.DEFAULT_MIN_ALTITUDE,
@@ -2628,9 +2626,13 @@
       const now = new Date();
       const obsTime = getObservationTime();
       const timeStr = VantageAstro.formatTime(obsTime);
-      const darkness = VantageAstro.getDarknessStatus(obsTime, state.location.latitude, state.location.longitude);
       
-      document.getElementById('timeText').textContent = `${timeStr} · ${darkness.description}`;
+      if (!state.location) {
+        document.getElementById('timeText').textContent = timeStr;
+      } else {
+        const darkness = VantageAstro.getDarknessStatus(obsTime, state.location.latitude, state.location.longitude);
+        document.getElementById('timeText').textContent = `${timeStr} · ${darkness.description}`;
+      }
       
       const badge = document.getElementById('timeOffsetBadge');
       if (state.timeOffset > 0) {
@@ -2643,6 +2645,23 @@
     
     // Render info cards
     function renderInfoCards() {
+      // Check if location is set
+      if (!state.location) {
+        document.getElementById('infoCards').innerHTML = `
+          <div class="info-card highlights-card">
+            <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <div class="info-card-content">
+              <div class="info-card-headline">Set your location</div>
+              <div class="info-card-details">Tap the location setting above to see tonight's sky</div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      
       const obsTime = getObservationTime();
       const { latitude, longitude } = state.location;
       
@@ -2781,6 +2800,18 @@
     
     // Render object list
     function renderObjects() {
+      // Check if location is set
+      if (!state.location) {
+        document.getElementById('objectCount').textContent = '';
+        document.getElementById('objectList').innerHTML = `
+          <div class="empty-state">
+            <h3>Set your location</h3>
+            <p>Tap the location setting above to see what's visible tonight.</p>
+          </div>
+        `;
+        return;
+      }
+      
       const obsTime = getObservationTime();
       
       // Build catalog with planets added dynamically
