@@ -2509,6 +2509,7 @@
     let weatherHourlyData = null;
     
     async function fetchWeather() {
+      if (!state.location) return;
       try {
         const { latitude, longitude } = state.location;
         // Fetch hourly forecast for next 24 hours
@@ -3132,6 +3133,10 @@
     let searchTimeout = null;
     
     function updateLocationDisplay() {
+      if (!state.location) {
+        document.getElementById('locationText').textContent = 'Set location';
+        return;
+      }
       const { name, latitude, longitude } = state.location;
       const latStr = Math.abs(latitude).toFixed(2) + '°' + (latitude >= 0 ? 'N' : 'S');
       const lonStr = Math.abs(longitude).toFixed(2) + '°' + (longitude >= 0 ? 'E' : 'W');
