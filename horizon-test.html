@@ -29,14 +29,13 @@
       background: var(--bg-primary);
       color: var(--text-light);
       min-height: 100vh;
-      overflow: hidden;
     }
     
     .screen {
       display: none;
       flex-direction: column;
-      height: 100vh;
-      height: 100dvh;
+      min-height: 100vh;
+      min-height: 100dvh;
     }
     
     .screen.active {
@@ -53,10 +52,10 @@
     }
     
     .intro-icon {
-      width: 80px;
-      height: 80px;
+      width: 70px;
+      height: 70px;
       color: var(--accent-warm);
-      opacity: 0.8;
+      opacity: 0.7;
     }
     
     .intro-screen h1 {
@@ -90,7 +89,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 60px 30px 50px;
-      background: var(--bg-secondary);
+      background: linear-gradient(180deg, #12151f 0%, #0d0f15 100%);
     }
     
     .compass-instruction {
@@ -109,107 +108,120 @@
       color: var(--text-muted);
     }
     
-    /* Beautiful compass */
+    /* Refined compass design */
     .compass-container {
       position: relative;
-      width: 280px;
-      height: 280px;
+      width: 260px;
+      height: 260px;
     }
     
-    .compass-outer-ring {
+    .compass-bg {
       position: absolute;
       inset: 0;
-      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(30, 35, 50, 0.8) 0%, rgba(13, 15, 21, 0.9) 100%);
+      box-shadow: 
+        inset 0 2px 20px rgba(0,0,0,0.5),
+        0 0 40px rgba(0,0,0,0.3);
+    }
+    
+    .compass-ring {
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 50%;
     }
     
-    .compass-inner-ring {
+    .compass-ticks {
       position: absolute;
-      inset: 20px;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 50%;
+      inset: 0;
+    }
+    
+    .compass-tick {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      width: 2px;
+      height: 10px;
+      background: rgba(255,255,255,0.15);
+      transform-origin: 50% 118px;
+      border-radius: 1px;
+    }
+    
+    .compass-tick.major {
+      height: 14px;
+      background: rgba(255,255,255,0.25);
     }
     
     .compass-direction {
       position: absolute;
-      font-size: 1.2rem;
+      font-size: 0.9rem;
       font-weight: 500;
-      color: rgba(255,255,255,0.35);
-      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      color: rgba(255,255,255,0.3);
     }
     
     .compass-direction.north {
-      top: 20px;
+      top: 32px;
       left: 50%;
       transform: translateX(-50%);
       color: var(--accent-warm);
+      font-size: 1.1rem;
       font-weight: 600;
     }
     
     .compass-direction.east {
-      right: 20px;
+      right: 32px;
       top: 50%;
       transform: translateY(-50%);
     }
     
     .compass-direction.south {
-      bottom: 20px;
+      bottom: 32px;
       left: 50%;
       transform: translateX(-50%);
     }
     
     .compass-direction.west {
-      left: 20px;
+      left: 32px;
       top: 50%;
       transform: translateY(-50%);
     }
     
-    /* Needle */
+    /* Elegant needle */
     .compass-needle-container {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 20px;
-      height: 200px;
+      width: 100%;
+      height: 100%;
       transform: translate(-50%, -50%);
-      transition: transform 0.12s ease-out;
+      transition: transform 0.1s ease-out;
     }
     
-    .compass-needle-north {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-bottom: 90px solid var(--accent-warm);
-      filter: drop-shadow(0 0 8px rgba(212, 165, 116, 0.4));
-    }
-    
-    .compass-needle-south {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 8px solid transparent;
-      border-right: 8px solid transparent;
-      border-top: 80px solid rgba(255,255,255,0.25);
-    }
-    
-    .compass-center-dot {
+    .compass-needle {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 16px;
-      height: 16px;
-      background: var(--bg-secondary);
-      border: 3px solid var(--accent-warm);
+    }
+    
+    .compass-needle svg {
+      width: 30px;
+      height: 180px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+    }
+    
+    .compass-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      background: radial-gradient(circle at 30% 30%, #3a3a4a, #1a1a2a);
+      border: 2px solid rgba(212, 165, 116, 0.6);
       border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       z-index: 10;
     }
     
@@ -229,7 +241,7 @@
     }
     
     .compass-status-text.aligned {
-      color: #7cb87c;
+      color: #8bbb8b;
     }
     
     .compass-status-text svg {
@@ -257,7 +269,8 @@
     
     /* ============ AR CAPTURE SCREEN ============ */
     .ar-screen {
-      position: relative;
+      position: fixed;
+      inset: 0;
       background: var(--bg-secondary);
     }
     
@@ -286,7 +299,7 @@
       pointer-events: none;
     }
     
-    /* Right side controls - exact from Vantage */
+    /* Right side controls */
     .horizon-right-controls {
       position: absolute;
       top: 16px;
@@ -323,34 +336,54 @@
       color: #8bbb8b;
     }
     
-    /* Direction badge */
-    .direction-badge {
+    /* Direction label - no border/bg */
+    .direction-label {
       position: absolute;
-      top: 16px;
-      left: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      background: rgba(13, 15, 21, 0.9);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
+      top: 20px;
+      left: 20px;
       z-index: 20;
     }
     
-    .direction-badge h2 {
+    .direction-label h2 {
       font-family: var(--font-display);
-      font-size: 1.15rem;
+      font-size: 1.3rem;
       font-weight: 400;
       color: var(--text-light);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
     
-    .direction-badge .step {
-      font-size: 0.75rem;
+    .direction-label .step {
+      font-size: 0.8rem;
       color: var(--text-muted);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
     
-    /* Crosshair - exact from Vantage */
+    /* Help popup */
+    .horizon-help-popup {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 120px;
+      background: rgba(13, 15, 21, 0.95);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 12px 14px;
+      z-index: 30;
+      display: none;
+    }
+    
+    .horizon-help-popup.visible {
+      display: block;
+    }
+    
+    .horizon-help-popup p {
+      font-size: 0.8rem;
+      color: #c0b8ae;
+      margin: 0;
+      line-height: 1.4;
+    }
+    
+    /* Crosshair */
     .horizon-crosshair {
       position: absolute;
       top: 50%;
@@ -368,7 +401,7 @@
       filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
     }
     
-    /* Bottom controls - exact from Vantage */
+    /* Bottom controls */
     .horizon-controls {
       display: flex;
       align-items: center;
@@ -438,6 +471,49 @@
       white-space: nowrap;
     }
     
+    /* Rotate prompt overlay */
+    .rotate-prompt {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: #0d0f15;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      z-index: 50;
+    }
+    
+    .rotate-prompt.active {
+      display: flex;
+    }
+    
+    .rotate-prompt svg {
+      width: 60px;
+      height: 60px;
+      color: var(--accent-warm);
+      margin-bottom: 20px;
+      animation: rotateHint 2s ease-in-out infinite;
+    }
+    
+    @keyframes rotateHint {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(90deg); }
+    }
+    
+    .rotate-prompt h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+    
+    .rotate-prompt p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    
     /* ============ TURN PROMPT ============ */
     .turn-prompt {
       display: none;
@@ -457,8 +533,8 @@
     }
     
     .turn-prompt-icon {
-      width: 80px;
-      height: 80px;
+      width: 70px;
+      height: 70px;
       color: var(--accent-warm);
       margin-bottom: 24px;
       opacity: 0.8;
@@ -466,24 +542,26 @@
     
     .turn-prompt h3 {
       font-family: var(--font-display);
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 400;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     
     .turn-prompt p {
       font-size: 0.95rem;
       color: var(--text-muted);
       margin-bottom: 32px;
+      line-height: 1.5;
     }
     
     /* ============ RESULTS SCREEN ============ */
     .results-screen {
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       text-align: center;
-      padding: 40px 30px;
-      gap: 32px;
+      padding: 60px 30px 40px;
+      gap: 28px;
+      overflow-y: auto;
     }
     
     .results-screen h2 {
@@ -495,8 +573,9 @@
     /* Compass-style layout for results */
     .results-compass {
       position: relative;
-      width: 240px;
-      height: 240px;
+      width: 220px;
+      height: 200px;
+      flex-shrink: 0;
     }
     
     .result-value {
@@ -505,14 +584,16 @@
     }
     
     .result-value .direction {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       margin-bottom: 2px;
     }
     
     .result-value .value {
       font-family: var(--font-display);
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       color: var(--accent-warm);
     }
     
@@ -540,26 +621,30 @@
       transform: translateY(-50%);
     }
     
-    .results-center-icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 50px;
-      height: 50px;
-      color: rgba(255,255,255,0.15);
-    }
-    
     .results-note {
       font-size: 0.85rem;
       color: var(--text-muted);
+      max-width: 280px;
+      line-height: 1.5;
+    }
+    
+    .results-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
       max-width: 280px;
     }
     
     .btn-secondary {
       background: transparent;
-      border: 2px solid var(--accent-warm);
-      color: var(--accent-warm);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text-muted);
+    }
+    
+    .btn-primary {
+      background: var(--accent-warm);
+      color: #1a1a1a;
     }
   </style>
 </head>
@@ -580,21 +665,58 @@
   <div class="screen compass-screen" id="compassScreen">
     <div class="compass-instruction">
       <h2>Hold phone flat</h2>
-      <p>Rotate until the needle points up</p>
+      <p>Rotate until the needle points to N</p>
     </div>
     
     <div class="compass-container">
-      <div class="compass-outer-ring"></div>
-      <div class="compass-inner-ring"></div>
+      <div class="compass-bg"></div>
+      <div class="compass-ring"></div>
+      
+      <!-- Tick marks -->
+      <div class="compass-ticks">
+        <div class="compass-tick major" style="transform: rotate(0deg)"></div>
+        <div class="compass-tick" style="transform: rotate(15deg)"></div>
+        <div class="compass-tick" style="transform: rotate(30deg)"></div>
+        <div class="compass-tick" style="transform: rotate(45deg)"></div>
+        <div class="compass-tick" style="transform: rotate(60deg)"></div>
+        <div class="compass-tick" style="transform: rotate(75deg)"></div>
+        <div class="compass-tick major" style="transform: rotate(90deg)"></div>
+        <div class="compass-tick" style="transform: rotate(105deg)"></div>
+        <div class="compass-tick" style="transform: rotate(120deg)"></div>
+        <div class="compass-tick" style="transform: rotate(135deg)"></div>
+        <div class="compass-tick" style="transform: rotate(150deg)"></div>
+        <div class="compass-tick" style="transform: rotate(165deg)"></div>
+        <div class="compass-tick major" style="transform: rotate(180deg)"></div>
+        <div class="compass-tick" style="transform: rotate(195deg)"></div>
+        <div class="compass-tick" style="transform: rotate(210deg)"></div>
+        <div class="compass-tick" style="transform: rotate(225deg)"></div>
+        <div class="compass-tick" style="transform: rotate(240deg)"></div>
+        <div class="compass-tick" style="transform: rotate(255deg)"></div>
+        <div class="compass-tick major" style="transform: rotate(270deg)"></div>
+        <div class="compass-tick" style="transform: rotate(285deg)"></div>
+        <div class="compass-tick" style="transform: rotate(300deg)"></div>
+        <div class="compass-tick" style="transform: rotate(315deg)"></div>
+        <div class="compass-tick" style="transform: rotate(330deg)"></div>
+        <div class="compass-tick" style="transform: rotate(345deg)"></div>
+      </div>
+      
       <div class="compass-direction north">N</div>
       <div class="compass-direction east">E</div>
       <div class="compass-direction south">S</div>
       <div class="compass-direction west">W</div>
+      
       <div class="compass-needle-container" id="compassNeedle">
-        <div class="compass-needle-north"></div>
-        <div class="compass-needle-south"></div>
+        <div class="compass-needle">
+          <svg viewBox="0 0 30 180">
+            <!-- North pointer (amber) -->
+            <path d="M15 0 L22 85 L15 75 L8 85 Z" fill="#d4a574"/>
+            <!-- South pointer (gray) -->
+            <path d="M15 180 L22 95 L15 105 L8 95 Z" fill="rgba(255,255,255,0.2)"/>
+          </svg>
+        </div>
       </div>
-      <div class="compass-center-dot"></div>
+      
+      <div class="compass-center"></div>
     </div>
     
     <div class="compass-status">
@@ -611,6 +733,13 @@
       
       <div class="horizon-right-controls">
         <button class="horizon-ctrl-btn" onclick="cancelCapture()">Cancel</button>
+        <button class="horizon-ctrl-btn" id="helpBtn" onclick="toggleHelp()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9 9a3 3 0 1 1 4 2.83c-.5.29-1 .88-1 1.67v.5"/>
+            <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+          </svg>
+        </button>
         <button class="horizon-ctrl-btn active" id="cameraToggle" onclick="toggleCamera()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
@@ -620,9 +749,13 @@
         </button>
       </div>
       
-      <div class="direction-badge">
+      <div class="direction-label">
         <h2 id="directionName">North</h2>
         <span class="step" id="directionStep">1 of 4</span>
+      </div>
+      
+      <div class="horizon-help-popup" id="helpPopup">
+        <p>For this direction, find where trees or buildings block the most sky, then set the line to match. Repeat for each facing.</p>
       </div>
       
       <div class="horizon-crosshair">
@@ -645,6 +778,16 @@
         </div>
         <button class="horizon-save-btn" id="saveBtn" onclick="saveHorizon()">Save</button>
       </div>
+      
+      <!-- Rotate to landscape prompt -->
+      <div class="rotate-prompt" id="rotatePrompt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
+          <line x1="12" y1="18" x2="12" y2="18" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h3>Rotate to Landscape</h3>
+        <p>Turn your phone sideways for the best view</p>
+      </div>
     </div>
   </div>
   
@@ -654,9 +797,9 @@
       <path d="M17 1l4 4-4 4"/>
       <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
     </svg>
-    <h3 id="turnPromptTitle">Turn Right to Face East</h3>
-    <p>Rotate 90° clockwise, then raise your phone.</p>
-    <button class="btn" onclick="continueCaptureAfterTurn()">Continue</button>
+    <h3 id="turnPromptTitle">Turn Yourself Right</h3>
+    <p id="turnPromptText">Rotate yourself 90° clockwise to face East.<br>Keep holding your phone towards the horizon.</p>
+    <button class="btn" id="turnPromptBtn" onclick="continueCaptureAfterTurn()">I'm Facing East</button>
   </div>
   
   <!-- Results Screen -->
@@ -680,16 +823,14 @@
         <div class="direction">West</div>
         <div class="value" id="resultW">--°</div>
       </div>
-      <svg class="results-center-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
-      </svg>
     </div>
     
-    <p class="results-note">Objects below these altitudes in each direction will be filtered out.</p>
+    <p class="results-note">Objects below these altitudes in each direction will be filtered from recommendations.</p>
     
-    <button class="btn" onclick="finishSetup()">Done</button>
-    <button class="btn btn-secondary" onclick="restart()" style="margin-top: 12px;">Start Over</button>
+    <div class="results-buttons">
+      <button class="btn btn-secondary" onclick="restart()">Start Over</button>
+      <button class="btn btn-primary" onclick="finishSetup()">Done</button>
+    </div>
   </div>
 
   <script>
@@ -704,6 +845,7 @@
     let horizonValue = 25;
     let horizonTilt = 0;
     let motionListener = null;
+    let isLandscape = false;
     
     // Screen management
     function showScreen(id) {
@@ -753,9 +895,9 @@
         return;
       }
       
-      // Rotate needle
+      // Rotate needle (needle points to magnetic north, so rotate by heading)
       const needle = document.getElementById('compassNeedle');
-      needle.style.transform = `translate(-50%, -50%) rotate(${heading}deg)`;
+      needle.style.transform = `rotate(${-heading}deg)`;
       
       // Check if aligned with North
       const isNorth = heading <= 15 || heading >= 345;
@@ -815,9 +957,33 @@
         }
       }
       
-      // Start motion tracking for horizon overlay
+      // Start motion tracking
       startMotionTracking();
-      drawHorizonOverlay();
+      
+      // Check orientation
+      checkOrientation();
+      window.addEventListener('resize', checkOrientation);
+    }
+    
+    function checkOrientation() {
+      isLandscape = window.innerWidth > window.innerHeight;
+      const rotatePrompt = document.getElementById('rotatePrompt');
+      
+      if (isLandscape) {
+        rotatePrompt.classList.remove('active');
+        resizeCanvas();
+        drawHorizonOverlay();
+      } else {
+        rotatePrompt.classList.add('active');
+      }
+    }
+    
+    function resizeCanvas() {
+      const canvas = document.getElementById('horizonCanvas');
+      if (canvas && horizonCtx) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
     }
     
     function startMotionTracking() {
@@ -825,8 +991,14 @@
       
       motionListener = (event) => {
         if (event.beta !== null) {
-          horizonTilt = 90 - event.beta;
-          drawHorizonOverlay();
+          // In landscape, gamma is what we want for tilt
+          if (isLandscape) {
+            // Adjust for landscape orientation
+            horizonTilt = Math.abs(event.gamma);
+          } else {
+            horizonTilt = 90 - event.beta;
+          }
+          if (isLandscape) drawHorizonOverlay();
         }
       };
       
@@ -838,10 +1010,11 @@
         window.removeEventListener('deviceorientation', motionListener);
         motionListener = null;
       }
+      window.removeEventListener('resize', checkOrientation);
     }
     
     function drawHorizonOverlay() {
-      if (!horizonCtx) return;
+      if (!horizonCtx || !isLandscape) return;
       
       const ctx = horizonCtx;
       const canvas = document.getElementById('horizonCanvas');
@@ -900,12 +1073,12 @@
       for (let deg = 0; deg <= 90; deg += 15) {
         if (deg === horizonValue) continue;
         const y = centerY + (horizonTilt - deg) / degreesPerPixel;
-        if (y > 50 && y < canvas.height - 50) {
+        if (y > 50 && y < canvas.height - 80) {
           ctx.beginPath();
-          ctx.moveTo(leftPadding + 24, y);
+          ctx.moveTo(leftPadding + 30, y);
           ctx.lineTo(canvas.width - 20, y);
           ctx.stroke();
-          ctx.fillText(`${deg}°`, leftPadding + 16, y + 5);
+          ctx.fillText(`${deg}°`, leftPadding + 24, y + 5);
         }
       }
     }
@@ -914,6 +1087,11 @@
       horizonValue = parseInt(value);
       document.getElementById('horizonSliderValue').textContent = `${horizonValue}°`;
       drawHorizonOverlay();
+    }
+    
+    function toggleHelp() {
+      const popup = document.getElementById('helpPopup');
+      popup.classList.toggle('visible');
     }
     
     function toggleCamera() {
@@ -950,7 +1128,9 @@
       
       if (currentDirectionIndex < directions.length) {
         const nextDirection = directionNames[directions[currentDirectionIndex]];
-        document.getElementById('turnPromptTitle').textContent = `Turn Right to Face ${nextDirection}`;
+        document.getElementById('turnPromptTitle').textContent = `Turn Yourself Right`;
+        document.getElementById('turnPromptText').innerHTML = `Rotate yourself 90° clockwise to face ${nextDirection}.<br>Keep holding your phone towards the horizon.`;
+        document.getElementById('turnPromptBtn').textContent = `I'm Facing ${nextDirection}`;
         document.getElementById('turnPrompt').classList.add('active');
       } else {
         stopMotionTracking();
@@ -989,7 +1169,10 @@
     }
     
     function finishSetup() {
-      alert('Horizons saved!\n\nN: ' + horizons.N + '°\nE: ' + horizons.E + '°\nS: ' + horizons.S + '°\nW: ' + horizons.W + '°');
+      // In real app, this saves to state and closes modal
+      // For prototype, just show confirmation
+      console.log('Horizons:', horizons);
+      alert('Saved! In the real app, this would close and apply your horizon settings.');
     }
     
     function restart() {
@@ -1006,16 +1189,6 @@
       cameraOn = true;
       horizonValue = 25;
     }
-    
-    // Handle resize
-    window.addEventListener('resize', () => {
-      const canvas = document.getElementById('horizonCanvas');
-      if (canvas && horizonCtx) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        drawHorizonOverlay();
-      }
-    });
   </script>
 </body>
 </html>
