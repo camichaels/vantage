@@ -1577,16 +1577,14 @@
     }
     
     .compass-cancel-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 8px 16px;
-      background: rgba(255,255,255,0.1);
+      margin-top: 16px;
+      padding: 12px 32px;
+      background: transparent;
       border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 8px;
+      border-radius: 10px;
       color: var(--text-light-muted);
       font-family: var(--font-body);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       cursor: pointer;
     }
     
@@ -1835,6 +1833,68 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
+    }
+    
+    /* Styled confirmation dialog */
+    .horizon-confirm-dialog {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(13, 15, 21, 0.95);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      z-index: 200;
+    }
+    
+    .horizon-confirm-dialog.active {
+      display: flex;
+    }
+    
+    .horizon-confirm-dialog h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+    
+    .horizon-confirm-dialog p {
+      font-size: 0.95rem;
+      color: var(--text-light-muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    
+    .horizon-confirm-dialog .dialog-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 260px;
+    }
+    
+    .horizon-confirm-dialog .dialog-btn {
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    
+    .horizon-confirm-dialog .dialog-btn-primary {
+      background: var(--accent-warm);
+      border: none;
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+    
+    .horizon-confirm-dialog .dialog-btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text-light-secondary);
     }
   </style>
 </head>
@@ -2316,8 +2376,6 @@
       
       <!-- Compass screen (directional mode only) -->
       <div class="horizon-compass-screen" id="horizonCompassScreen">
-        <button class="compass-cancel-btn" onclick="closeHorizonModal()">Cancel</button>
-        
         <div class="compass-instruction">
           <h2>Hold phone flat</h2>
           <p>Turn yourself until the needle<br>points up toward N</p>
@@ -2345,6 +2403,7 @@
         <div class="compass-status">
           <div class="compass-status-text" id="horizonCompassStatus">Turn to face North</div>
           <button class="compass-confirm-btn" id="horizonCompassBtn" onclick="confirmCompassNorth()">I'm Facing North</button>
+          <button class="compass-cancel-btn" onclick="closeHorizonModal()">Cancel</button>
         </div>
       </div>
       
@@ -2377,6 +2436,25 @@
           <button class="btn-secondary" onclick="restartDirectionalCapture()">Start Over</button>
           <button class="btn-primary" onclick="applyDirectionalHorizon()">Done</button>
         </div>
+      </div>
+    </div>
+    
+    <!-- Confirmation dialogs -->
+    <div class="horizon-confirm-dialog" id="horizonConfirmDialog">
+      <h3 id="confirmDialogTitle">Use saved values?</h3>
+      <p id="confirmDialogText">You have saved directional values.</p>
+      <div class="dialog-buttons">
+        <button class="dialog-btn dialog-btn-primary" id="confirmDialogYes">Yes</button>
+        <button class="dialog-btn dialog-btn-secondary" id="confirmDialogNo">No, start over</button>
+      </div>
+    </div>
+    
+    <!-- Location required dialog -->
+    <div class="horizon-confirm-dialog" id="horizonLocationDialog">
+      <h3>Location Required</h3>
+      <p>Please set your location before configuring the horizon.</p>
+      <div class="dialog-buttons">
+        <button class="dialog-btn dialog-btn-primary" onclick="closeLocationDialog()">OK</button>
       </div>
     </div>
   </div>
@@ -4068,7 +4146,8 @@
     function openHorizonModal(mode = 'single') {
       // Check if location is set
       if (!state.location) {
-        alert('Please set your location first');
+        document.getElementById('horizonModal').classList.add('active');
+        document.getElementById('horizonLocationDialog').classList.add('active');
         return;
       }
       
@@ -4087,6 +4166,7 @@
       document.getElementById('horizonTurnPrompt').classList.remove('active');
       document.getElementById('horizonResultsScreen').classList.remove('active');
       document.getElementById('horizonDirectionLabel').classList.remove('visible');
+      document.getElementById('horizonConfirmDialog').classList.remove('active');
       
       // Reset controls
       document.getElementById('horizonCameraBtn').classList.remove('active');
@@ -4096,48 +4176,172 @@
         // Check if we have existing directional values
         const existingDirectional = state.location.horizonDirectional;
         if (existingDirectional && existingDirectional.N !== null) {
-          // Offer to use existing values or start fresh
-          if (confirm(`You have saved directional values (N:${existingDirectional.N}° E:${existingDirectional.E}° S:${existingDirectional.S}° W:${existingDirectional.W}°). Use these values?`)) {
-            // Show results screen with existing values
-            horizonDirections = { ...existingDirectional };
-            document.getElementById('horizonResultN').textContent = `${horizonDirections.N}°`;
-            document.getElementById('horizonResultE').textContent = `${horizonDirections.E}°`;
-            document.getElementById('horizonResultS').textContent = `${horizonDirections.S}°`;
-            document.getElementById('horizonResultW').textContent = `${horizonDirections.W}°`;
-            document.getElementById('horizonResultsScreen').classList.add('active');
-            return;
-          }
+          // Show styled confirmation dialog
+          showHorizonConfirmDialog(
+            'Use saved values?',
+            `N: ${existingDirectional.N}°  E: ${existingDirectional.E}°  S: ${existingDirectional.S}°  W: ${existingDirectional.W}°`,
+            'Yes, use saved',
+            'No, start over',
+            () => {
+              // Yes - apply saved values and close
+              applyExistingDirectionalHorizon(existingDirectional);
+            },
+            () => {
+              // No - start fresh
+              startDirectionalFromCompass();
+            }
+          );
+          return;
         }
         
-        // Start with compass screen
-        document.getElementById('horizonHelpText').textContent = 'For this direction, find where trees or buildings block the most sky, then set the line to match.';
-        document.getElementById('horizonCompassScreen').classList.add('active');
-        document.getElementById('horizonSaveBtn').textContent = 'Save North';
-        requestCompassPermission();
+        startDirectionalFromCompass();
       } else {
-        // Single mode - show AR view directly
-        document.getElementById('horizonHelpText').textContent = 'Turn in a full circle while pointing at the horizon. Find where trees or buildings block the most sky, then set the line to match.';
-        document.getElementById('horizonSaveBtn').textContent = 'Save';
+        // Single mode - check for existing camera-captured value
+        const existingSingleCaptured = state.location.horizonCaptured;
+        if (existingSingleCaptured !== undefined && existingSingleCaptured !== null) {
+          // Show styled confirmation dialog
+          showHorizonConfirmDialog(
+            'Use saved value?',
+            `Previously captured: ${existingSingleCaptured}°`,
+            'Yes, use saved',
+            'No, start over',
+            () => {
+              // Yes - apply saved value and close
+              applyExistingSingleHorizon(existingSingleCaptured);
+            },
+            () => {
+              // No - start fresh
+              startSingleCapture();
+            }
+          );
+          return;
+        }
         
-        // Set current value
-        horizonValue = state.location.horizon || state.minAltitude;
-        document.getElementById('horizonSlider').value = horizonValue;
-        document.getElementById('horizonSliderValue').textContent = `${horizonValue}°`;
-        
-        // Setup canvas
-        resizeHorizonCanvas();
-        window.addEventListener('resize', resizeHorizonCanvas);
-        
-        // Check orientation
-        checkHorizonOrientation();
-        window.addEventListener('resize', checkHorizonOrientation);
-        
-        // Request motion permission and start listening
-        requestHorizonMotion();
-        
-        // Draw initial overlay
-        drawHorizonOverlay();
+        startSingleCapture();
       }
+    }
+    
+    function closeLocationDialog() {
+      document.getElementById('horizonLocationDialog').classList.remove('active');
+      document.getElementById('horizonModal').classList.remove('active');
+    }
+    
+    function showHorizonConfirmDialog(title, text, yesLabel, noLabel, onYes, onNo) {
+      document.getElementById('confirmDialogTitle').textContent = title;
+      document.getElementById('confirmDialogText').textContent = text;
+      document.getElementById('confirmDialogYes').textContent = yesLabel;
+      document.getElementById('confirmDialogNo').textContent = noLabel;
+      
+      const yesBtn = document.getElementById('confirmDialogYes');
+      const noBtn = document.getElementById('confirmDialogNo');
+      
+      // Remove old listeners
+      yesBtn.replaceWith(yesBtn.cloneNode(true));
+      noBtn.replaceWith(noBtn.cloneNode(true));
+      
+      // Add new listeners
+      document.getElementById('confirmDialogYes').onclick = () => {
+        document.getElementById('horizonConfirmDialog').classList.remove('active');
+        onYes();
+      };
+      document.getElementById('confirmDialogNo').onclick = () => {
+        document.getElementById('horizonConfirmDialog').classList.remove('active');
+        onNo();
+      };
+      
+      document.getElementById('horizonConfirmDialog').classList.add('active');
+    }
+    
+    function applyExistingDirectionalHorizon(existingDirectional) {
+      // Apply values directly without showing results screen
+      state.location.horizonDirectional = { ...existingDirectional };
+      
+      const values = Object.values(existingDirectional);
+      const minVal = Math.min(...values);
+      const maxVal = Math.max(...values);
+      state.location.horizon = minVal;
+      state.minAltitude = minVal;
+      
+      // Update saved locations
+      const locIndex = state.savedLocations.findIndex(loc => 
+        loc.latitude === state.location.latitude && 
+        loc.longitude === state.location.longitude
+      );
+      if (locIndex >= 0) {
+        state.savedLocations[locIndex].horizonDirectional = { ...existingDirectional };
+        state.savedLocations[locIndex].horizon = minVal;
+      }
+      
+      saveState();
+      closeHorizonModal();
+      
+      document.getElementById('altitudeText').textContent = `Horizon: ${minVal}-${maxVal}°`;
+      updateHorizonDropdownSelection('directional');
+      renderObjects();
+      
+      // Show toast
+      const toast = document.getElementById('horizonToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+    
+    function applyExistingSingleHorizon(value) {
+      // Apply value directly without showing AR
+      state.location.horizon = value;
+      state.location.horizonCaptured = value;
+      state.minAltitude = value;
+      
+      const locIndex = state.savedLocations.findIndex(loc => 
+        loc.latitude === state.location.latitude && 
+        loc.longitude === state.location.longitude
+      );
+      if (locIndex >= 0) {
+        state.savedLocations[locIndex].horizon = value;
+        state.savedLocations[locIndex].horizonCaptured = value;
+      }
+      
+      saveState();
+      closeHorizonModal();
+      
+      document.getElementById('altitudeText').textContent = `Horizon: ${value}°`;
+      updateHorizonDropdownSelection('single');
+      renderObjects();
+      
+      // Show toast
+      const toast = document.getElementById('horizonToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+    
+    function startDirectionalFromCompass() {
+      document.getElementById('horizonHelpText').textContent = 'For this direction, find where trees or buildings block the most sky, then set the line to match.';
+      document.getElementById('horizonCompassScreen').classList.add('active');
+      document.getElementById('horizonSaveBtn').textContent = 'Save North';
+      requestCompassPermission();
+    }
+    
+    function startSingleCapture() {
+      document.getElementById('horizonHelpText').textContent = 'Turn in a full circle while pointing at the horizon. Find where trees or buildings block the most sky, then set the line to match.';
+      document.getElementById('horizonSaveBtn').textContent = 'Save';
+      
+      // Set current value
+      horizonValue = state.location.horizon || state.minAltitude;
+      document.getElementById('horizonSlider').value = horizonValue;
+      document.getElementById('horizonSliderValue').textContent = `${horizonValue}°`;
+      
+      // Setup canvas
+      resizeHorizonCanvas();
+      window.addEventListener('resize', resizeHorizonCanvas);
+      
+      // Check orientation
+      checkHorizonOrientation();
+      window.addEventListener('resize', checkHorizonOrientation);
+      
+      // Request motion permission and start listening
+      requestHorizonMotion();
+      
+      // Draw initial overlay
+      drawHorizonOverlay();
     }
     
     function closeHorizonModal() {
@@ -4356,10 +4560,10 @@
       } else {
         // Single mode - save and close
         state.location.horizon = horizonValue;
+        state.location.horizonCaptured = horizonValue; // Save for "use saved" prompt
         state.minAltitude = horizonValue;
         
         // Keep directional values if they exist (user can switch back)
-        // Just mark that we're using single value now
         
         // Update saved locations array
         const locIndex = state.savedLocations.findIndex(loc => 
@@ -4368,6 +4572,7 @@
         );
         if (locIndex >= 0) {
           state.savedLocations[locIndex].horizon = horizonValue;
+          state.savedLocations[locIndex].horizonCaptured = horizonValue;
         }
         
         saveState();
@@ -4517,8 +4722,14 @@
       }
       horizonCameraActive = false;
       
-      // Hide direction label
+      // Hide direction label and other AR elements
       document.getElementById('horizonDirectionLabel').classList.remove('visible');
+      document.getElementById('horizonRotatePrompt').classList.remove('active');
+      
+      // Clear the canvas so it doesn't show through
+      if (horizonCtx && horizonCanvas) {
+        horizonCtx.clearRect(0, 0, horizonCanvas.width, horizonCanvas.height);
+      }
       
       // Show results
       document.getElementById('horizonResultN').textContent = `${horizonDirections.N}°`;
