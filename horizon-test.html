@@ -106,9 +106,10 @@
     .compass-instruction p {
       font-size: 0.9rem;
       color: var(--text-muted);
+      line-height: 1.5;
     }
     
-    /* Refined compass design */
+    /* Compass design */
     .compass-container {
       position: relative;
       width: 260px;
@@ -139,23 +140,23 @@
     
     .compass-tick {
       position: absolute;
-      top: 12px;
+      top: 14px;
       left: 50%;
       width: 2px;
-      height: 10px;
+      height: 8px;
       background: rgba(255,255,255,0.15);
-      transform-origin: 50% 118px;
+      transform-origin: 50% 116px;
       border-radius: 1px;
     }
     
     .compass-tick.major {
-      height: 14px;
+      height: 12px;
       background: rgba(255,255,255,0.25);
     }
     
     .compass-direction {
       position: absolute;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 500;
       color: rgba(255,255,255,0.3);
     }
@@ -165,12 +166,12 @@
       left: 50%;
       transform: translateX(-50%);
       color: var(--accent-warm);
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 600;
     }
     
     .compass-direction.east {
-      right: 32px;
+      right: 30px;
       top: 50%;
       transform: translateY(-50%);
     }
@@ -182,33 +183,32 @@
     }
     
     .compass-direction.west {
-      left: 32px;
+      left: 30px;
       top: 50%;
       transform: translateY(-50%);
     }
     
-    /* Elegant needle */
+    /* Needle container - sized to fit inside compass */
     .compass-needle-container {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 100%;
-      height: 100%;
+      width: 24px;
+      height: 160px;
       transform: translate(-50%, -50%);
-      transition: transform 0.1s ease-out;
+      /* Smooth transition for dampened movement */
+      transition: transform 0.15s ease-out;
     }
     
     .compass-needle {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      inset: 0;
     }
     
     .compass-needle svg {
-      width: 30px;
-      height: 180px;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
     }
     
     .compass-center {
@@ -216,12 +216,12 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       background: radial-gradient(circle at 30% 30%, #3a3a4a, #1a1a2a);
-      border: 2px solid rgba(212, 165, 116, 0.6);
+      border: 2px solid rgba(212, 165, 116, 0.5);
       border-radius: 50%;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
       z-index: 10;
     }
     
@@ -358,7 +358,18 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
     
-    /* Help popup */
+    /* Help popup overlay - click anywhere to dismiss */
+    .horizon-help-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 28;
+    }
+    
+    .horizon-help-overlay.visible {
+      display: block;
+    }
+    
     .horizon-help-popup {
       position: absolute;
       top: 16px;
@@ -369,11 +380,6 @@
       border-radius: 10px;
       padding: 12px 14px;
       z-index: 30;
-      display: none;
-    }
-    
-    .horizon-help-popup.visible {
-      display: block;
     }
     
     .horizon-help-popup p {
@@ -665,7 +671,7 @@
   <div class="screen compass-screen" id="compassScreen">
     <div class="compass-instruction">
       <h2>Hold phone flat</h2>
-      <p>Rotate until the needle points to N</p>
+      <p>Turn yourself until the needle<br>points up toward N</p>
     </div>
     
     <div class="compass-container">
@@ -707,11 +713,11 @@
       
       <div class="compass-needle-container" id="compassNeedle">
         <div class="compass-needle">
-          <svg viewBox="0 0 30 180">
+          <svg viewBox="0 0 24 160">
             <!-- North pointer (amber) -->
-            <path d="M15 0 L22 85 L15 75 L8 85 Z" fill="#d4a574"/>
+            <path d="M12 0 L18 70 L12 60 L6 70 Z" fill="#d4a574"/>
             <!-- South pointer (gray) -->
-            <path d="M15 180 L22 95 L15 105 L8 95 Z" fill="rgba(255,255,255,0.2)"/>
+            <path d="M12 160 L18 90 L12 100 L6 90 Z" fill="rgba(255,255,255,0.2)"/>
           </svg>
         </div>
       </div>
@@ -720,7 +726,7 @@
     </div>
     
     <div class="compass-status">
-      <div class="compass-status-text" id="compassStatus">Rotate to face North</div>
+      <div class="compass-status-text" id="compassStatus">Turn to face North</div>
       <button class="compass-confirm-btn" id="compassConfirmBtn" onclick="confirmNorth()">I'm Facing North</button>
     </div>
   </div>
@@ -754,8 +760,11 @@
         <span class="step" id="directionStep">1 of 4</span>
       </div>
       
-      <div class="horizon-help-popup" id="helpPopup">
-        <p>For this direction, find where trees or buildings block the most sky, then set the line to match. Repeat for each facing.</p>
+      <!-- Help overlay - click anywhere to dismiss -->
+      <div class="horizon-help-overlay" id="helpOverlay" onclick="dismissHelp()">
+        <div class="horizon-help-popup" onclick="event.stopPropagation()">
+          <p>For this direction, find where trees or buildings block the most sky, then set the line to match. Repeat for each facing.</p>
+        </div>
       </div>
       
       <div class="horizon-crosshair">
@@ -844,8 +853,14 @@
     let horizonCtx = null;
     let horizonValue = 25;
     let horizonTilt = 0;
+    let smoothedTilt = 0;
     let motionListener = null;
     let isLandscape = false;
+    
+    // Compass smoothing
+    let smoothedHeading = 0;
+    let headingHistory = [];
+    const SMOOTHING_SAMPLES = 8;
     
     // Screen management
     function showScreen(id) {
@@ -856,6 +871,8 @@
     // ============ COMPASS ============
     function startCompass() {
       showScreen('compassScreen');
+      headingHistory = [];
+      smoothedHeading = 0;
       
       if ('DeviceOrientationEvent' in window) {
         if (typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -895,12 +912,27 @@
         return;
       }
       
-      // Rotate needle (needle points to magnetic north, so rotate by heading)
+      // Smooth the heading using moving average
+      headingHistory.push(heading);
+      if (headingHistory.length > SMOOTHING_SAMPLES) {
+        headingHistory.shift();
+      }
+      
+      // Handle wraparound at 0/360 boundary
+      let sinSum = 0, cosSum = 0;
+      for (let h of headingHistory) {
+        sinSum += Math.sin(h * Math.PI / 180);
+        cosSum += Math.cos(h * Math.PI / 180);
+      }
+      smoothedHeading = Math.atan2(sinSum, cosSum) * 180 / Math.PI;
+      if (smoothedHeading < 0) smoothedHeading += 360;
+      
+      // Rotate needle
       const needle = document.getElementById('compassNeedle');
-      needle.style.transform = `rotate(${-heading}deg)`;
+      needle.style.transform = `translate(-50%, -50%) rotate(${-smoothedHeading}deg)`;
       
       // Check if aligned with North
-      const isNorth = heading <= 15 || heading >= 345;
+      const isNorth = smoothedHeading <= 15 || smoothedHeading >= 345;
       const status = document.getElementById('compassStatus');
       const btn = document.getElementById('compassConfirmBtn');
       
@@ -909,7 +941,7 @@
         status.classList.add('aligned');
         btn.classList.add('ready');
       } else {
-        status.textContent = 'Rotate to face North';
+        status.textContent = 'Turn to face North';
         status.classList.remove('aligned');
         btn.classList.remove('ready');
       }
@@ -942,6 +974,9 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       horizonCtx = canvas.getContext('2d');
+      
+      // Reset smoothed tilt
+      smoothedTilt = 45; // Start at reasonable middle value
       
       // Start camera
       if (cameraOn && !videoStream) {
@@ -990,15 +1025,26 @@
       if (motionListener) return;
       
       motionListener = (event) => {
-        if (event.beta !== null) {
-          // In landscape, gamma is what we want for tilt
-          if (isLandscape) {
-            // Adjust for landscape orientation
-            horizonTilt = Math.abs(event.gamma);
+        if (event.gamma !== null && isLandscape) {
+          // In landscape mode:
+          // gamma = 0 when phone is vertical (pointing at horizon) = 0° altitude
+          // gamma = -90 when phone points straight up = 90° altitude
+          // gamma = 90 when phone points straight down = below horizon
+          
+          let rawTilt;
+          if (event.gamma < 0) {
+            // Phone tilted up (toward sky)
+            rawTilt = Math.abs(event.gamma); // 0 to 90
           } else {
-            horizonTilt = 90 - event.beta;
+            // Phone tilted down (toward ground)
+            rawTilt = -event.gamma; // negative values = below horizon
           }
-          if (isLandscape) drawHorizonOverlay();
+          
+          // Smooth the tilt
+          smoothedTilt = smoothedTilt * 0.85 + rawTilt * 0.15;
+          horizonTilt = smoothedTilt;
+          
+          drawHorizonOverlay();
         }
       };
       
@@ -1023,7 +1069,7 @@
       const centerY = canvas.height / 2;
       const leftPadding = 24;
       
-      // Below horizon warning
+      // Below horizon warning (pointing too far down)
       if (horizonTilt < -10) {
         ctx.fillStyle = 'rgba(140, 90, 90, 0.6)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1038,29 +1084,33 @@
         return;
       }
       
-      // Calculate horizon line position
+      // Calculate positions
+      // Camera view spans roughly 60 degrees vertically
+      // horizonTilt is where the camera is pointing (in degrees altitude)
+      // We show degree markers relative to current tilt
       const degreesPerPixel = 60 / canvas.height;
-      const horizonOffset = (horizonTilt - horizonValue) / degreesPerPixel;
-      const horizonY = centerY + horizonOffset;
       
-      // Draw masked area (below horizon)
+      // The selected horizon value line position
+      const horizonLineY = centerY + (horizonTilt - horizonValue) / degreesPerPixel;
+      
+      // Draw masked area (below horizon threshold)
       ctx.fillStyle = 'rgba(140, 90, 90, 0.5)';
-      ctx.fillRect(0, horizonY, canvas.width, canvas.height - horizonY);
+      ctx.fillRect(0, horizonLineY, canvas.width, canvas.height - horizonLineY);
       
       // Draw horizon line
       ctx.strokeStyle = '#d4a574';
       ctx.lineWidth = 4;
       ctx.setLineDash([]);
       ctx.beginPath();
-      ctx.moveTo(0, horizonY);
-      ctx.lineTo(canvas.width, horizonY);
+      ctx.moveTo(0, horizonLineY);
+      ctx.lineTo(canvas.width, horizonLineY);
       ctx.stroke();
       
       // Draw horizon label
       ctx.fillStyle = '#d4a574';
       ctx.font = '600 14px "DM Sans", sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText(`${horizonValue}° min`, leftPadding, horizonY - 10);
+      ctx.fillText(`${horizonValue}° min`, leftPadding, horizonLineY - 10);
       
       // Draw degree markers
       ctx.strokeStyle = 'rgba(255,255,255,0.4)';
@@ -1073,7 +1123,7 @@
       for (let deg = 0; deg <= 90; deg += 15) {
         if (deg === horizonValue) continue;
         const y = centerY + (horizonTilt - deg) / degreesPerPixel;
-        if (y > 50 && y < canvas.height - 80) {
+        if (y > 60 && y < canvas.height - 80) {
           ctx.beginPath();
           ctx.moveTo(leftPadding + 30, y);
           ctx.lineTo(canvas.width - 20, y);
@@ -1090,8 +1140,13 @@
     }
     
     function toggleHelp() {
-      const popup = document.getElementById('helpPopup');
-      popup.classList.toggle('visible');
+      const overlay = document.getElementById('helpOverlay');
+      overlay.classList.add('visible');
+    }
+    
+    function dismissHelp() {
+      const overlay = document.getElementById('helpOverlay');
+      overlay.classList.remove('visible');
     }
     
     function toggleCamera() {
@@ -1170,9 +1225,8 @@
     
     function finishSetup() {
       // In real app, this saves to state and closes modal
-      // For prototype, just show confirmation
       console.log('Horizons:', horizons);
-      alert('Saved! In the real app, this would close and apply your horizon settings.');
+      // No extra confirmation for real app
     }
     
     function restart() {
