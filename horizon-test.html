@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Horizon Capture Prototype</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #f0ede6;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    
+    .screen {
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+      padding: 20px;
+    }
+    
+    .screen.active {
+      display: flex;
+    }
+    
+    /* Intro Screen */
+    .intro-screen {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+    
+    .intro-screen h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .intro-screen p {
+      font-size: 1rem;
+      color: #9a958d;
+      max-width: 300px;
+      line-height: 1.5;
+    }
+    
+    /* Compass Screen */
+    .compass-screen {
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    
+    .compass-instruction {
+      text-align: center;
+    }
+    
+    .compass-instruction h2 {
+      font-size: 1.25rem;
+      margin-bottom: 10px;
+    }
+    
+    .compass-instruction p {
+      font-size: 0.9rem;
+      color: #9a958d;
+    }
+    
+    .compass-container {
+      position: relative;
+      width: 280px;
+      height: 280px;
+    }
+    
+    .compass-ring {
+      position: absolute;
+      inset: 0;
+      border: 3px solid #3a3a5a;
+      border-radius: 50%;
+    }
+    
+    .compass-direction {
+      position: absolute;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #9a958d;
+    }
+    
+    .compass-direction.north {
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #d4a574;
+    }
+    
+    .compass-direction.south {
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .compass-direction.east {
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .compass-direction.west {
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .compass-needle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 120px;
+      transform-origin: bottom center;
+      transform: translate(-50%, -100%) rotate(0deg);
+      transition: transform 0.1s ease-out;
+    }
+    
+    .compass-needle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-bottom: 30px solid #d4574a;
+    }
+    
+    .compass-needle::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 90px;
+      background: #6a6a8a;
+    }
+    
+    .compass-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 16px;
+      height: 16px;
+      background: #f0ede6;
+      border-radius: 50%;
+    }
+    
+    .compass-heading {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 300;
+      margin-top: 20px;
+    }
+    
+    .compass-status {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #9a958d;
+      height: 24px;
+    }
+    
+    .compass-status.aligned {
+      color: #7cb87c;
+    }
+    
+    /* AR Screen */
+    .ar-screen {
+      padding: 0;
+      position: relative;
+    }
+    
+    .ar-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .ar-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .ar-header {
+      padding: 60px 20px 20px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+      text-align: center;
+    }
+    
+    .ar-header h2 {
+      font-size: 1.25rem;
+      margin-bottom: 5px;
+    }
+    
+    .ar-header p {
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+    
+    .ar-horizon-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #d4a574;
+      box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .ar-horizon-label {
+      position: absolute;
+      right: 20px;
+      background: rgba(0,0,0,0.6);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .ar-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      padding-bottom: 40px;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    }
+    
+    .ar-slider-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .ar-slider-container span {
+      font-size: 0.85rem;
+      color: #9a958d;
+      width: 30px;
+    }
+    
+    .ar-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      outline: none;
+    }
+    
+    .ar-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 50px;
+      height: 50px;
+      background: #d4a574;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    
+    .ar-btn {
+      width: 100%;
+      padding: 16px;
+      background: #d4a574;
+      border: none;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    /* Results Screen */
+    .results-screen {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 30px;
+    }
+    
+    .results-screen h2 {
+      font-size: 1.5rem;
+    }
+    
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      width: 100%;
+      max-width: 300px;
+    }
+    
+    .result-card {
+      background: #2a3148;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    
+    .result-card .direction {
+      font-size: 0.85rem;
+      color: #9a958d;
+      margin-bottom: 5px;
+    }
+    
+    .result-card .value {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #d4a574;
+    }
+    
+    .results-visual {
+      position: relative;
+      width: 200px;
+      height: 200px;
+    }
+    
+    .results-visual svg {
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* Common button */
+    .btn {
+      padding: 16px 40px;
+      background: #d4a574;
+      border: none;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid #d4a574;
+      color: #d4a574;
+    }
+    
+    /* Error/status messages */
+    .error-message {
+      background: rgba(212, 87, 74, 0.2);
+      border: 1px solid #d4574a;
+      padding: 15px 20px;
+      border-radius: 10px;
+      color: #f0ede6;
+      text-align: center;
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Intro Screen -->
+  <div class="screen intro-screen active" id="introScreen">
+    <h1>Horizon Capture</h1>
+    <p>Set your horizon for each direction to filter out objects blocked by trees, buildings, or hills.</p>
+    <p>You'll use the compass to face North, then capture 4 horizons.</p>
+    <button class="btn" onclick="startCompass()">Get Started</button>
+  </div>
+  
+  <!-- Compass Screen -->
+  <div class="screen compass-screen" id="compassScreen">
+    <div class="compass-instruction">
+      <h2>Hold phone flat</h2>
+      <p>Rotate your body until the red needle points to N</p>
+    </div>
+    
+    <div class="compass-container">
+      <div class="compass-ring"></div>
+      <div class="compass-direction north">N</div>
+      <div class="compass-direction east">E</div>
+      <div class="compass-direction south">S</div>
+      <div class="compass-direction west">W</div>
+      <div class="compass-needle" id="compassNeedle"></div>
+      <div class="compass-center"></div>
+    </div>
+    
+    <div>
+      <div class="compass-heading" id="compassHeading">---°</div>
+      <div class="compass-status" id="compassStatus">Rotate to face North</div>
+    </div>
+    
+    <button class="btn" id="compassConfirmBtn" onclick="confirmNorth()" disabled>I'm Facing North</button>
+  </div>
+  
+  <!-- AR Capture Screen -->
+  <div class="screen ar-screen" id="arScreen">
+    <video class="ar-video" id="arVideo" autoplay playsinline></video>
+    <div class="ar-overlay">
+      <div class="ar-header">
+        <h2 id="arDirection">North Horizon</h2>
+        <p>Adjust the line to match your horizon</p>
+      </div>
+      
+      <div class="ar-horizon-line" id="arHorizonLine"></div>
+      <div class="ar-horizon-label" id="arHorizonLabel">25°</div>
+      
+      <div class="ar-controls">
+        <div class="ar-slider-container">
+          <span>0°</span>
+          <input type="range" class="ar-slider" id="arSlider" min="0" max="90" value="25">
+          <span>90°</span>
+        </div>
+        <button class="ar-btn" id="arSaveBtn" onclick="saveHorizon()">Save North</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Results Screen -->
+  <div class="screen results-screen" id="resultsScreen">
+    <h2>Horizon Profile Set!</h2>
+    
+    <div class="results-visual">
+      <svg viewBox="0 0 200 200" id="resultsSvg">
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#3a3a5a" stroke-width="2"/>
+        <text x="100" y="25" text-anchor="middle" fill="#d4a574" font-size="14">N</text>
+        <text x="180" y="105" text-anchor="middle" fill="#9a958d" font-size="14">E</text>
+        <text x="100" y="190" text-anchor="middle" fill="#9a958d" font-size="14">S</text>
+        <text x="20" y="105" text-anchor="middle" fill="#9a958d" font-size="14">W</text>
+        <!-- Horizon shape will be drawn here -->
+        <polygon id="horizonShape" fill="rgba(212, 165, 116, 0.3)" stroke="#d4a574" stroke-width="2"/>
+      </svg>
+    </div>
+    
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="direction">North</div>
+        <div class="value" id="resultN">--°</div>
+      </div>
+      <div class="result-card">
+        <div class="direction">East</div>
+        <div class="value" id="resultE">--°</div>
+      </div>
+      <div class="result-card">
+        <div class="direction">South</div>
+        <div class="value" id="resultS">--°</div>
+      </div>
+      <div class="result-card">
+        <div class="direction">West</div>
+        <div class="value" id="resultW">--°</div>
+      </div>
+    </div>
+    
+    <button class="btn" onclick="restart()">Start Over</button>
+  </div>
+
+  <script>
+    // State
+    const horizons = { N: null, E: null, S: null, W: null };
+    const directions = ['N', 'E', 'S', 'W'];
+    const directionNames = { N: 'North', E: 'East', S: 'South', W: 'West' };
+    let currentDirectionIndex = 0;
+    let currentHeading = 0;
+    let videoStream = null;
+    
+    // Screen management
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    
+    // Start compass
+    function startCompass() {
+      showScreen('compassScreen');
+      
+      if ('DeviceOrientationEvent' in window) {
+        // iOS 13+ requires permission
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(permission => {
+              if (permission === 'granted') {
+                window.addEventListener('deviceorientation', handleOrientation);
+              } else {
+                showCompassError('Compass permission denied');
+              }
+            })
+            .catch(err => {
+              showCompassError('Could not access compass');
+            });
+        } else {
+          // Non-iOS or older iOS
+          window.addEventListener('deviceorientation', handleOrientation);
+        }
+      } else {
+        showCompassError('Compass not available on this device');
+      }
+    }
+    
+    function showCompassError(msg) {
+      document.getElementById('compassStatus').textContent = msg;
+      document.getElementById('compassStatus').style.color = '#d4574a';
+    }
+    
+    function handleOrientation(event) {
+      let heading;
+      
+      // iOS uses webkitCompassHeading
+      if (event.webkitCompassHeading !== undefined) {
+        heading = event.webkitCompassHeading;
+      } else if (event.alpha !== null) {
+        // Android - alpha is relative to arbitrary direction
+        // This is less accurate but we'll use it
+        heading = 360 - event.alpha;
+      } else {
+        return;
+      }
+      
+      currentHeading = Math.round(heading);
+      
+      // Update needle (rotate opposite to heading so N stays at top when facing N)
+      const needle = document.getElementById('compassNeedle');
+      needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+      
+      // Update heading display
+      document.getElementById('compassHeading').textContent = `${currentHeading}°`;
+      
+      // Check if aligned with North (within 10 degrees)
+      const isNorth = currentHeading <= 10 || currentHeading >= 350;
+      const status = document.getElementById('compassStatus');
+      const btn = document.getElementById('compassConfirmBtn');
+      
+      if (isNorth) {
+        status.textContent = '✓ Facing North';
+        status.classList.add('aligned');
+        btn.disabled = false;
+      } else {
+        status.textContent = 'Rotate to face North';
+        status.classList.remove('aligned');
+        btn.disabled = false; // Allow anyway for testing
+      }
+    }
+    
+    // Confirm facing North and start AR capture
+    function confirmNorth() {
+      window.removeEventListener('deviceorientation', handleOrientation);
+      currentDirectionIndex = 0;
+      startARCapture();
+    }
+    
+    // AR Capture
+    async function startARCapture() {
+      showScreen('arScreen');
+      
+      const direction = directions[currentDirectionIndex];
+      const directionName = directionNames[direction];
+      
+      document.getElementById('arDirection').textContent = `${directionName} Horizon`;
+      document.getElementById('arSaveBtn').textContent = `Save ${directionName}`;
+      
+      // Start camera if not already running
+      if (!videoStream) {
+        try {
+          videoStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' }
+          });
+          document.getElementById('arVideo').srcObject = videoStream;
+        } catch (err) {
+          console.error('Camera error:', err);
+          alert('Could not access camera');
+          return;
+        }
+      }
+      
+      // Reset slider to default or previous value
+      const slider = document.getElementById('arSlider');
+      slider.value = horizons[direction] || 25;
+      updateHorizonLine(slider.value);
+      
+      // Slider event
+      slider.oninput = (e) => updateHorizonLine(e.target.value);
+    }
+    
+    function updateHorizonLine(value) {
+      const percent = 80 - (value / 90 * 60); // Map 0-90 to 80%-20% from top
+      document.getElementById('arHorizonLine').style.top = `${percent}%`;
+      document.getElementById('arHorizonLabel').style.top = `${percent}%`;
+      document.getElementById('arHorizonLabel').textContent = `${value}°`;
+    }
+    
+    function saveHorizon() {
+      const direction = directions[currentDirectionIndex];
+      const value = parseInt(document.getElementById('arSlider').value);
+      horizons[direction] = value;
+      
+      currentDirectionIndex++;
+      
+      if (currentDirectionIndex < directions.length) {
+        // Show instruction to turn
+        const nextDirection = directionNames[directions[currentDirectionIndex]];
+        alert(`Turn 90° right to face ${nextDirection}`);
+        startARCapture();
+      } else {
+        // All done
+        stopCamera();
+        showResults();
+      }
+    }
+    
+    function stopCamera() {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+    }
+    
+    function showResults() {
+      showScreen('resultsScreen');
+      
+      document.getElementById('resultN').textContent = `${horizons.N}°`;
+      document.getElementById('resultE').textContent = `${horizons.E}°`;
+      document.getElementById('resultS').textContent = `${horizons.S}°`;
+      document.getElementById('resultW').textContent = `${horizons.W}°`;
+      
+      // Draw horizon shape
+      drawHorizonShape();
+    }
+    
+    function drawHorizonShape() {
+      const svg = document.getElementById('resultsSvg');
+      const polygon = document.getElementById('horizonShape');
+      
+      // Center of SVG
+      const cx = 100, cy = 100;
+      const maxRadius = 80;
+      
+      // Calculate points for each direction
+      // Higher horizon = smaller radius (more blocked)
+      const points = [];
+      const values = [horizons.N, horizons.E, horizons.S, horizons.W];
+      const angles = [-90, 0, 90, 180]; // Degrees from right (E)
+      
+      // Create smooth curve with intermediate points
+      for (let i = 0; i < 4; i++) {
+        const startVal = values[i];
+        const endVal = values[(i + 1) % 4];
+        const startAngle = angles[i];
+        const endAngle = angles[(i + 1) % 4] || 270;
+        
+        // Add 3 points per quadrant for smoothness
+        for (let j = 0; j < 3; j++) {
+          const t = j / 3;
+          const angle = (startAngle + (endAngle - startAngle) * t) * Math.PI / 180;
+          const val = startVal + (endVal - startVal) * t;
+          const radius = maxRadius * (1 - val / 120); // Normalize so 90° isn't at center
+          
+          const x = cx + Math.cos(angle) * radius;
+          const y = cy + Math.sin(angle) * radius;
+          points.push(`${x},${y}`);
+        }
+      }
+      
+      polygon.setAttribute('points', points.join(' '));
+    }
+    
+    function restart() {
+      horizons.N = null;
+      horizons.E = null;
+      horizons.S = null;
+      horizons.W = null;
+      currentDirectionIndex = 0;
+      showScreen('introScreen');
+    }
+  </script>
+</body>
+</html>
