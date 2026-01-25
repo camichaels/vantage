@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Vantage</title>
   
+  <!-- PWA / Home Screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Vantage">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#1a1f2e">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
@@ -213,8 +220,9 @@
     }
     
     .help-modal-reset {
-      text-align: center;
-      padding: 0 20px 20px 20px;
+      margin-top: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
     
     .help-modal-reset a {
@@ -864,21 +872,32 @@
       opacity: 0.55;
     }
     
-    .footer-hint {
+    .footer-main {
       text-align: center;
-      padding-top: var(--space-xl);
-      font-size: var(--text-sm);
-      color: var(--text-light-muted);
+      padding: var(--space-xl) 0 var(--space-2xl);
     }
     
-    .footer-hint a {
+    .footer-tagline {
+      font-size: var(--text-sm);
+      color: var(--text-light-muted);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .footer-contact {
+      font-size: var(--text-xs);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .footer-contact a {
       color: var(--accent-warm-dim);
       text-decoration: none;
     }
     
+    .footer-contact a:hover {
+      text-decoration: underline;
+    }
+    
     .footer-copyright {
-      text-align: center;
-      padding: var(--space-lg) 0 var(--space-xl);
       font-size: var(--text-xs);
       color: var(--text-light-muted);
       opacity: 0.6;
@@ -1795,12 +1814,10 @@
       </div>
     </section>
     
-    <footer class="footer-hint">
-      Showing objects above 25° altitude
-    </footer>
-    
-    <footer class="footer-copyright">
-      © 2026 Vantage
+    <footer class="footer-main">
+      <div class="footer-tagline">Made with ❤️ for those who look up</div>
+      <div class="footer-contact"><a href="mailto:hello@vantage.earth">hello@vantage.earth</a></div>
+      <div class="footer-copyright">© 2026 Vantage</div>
     </footer>
   </div>
 
@@ -1822,12 +1839,11 @@
         
         <h4>Time slider</h4>
         <p>Use "Now" to see what's visible later tonight. Weather and sky conditions update to match.</p>
+        
+        <p class="help-modal-reset"><a href="#" onclick="resetAllData(event)">Reset all data</a></p>
       </div>
       <div class="help-modal-footer">
         <button class="help-modal-btn" onclick="closeHelpModal()">Got it</button>
-      </div>
-      <div class="help-modal-reset">
-        <a href="#" onclick="resetAllData(event)">Reset all data</a>
       </div>
     </div>
   </div>
@@ -3138,12 +3154,6 @@
       document.getElementById('altitudeSelector').classList.remove('open');
       saveState();
       renderObjects();
-      updateFooter();
-    }
-    
-    // Update footer hint
-    function updateFooter() {
-      document.querySelector('.footer-hint').textContent = `Showing objects above ${state.minAltitude}° altitude`;
     }
     
     // Dropdown management
@@ -3251,7 +3261,6 @@
       if (state.location.horizon !== undefined) {
         state.minAltitude = state.location.horizon;
         document.getElementById('altitudeText').textContent = `Horizon: ${state.minAltitude}°`;
-        document.querySelector('.footer-hint').textContent = `Showing objects above ${state.minAltitude}° altitude`;
       }
       
       saveState();
@@ -3498,7 +3507,6 @@
     fetchWeather(); // Fetch weather data
     renderInfoCards();
     renderObjects();
-    updateFooter();
     
     // Update UI to reflect loaded state
     document.getElementById('altitudeText').textContent = `Horizon: ${state.minAltitude}°`;
@@ -3775,7 +3783,6 @@
       
       // Update all UI elements
       document.getElementById('altitudeText').textContent = `Horizon: ${horizonValue}°`;
-      document.querySelector('.footer-hint').textContent = `Showing objects above ${horizonValue}° altitude`;
       
       // Update dropdown selection
       document.querySelectorAll('#altitudeSelector .dropdown-option').forEach(opt => {
