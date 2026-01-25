@@ -1524,7 +1524,7 @@
     
     .horizon-turn-prompt p {
       font-size: 0.95rem;
-      color: var(--text-muted);
+      color: var(--text-light-muted);
       margin-bottom: 32px;
       line-height: 1.5;
     }
@@ -1546,7 +1546,7 @@
       display: none;
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, #12151f 0%, #0d0f15 100%);
+      background: var(--bg-primary);
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
@@ -1572,8 +1572,22 @@
     
     .compass-instruction p {
       font-size: 0.9rem;
-      color: var(--text-muted);
+      color: var(--text-light-muted);
       line-height: 1.5;
+    }
+    
+    .compass-cancel-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: var(--text-light-muted);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      cursor: pointer;
     }
     
     .compass-container {
@@ -1672,7 +1686,7 @@
     
     .compass-status-text {
       font-size: 0.95rem;
-      color: var(--text-muted);
+      color: var(--text-light-muted);
       height: 32px;
       display: flex;
       align-items: center;
@@ -1749,7 +1763,7 @@
     
     .result-value .direction {
       font-size: 0.7rem;
-      color: var(--text-muted);
+      color: var(--text-light-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 2px;
@@ -1787,7 +1801,7 @@
     
     .results-note {
       font-size: 0.85rem;
-      color: var(--text-muted);
+      color: var(--text-light-muted);
       max-width: 280px;
       line-height: 1.5;
     }
@@ -1805,7 +1819,7 @@
       background: transparent;
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 12px;
-      color: var(--text-muted);
+      color: var(--text-light-secondary);
       font-family: var(--font-body);
       font-size: 1rem;
       cursor: pointer;
@@ -2010,10 +2024,6 @@
               <div class="dropdown-label" style="font-size: 0.7rem; margin-top: 8px; margin-bottom: 4px; color: var(--text-muted);">Use camera</div>
               <div class="dropdown-option" id="horizonOptDirectional" onclick="openHorizonModal('directional'); toggleDropdown('altitudeSelector');">
                 <div class="dropdown-option-content">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px;">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
-                  </svg>
                   <div>
                     <div class="dropdown-option-name">Four directions</div>
                     <div class="dropdown-option-detail">Set N, E, S, W separately</div>
@@ -2025,10 +2035,6 @@
               </div>
               <div class="dropdown-option" id="horizonOptSingle" onclick="openHorizonModal('single'); toggleDropdown('altitudeSelector');" style="border-bottom: 1px solid var(--bg-tertiary); margin-bottom: 8px; padding-bottom: 12px;">
                 <div class="dropdown-option-content">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px;">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                    <circle cx="12" cy="13" r="4"/>
-                  </svg>
                   <div>
                     <div class="dropdown-option-name">Single value</div>
                     <div class="dropdown-option-detail">Set one value for all directions</div>
@@ -2294,6 +2300,7 @@
         </svg>
         <h3>Rotate to Landscape</h3>
         <p>Turn your phone sideways for the best view of the horizon</p>
+        <button class="horizon-cancel-btn" onclick="closeHorizonModal()">Cancel</button>
       </div>
       
       <!-- Turn prompt (directional mode only) -->
@@ -2309,6 +2316,8 @@
       
       <!-- Compass screen (directional mode only) -->
       <div class="horizon-compass-screen" id="horizonCompassScreen">
+        <button class="compass-cancel-btn" onclick="closeHorizonModal()">Cancel</button>
+        
         <div class="compass-instruction">
           <h2>Hold phone flat</h2>
           <p>Turn yourself until the needle<br>points up toward N</p>
@@ -4057,6 +4066,12 @@
     }
     
     function openHorizonModal(mode = 'single') {
+      // Check if location is set
+      if (!state.location) {
+        alert('Please set your location first');
+        return;
+      }
+      
       horizonMode = mode;
       document.getElementById('horizonModal').classList.add('active');
       horizonVideo = document.getElementById('horizonVideo');
@@ -4078,6 +4093,22 @@
       document.getElementById('horizonHelpPopup').classList.remove('visible');
       
       if (mode === 'directional') {
+        // Check if we have existing directional values
+        const existingDirectional = state.location.horizonDirectional;
+        if (existingDirectional && existingDirectional.N !== null) {
+          // Offer to use existing values or start fresh
+          if (confirm(`You have saved directional values (N:${existingDirectional.N}° E:${existingDirectional.E}° S:${existingDirectional.S}° W:${existingDirectional.W}°). Use these values?`)) {
+            // Show results screen with existing values
+            horizonDirections = { ...existingDirectional };
+            document.getElementById('horizonResultN').textContent = `${horizonDirections.N}°`;
+            document.getElementById('horizonResultE').textContent = `${horizonDirections.E}°`;
+            document.getElementById('horizonResultS').textContent = `${horizonDirections.S}°`;
+            document.getElementById('horizonResultW').textContent = `${horizonDirections.W}°`;
+            document.getElementById('horizonResultsScreen').classList.add('active');
+            return;
+          }
+        }
+        
         // Start with compass screen
         document.getElementById('horizonHelpText').textContent = 'For this direction, find where trees or buildings block the most sky, then set the line to match.';
         document.getElementById('horizonCompassScreen').classList.add('active');
@@ -4327,8 +4358,8 @@
         state.location.horizon = horizonValue;
         state.minAltitude = horizonValue;
         
-        // Clear directional if setting single value
-        delete state.location.horizonDirectional;
+        // Keep directional values if they exist (user can switch back)
+        // Just mark that we're using single value now
         
         // Update saved locations array
         const locIndex = state.savedLocations.findIndex(loc => 
@@ -4337,7 +4368,6 @@
         );
         if (locIndex >= 0) {
           state.savedLocations[locIndex].horizon = horizonValue;
-          delete state.savedLocations[locIndex].horizonDirectional;
         }
         
         saveState();
