@@ -1387,7 +1387,7 @@
       display: none;
       position: absolute;
       inset: 0;
-      background: #0d0f15;
+      background: var(--bg-primary);
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -1459,6 +1459,452 @@
       15% { opacity: 1; transform: translateX(-50%) translateY(0); }
       85% { opacity: 1; transform: translateX(-50%) translateY(0); }
       100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    }
+    
+    /* Directional horizon capture styles */
+    .horizon-direction-label {
+      display: none;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 20;
+    }
+    
+    .horizon-direction-label.visible {
+      display: block;
+    }
+    
+    .horizon-direction-label h2 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--text-light);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      margin: 0;
+    }
+    
+    .horizon-direction-label span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+    
+    .horizon-turn-prompt {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: var(--bg-secondary);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      z-index: 100;
+    }
+    
+    .horizon-turn-prompt.active {
+      display: flex;
+    }
+    
+    .horizon-turn-prompt svg {
+      width: 70px;
+      height: 70px;
+      color: var(--accent-warm);
+      margin-bottom: 24px;
+      opacity: 0.8;
+    }
+    
+    .horizon-turn-prompt h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin-bottom: 8px;
+      color: var(--text-light);
+    }
+    
+    .horizon-turn-prompt p {
+      font-size: 0.95rem;
+      color: var(--text-light-muted);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+    
+    .horizon-turn-btn {
+      padding: 16px 48px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    /* Compass screen */
+    .horizon-compass-screen {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: var(--bg-primary);
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 60px 30px 50px;
+      z-index: 100;
+    }
+    
+    .horizon-compass-screen.active {
+      display: flex;
+    }
+    
+    .compass-instruction {
+      text-align: center;
+    }
+    
+    .compass-instruction h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin-bottom: 8px;
+      color: var(--text-light);
+    }
+    
+    .compass-instruction p {
+      font-size: 0.9rem;
+      color: var(--text-light-muted);
+      line-height: 1.5;
+    }
+    
+    .compass-cancel-btn {
+      padding: 14px 48px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: var(--text-light-muted);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+    }
+    
+    .compass-container {
+      position: relative;
+      width: 260px;
+      height: 260px;
+    }
+    
+    .compass-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(30, 35, 50, 0.8) 0%, rgba(13, 15, 21, 0.9) 100%);
+      box-shadow: inset 0 2px 20px rgba(0,0,0,0.5), 0 0 40px rgba(0,0,0,0.3);
+    }
+    
+    .compass-ring {
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
+    
+    .compass-direction {
+      position: absolute;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.3);
+    }
+    
+    .compass-direction.north {
+      top: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--accent-warm);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    .compass-direction.east {
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .compass-direction.south {
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .compass-direction.west {
+      left: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .compass-needle-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 24px;
+      height: 160px;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease-out;
+    }
+    
+    .compass-needle {
+      position: absolute;
+      inset: 0;
+    }
+    
+    .compass-needle svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+    }
+    
+    .compass-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: radial-gradient(circle at 30% 30%, #3a3a4a, #1a1a2a);
+      border: 2px solid rgba(212, 165, 116, 0.5);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      z-index: 10;
+    }
+    
+    .compass-status {
+      text-align: center;
+      width: 100%;
+      max-width: 280px;
+    }
+    
+    .compass-status-text {
+      font-size: 0.95rem;
+      color: var(--text-light-muted);
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .compass-status-text.aligned {
+      color: #8bbb8b;
+    }
+    
+    .compass-status-text svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .compass-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    
+    .compass-confirm-btn {
+      padding: 16px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+      width: 100%;
+    }
+    
+    .compass-confirm-btn.ready {
+      opacity: 1;
+    }
+    
+    /* Results screen */
+    .horizon-results-screen {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: var(--bg-primary);
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      text-align: center;
+      padding: 60px 30px 40px;
+      gap: 28px;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    
+    .horizon-results-screen.active {
+      display: flex;
+    }
+    
+    .horizon-results-screen h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--text-light);
+    }
+    
+    .results-compass {
+      position: relative;
+      width: 220px;
+      height: 200px;
+      flex-shrink: 0;
+    }
+    
+    .result-value {
+      position: absolute;
+      text-align: center;
+    }
+    
+    .result-value .direction {
+      font-size: 0.7rem;
+      color: var(--text-light-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }
+    
+    .result-value .value {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--accent-warm);
+    }
+    
+    .result-value.north {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .result-value.east {
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .result-value.south {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .result-value.west {
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .results-note {
+      font-size: 0.85rem;
+      color: var(--text-light-muted);
+      max-width: 280px;
+      line-height: 1.5;
+    }
+    
+    .results-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 280px;
+    }
+    
+    .results-buttons .btn-secondary {
+      padding: 16px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: var(--text-light-secondary);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    
+    .results-buttons .btn-primary {
+      padding: 16px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    /* Styled confirmation dialog */
+    .horizon-confirm-dialog {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg-primary);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      z-index: 2500;
+    }
+    
+    .horizon-confirm-dialog.active {
+      display: flex;
+    }
+    
+    .horizon-confirm-dialog h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+    
+    .horizon-confirm-dialog p {
+      font-size: 0.95rem;
+      color: var(--text-light-muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    
+    .horizon-confirm-dialog .dialog-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 260px;
+    }
+    
+    .horizon-confirm-dialog .dialog-btn {
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    
+    .horizon-confirm-dialog .dialog-btn-primary {
+      background: var(--accent-warm);
+      border: none;
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+    
+    .horizon-confirm-dialog .dialog-btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text-light-secondary);
     }
   </style>
 </head>
@@ -1645,18 +2091,30 @@
           <div class="dropdown-panel">
             <div class="dropdown-section">
               <div class="dropdown-label">Minimum altitude</div>
-              <div class="dropdown-option" onclick="openHorizonModal(); toggleDropdown('altitudeSelector');" style="border-bottom: 1px solid var(--bg-tertiary); margin-bottom: 8px; padding-bottom: 12px;">
+              <div class="dropdown-label" style="font-size: 0.7rem; margin-top: 8px; margin-bottom: 4px; color: var(--text-muted);">Use camera</div>
+              <div class="dropdown-option" id="horizonOptDirectional" onclick="openHorizonModal('directional'); toggleDropdown('altitudeSelector');">
                 <div class="dropdown-option-content">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px;">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                    <circle cx="12" cy="13" r="4"/>
-                  </svg>
                   <div>
-                    <div class="dropdown-option-name">Use Camera</div>
-                    <div class="dropdown-option-detail">Set horizon using AR view</div>
+                    <div class="dropdown-option-name">Four directions</div>
+                    <div class="dropdown-option-detail">Set N, E, S, W separately</div>
                   </div>
                 </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
               </div>
+              <div class="dropdown-option" id="horizonOptSingle" onclick="openHorizonModal('single'); toggleDropdown('altitudeSelector');" style="border-bottom: 1px solid var(--bg-tertiary); margin-bottom: 8px; padding-bottom: 12px;">
+                <div class="dropdown-option-content">
+                  <div>
+                    <div class="dropdown-option-name">Single value</div>
+                    <div class="dropdown-option-detail">Set one value for all directions</div>
+                  </div>
+                </div>
+                <svg class="dropdown-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="dropdown-label" style="font-size: 0.7rem; margin-bottom: 4px; color: var(--text-muted);">Presets</div>
               <div class="dropdown-option" onclick="selectAltitude(0)">
                 <div class="dropdown-option-content">
                   <div class="dropdown-option-name">0°</div>
@@ -1854,6 +2312,12 @@
       <video class="horizon-video" id="horizonVideo" autoplay playsinline></video>
       <canvas class="horizon-canvas" id="horizonCanvas"></canvas>
       
+      <!-- Direction label (directional mode only) -->
+      <div class="horizon-direction-label" id="horizonDirectionLabel">
+        <h2 id="horizonDirectionName">North</h2>
+        <span id="horizonDirectionStep">1 of 4</span>
+      </div>
+      
       <!-- Right side controls -->
       <div class="horizon-right-controls">
         <button class="horizon-ctrl-btn" onclick="closeHorizonModal()">Cancel</button>
@@ -1875,7 +2339,7 @@
       
       <!-- Help popup -->
       <div class="horizon-help-popup" id="horizonHelpPopup">
-        <p>Turn in a full circle while pointing at the horizon. Find where trees or buildings block the most sky, then set the line to match.</p>
+        <p id="horizonHelpText">Turn in a full circle while pointing at the horizon. Find where trees or buildings block the most sky, then set the line to match.</p>
       </div>
       
       <div class="horizon-crosshair">
@@ -1896,7 +2360,7 @@
                  min="0" max="50" value="25" 
                  oninput="updateHorizonSlider(this.value)">
         </div>
-        <button class="horizon-save-btn" onclick="applyHorizon()">Save</button>
+        <button class="horizon-save-btn" id="horizonSaveBtn" onclick="applyHorizon()">Save</button>
       </div>
       
       <div class="horizon-rotate-prompt" id="horizonRotatePrompt">
@@ -1906,7 +2370,104 @@
         </svg>
         <h3>Rotate to Landscape</h3>
         <p>Turn your phone sideways for the best view of the horizon</p>
+        <button class="horizon-cancel-btn" onclick="closeHorizonModal()">Cancel</button>
       </div>
+      
+      <!-- Turn prompt (directional mode only) -->
+      <div class="horizon-turn-prompt" id="horizonTurnPrompt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 1l4 4-4 4"/>
+          <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+        </svg>
+        <h3 id="horizonTurnTitle">Turn Yourself Right</h3>
+        <p id="horizonTurnText">Rotate yourself 90° clockwise to face East.<br>Keep holding your phone towards the horizon.</p>
+        <button class="horizon-turn-btn" id="horizonTurnBtn" onclick="continueDirectionalCapture()">I'm Facing East</button>
+      </div>
+      
+      <!-- Compass screen (directional mode only) -->
+      <div class="horizon-compass-screen" id="horizonCompassScreen">
+        <div class="compass-instruction">
+          <h2>Hold phone flat</h2>
+          <p>Turn yourself until the needle<br>points up toward N</p>
+        </div>
+        
+        <div class="compass-container">
+          <div class="compass-bg"></div>
+          <div class="compass-ring"></div>
+          <div class="compass-ticks"></div>
+          <div class="compass-direction north">N</div>
+          <div class="compass-direction east">E</div>
+          <div class="compass-direction south">S</div>
+          <div class="compass-direction west">W</div>
+          <div class="compass-needle-container" id="horizonCompassNeedle">
+            <div class="compass-needle">
+              <svg viewBox="0 0 24 160">
+                <path d="M12 0 L18 70 L12 60 L6 70 Z" fill="#d4a574"/>
+                <path d="M12 160 L18 90 L12 100 L6 90 Z" fill="rgba(255,255,255,0.2)"/>
+              </svg>
+            </div>
+          </div>
+          <div class="compass-center"></div>
+        </div>
+        
+        <div class="compass-status">
+          <div class="compass-status-text" id="horizonCompassStatus">Turn to face North</div>
+          <div class="compass-buttons">
+            <button class="compass-confirm-btn" id="horizonCompassBtn" onclick="confirmCompassNorth()">I'm Facing North</button>
+            <button class="compass-cancel-btn" onclick="closeHorizonModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Results screen (directional mode only) -->
+      <div class="horizon-results-screen" id="horizonResultsScreen">
+        <h2>Horizon Set!</h2>
+        
+        <div class="results-compass">
+          <div class="result-value north">
+            <div class="direction">North</div>
+            <div class="value" id="horizonResultN">--°</div>
+          </div>
+          <div class="result-value east">
+            <div class="direction">East</div>
+            <div class="value" id="horizonResultE">--°</div>
+          </div>
+          <div class="result-value south">
+            <div class="direction">South</div>
+            <div class="value" id="horizonResultS">--°</div>
+          </div>
+          <div class="result-value west">
+            <div class="direction">West</div>
+            <div class="value" id="horizonResultW">--°</div>
+          </div>
+        </div>
+        
+        <p class="results-note">Objects below these altitudes in each direction will be filtered from recommendations.</p>
+        
+        <div class="results-buttons">
+          <button class="btn-secondary" onclick="restartDirectionalCapture()">Start Over</button>
+          <button class="btn-primary" onclick="applyDirectionalHorizon()">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Confirmation dialogs (outside modal for proper layering) -->
+  <div class="horizon-confirm-dialog" id="horizonConfirmDialog">
+    <h3 id="confirmDialogTitle">Use saved values?</h3>
+    <p id="confirmDialogText">You have saved directional values.</p>
+    <div class="dialog-buttons">
+      <button class="dialog-btn dialog-btn-primary" id="confirmDialogYes">Yes</button>
+      <button class="dialog-btn dialog-btn-secondary" id="confirmDialogNo">No, start over</button>
+    </div>
+  </div>
+  
+  <!-- Location required dialog -->
+  <div class="horizon-confirm-dialog" id="horizonLocationDialog">
+    <h3>Location Required</h3>
+    <p>Please set your location before configuring the horizon.</p>
+    <div class="dialog-buttons">
+      <button class="dialog-btn dialog-btn-primary" onclick="closeLocationDialog()">OK</button>
     </div>
   </div>
   
@@ -2313,10 +2874,28 @@
       rankObjects(catalog, location, date, equipment, userPrefs, minAltitude = 25) {
         const { latitude, longitude } = location;
         const moon = VantageAstro.getMoonPosition(date);
+        const hasDirectional = location.horizonDirectional != null;
         
         return catalog.map(obj => {
           const altAz = VantageAstro.getAltAz(obj.ra, obj.dec, date, latitude, longitude);
           const moonDistance = VantageAstro.getAngularSeparation(obj.ra, obj.dec, moon.ra, moon.dec);
+          
+          // Use directional horizon if available
+          let effectiveMinAltitude = minAltitude;
+          if (hasDirectional) {
+            const hd = location.horizonDirectional;
+            const azimuth = ((altAz.azimuth % 360) + 360) % 360;
+            // Interpolate between cardinal directions
+            if (azimuth <= 90) {
+              effectiveMinAltitude = hd.N + (hd.E - hd.N) * (azimuth / 90);
+            } else if (azimuth <= 180) {
+              effectiveMinAltitude = hd.E + (hd.S - hd.E) * ((azimuth - 90) / 90);
+            } else if (azimuth <= 270) {
+              effectiveMinAltitude = hd.S + (hd.W - hd.S) * ((azimuth - 180) / 90);
+            } else {
+              effectiveMinAltitude = hd.W + (hd.N - hd.W) * ((azimuth - 270) / 90);
+            }
+          }
           
           const conditions = {
             altitude: altAz.altitude, azimuth: altAz.azimuth, moonDistance,
@@ -2324,7 +2903,7 @@
             seen: userPrefs?.seen?.has(obj.id)
           };
           
-          const scoreResult = this.scoreObject(obj, conditions, equipment, minAltitude);
+          const scoreResult = this.scoreObject(obj, conditions, equipment, effectiveMinAltitude);
           
           return {
             ...obj, ...scoreResult,
@@ -3508,11 +4087,7 @@
     renderInfoCards();
     renderObjects();
     
-    // Update UI to reflect loaded state
-    document.getElementById('altitudeText').textContent = `Horizon: ${state.minAltitude}°`;
-    document.querySelectorAll('#altitudeSelector .dropdown-option').forEach(opt => {
-      opt.classList.toggle('selected', opt.onclick.toString().includes(`(${state.minAltitude})`));
-    });
+    // Update UI to reflect loaded state - horizon display handled after functions defined
     const equipNames = { smart: 'Smart telescope', visual: 'Visual telescope', binoculars: 'Binoculars', naked: 'Naked eye' };
     document.getElementById('equipmentText').textContent = equipNames[state.equipment];
     document.querySelectorAll('#equipmentSelector .dropdown-option').forEach(opt => {
@@ -3529,6 +4104,37 @@
     let horizonCtx = null;
     let horizonTilt = 0;
     let horizonValue = 25;
+    
+    // Directional horizon state
+    let horizonMode = 'single'; // 'single' or 'directional'
+    let horizonDirections = { N: null, E: null, S: null, W: null };
+    let horizonCurrentDirectionIndex = 0;
+    const horizonDirectionOrder = ['N', 'E', 'S', 'W'];
+    const horizonDirectionNames = { N: 'North', E: 'East', S: 'South', W: 'West' };
+    let compassHeadingHistory = [];
+    const COMPASS_SMOOTHING_SAMPLES = 8;
+    
+    // Get horizon value at a given azimuth (interpolates directional values)
+    function getHorizonAtAzimuth(azimuth) {
+      const hd = state.location.horizonDirectional;
+      if (!hd) return state.minAltitude;
+      
+      const { N, E, S, W } = hd;
+      
+      // Normalize azimuth to 0-360
+      azimuth = ((azimuth % 360) + 360) % 360;
+      
+      // Interpolate between cardinal directions
+      if (azimuth <= 90) {
+        return N + (E - N) * (azimuth / 90);
+      } else if (azimuth <= 180) {
+        return E + (S - E) * ((azimuth - 90) / 90);
+      } else if (azimuth <= 270) {
+        return S + (W - S) * ((azimuth - 180) / 90);
+      } else {
+        return W + (N - W) * ((azimuth - 270) / 90);
+      }
+    }
     
     // Help modal
     function openHelpModal() {
@@ -3549,20 +4155,196 @@
       }
     }
     
-    function openHorizonModal() {
+    function openHorizonModal(mode = 'single') {
+      // Check if location is set
+      if (!state.location) {
+        document.getElementById('horizonLocationDialog').classList.add('active');
+        return;
+      }
+      
+      horizonMode = mode;
+      
+      if (mode === 'directional') {
+        // Check if we have existing directional values BEFORE opening modal
+        const existingDirectional = state.location.horizonDirectional;
+        if (existingDirectional && existingDirectional.N !== null) {
+          // Show styled confirmation dialog (modal not open yet)
+          showHorizonConfirmDialog(
+            'Use saved values?',
+            `N: ${existingDirectional.N}°  E: ${existingDirectional.E}°  S: ${existingDirectional.S}°  W: ${existingDirectional.W}°`,
+            'Yes, use saved',
+            'No, start over',
+            () => {
+              // Yes - apply saved values directly (don't open modal)
+              applyExistingDirectionalHorizon(existingDirectional);
+            },
+            () => {
+              // No - now open modal and start fresh
+              openHorizonModalFresh('directional');
+            }
+          );
+          return;
+        }
+      } else {
+        // Single mode - check for existing camera-captured value
+        const existingSingleCaptured = state.location.horizonCaptured;
+        if (existingSingleCaptured !== undefined && existingSingleCaptured !== null) {
+          // Show styled confirmation dialog
+          showHorizonConfirmDialog(
+            'Use saved value?',
+            `Previously captured: ${existingSingleCaptured}°`,
+            'Yes, use saved',
+            'No, start over',
+            () => {
+              // Yes - apply saved value directly
+              applyExistingSingleHorizon(existingSingleCaptured);
+            },
+            () => {
+              // No - now open modal and start fresh
+              openHorizonModalFresh('single');
+            }
+          );
+          return;
+        }
+      }
+      
+      // No existing values, open modal directly
+      openHorizonModalFresh(mode);
+    }
+    
+    function openHorizonModalFresh(mode) {
       document.getElementById('horizonModal').classList.add('active');
       horizonVideo = document.getElementById('horizonVideo');
       horizonCanvas = document.getElementById('horizonCanvas');
       horizonCtx = horizonCanvas.getContext('2d');
       
-      // Set current value
-      horizonValue = state.location.horizon || state.minAltitude;
-      document.getElementById('horizonSlider').value = horizonValue;
-      document.getElementById('horizonSliderValue').textContent = `${horizonValue}°`;
+      // Reset directional state
+      horizonDirections = { N: null, E: null, S: null, W: null };
+      horizonCurrentDirectionIndex = 0;
+      
+      // Hide all directional screens initially
+      document.getElementById('horizonCompassScreen').classList.remove('active');
+      document.getElementById('horizonTurnPrompt').classList.remove('active');
+      document.getElementById('horizonResultsScreen').classList.remove('active');
+      document.getElementById('horizonDirectionLabel').classList.remove('visible');
       
       // Reset controls
       document.getElementById('horizonCameraBtn').classList.remove('active');
       document.getElementById('horizonHelpPopup').classList.remove('visible');
+      
+      if (mode === 'directional') {
+        startDirectionalFromCompass();
+      } else {
+        startSingleCapture();
+      }
+    }
+    
+    function closeLocationDialog() {
+      document.getElementById('horizonLocationDialog').classList.remove('active');
+    }
+    
+    function showHorizonConfirmDialog(title, text, yesLabel, noLabel, onYes, onNo) {
+      document.getElementById('confirmDialogTitle').textContent = title;
+      document.getElementById('confirmDialogText').textContent = text;
+      document.getElementById('confirmDialogYes').textContent = yesLabel;
+      document.getElementById('confirmDialogNo').textContent = noLabel;
+      
+      const yesBtn = document.getElementById('confirmDialogYes');
+      const noBtn = document.getElementById('confirmDialogNo');
+      
+      // Remove old listeners
+      yesBtn.replaceWith(yesBtn.cloneNode(true));
+      noBtn.replaceWith(noBtn.cloneNode(true));
+      
+      // Add new listeners
+      document.getElementById('confirmDialogYes').onclick = () => {
+        document.getElementById('horizonConfirmDialog').classList.remove('active');
+        onYes();
+      };
+      document.getElementById('confirmDialogNo').onclick = () => {
+        document.getElementById('horizonConfirmDialog').classList.remove('active');
+        onNo();
+      };
+      
+      document.getElementById('horizonConfirmDialog').classList.add('active');
+    }
+    
+    function applyExistingDirectionalHorizon(existingDirectional) {
+      // Apply values directly without showing results screen
+      state.location.horizonDirectional = { ...existingDirectional };
+      
+      const values = Object.values(existingDirectional);
+      const minVal = Math.min(...values);
+      const maxVal = Math.max(...values);
+      state.location.horizon = minVal;
+      state.minAltitude = minVal;
+      
+      // Update saved locations
+      const locIndex = state.savedLocations.findIndex(loc => 
+        loc.latitude === state.location.latitude && 
+        loc.longitude === state.location.longitude
+      );
+      if (locIndex >= 0) {
+        state.savedLocations[locIndex].horizonDirectional = { ...existingDirectional };
+        state.savedLocations[locIndex].horizon = minVal;
+      }
+      
+      saveState();
+      closeHorizonModal();
+      
+      document.getElementById('altitudeText').textContent = `Horizon: ${minVal}-${maxVal}°`;
+      updateHorizonDropdownSelection('directional');
+      renderObjects();
+      
+      // Show toast
+      const toast = document.getElementById('horizonToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+    
+    function applyExistingSingleHorizon(value) {
+      // Apply value directly without showing AR
+      state.location.horizon = value;
+      state.location.horizonCaptured = value;
+      state.minAltitude = value;
+      
+      const locIndex = state.savedLocations.findIndex(loc => 
+        loc.latitude === state.location.latitude && 
+        loc.longitude === state.location.longitude
+      );
+      if (locIndex >= 0) {
+        state.savedLocations[locIndex].horizon = value;
+        state.savedLocations[locIndex].horizonCaptured = value;
+      }
+      
+      saveState();
+      closeHorizonModal();
+      
+      document.getElementById('altitudeText').textContent = `Horizon: ${value}°`;
+      updateHorizonDropdownSelection('single');
+      renderObjects();
+      
+      // Show toast
+      const toast = document.getElementById('horizonToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+    
+    function startDirectionalFromCompass() {
+      document.getElementById('horizonHelpText').textContent = 'For this direction, find where trees or buildings block the most sky, then set the line to match.';
+      document.getElementById('horizonCompassScreen').classList.add('active');
+      document.getElementById('horizonSaveBtn').textContent = 'Save North';
+      requestCompassPermission();
+    }
+    
+    function startSingleCapture() {
+      document.getElementById('horizonHelpText').textContent = 'Turn in a full circle while pointing at the horizon. Find where trees or buildings block the most sky, then set the line to match.';
+      document.getElementById('horizonSaveBtn').textContent = 'Save';
+      
+      // Set current value
+      horizonValue = state.location.horizon || state.minAltitude;
+      document.getElementById('horizonSlider').value = horizonValue;
+      document.getElementById('horizonSliderValue').textContent = `${horizonValue}°`;
       
       // Setup canvas
       resizeHorizonCanvas();
@@ -3589,6 +4371,15 @@
       }
       horizonCameraActive = false;
       document.getElementById('horizonCameraBtn').classList.remove('active');
+      
+      // Hide all directional screens
+      document.getElementById('horizonCompassScreen').classList.remove('active');
+      document.getElementById('horizonTurnPrompt').classList.remove('active');
+      document.getElementById('horizonResultsScreen').classList.remove('active');
+      document.getElementById('horizonDirectionLabel').classList.remove('visible');
+      
+      // Remove compass listener if active
+      window.removeEventListener('deviceorientation', handleCompassOrientation);
       
       window.removeEventListener('resize', resizeHorizonCanvas);
       window.removeEventListener('resize', checkHorizonOrientation);
@@ -3765,9 +4556,224 @@
     }
     
     function applyHorizon() {
-      // Save horizon to current location
-      state.location.horizon = horizonValue;
-      state.minAltitude = horizonValue;
+      if (horizonMode === 'directional') {
+        // In directional mode, save current direction and move to next
+        const direction = horizonDirectionOrder[horizonCurrentDirectionIndex];
+        horizonDirections[direction] = horizonValue;
+        
+        horizonCurrentDirectionIndex++;
+        
+        if (horizonCurrentDirectionIndex < 4) {
+          // Show turn prompt for next direction
+          const nextDirection = horizonDirectionNames[horizonDirectionOrder[horizonCurrentDirectionIndex]];
+          document.getElementById('horizonTurnTitle').textContent = 'Turn Yourself Right';
+          document.getElementById('horizonTurnText').innerHTML = `Rotate yourself 90° clockwise to face ${nextDirection}.<br>Keep holding your phone towards the horizon.`;
+          document.getElementById('horizonTurnBtn').textContent = `I'm Facing ${nextDirection}`;
+          document.getElementById('horizonTurnPrompt').classList.add('active');
+        } else {
+          // All directions captured - show results
+          showDirectionalResults();
+        }
+      } else {
+        // Single mode - save and close
+        state.location.horizon = horizonValue;
+        state.location.horizonCaptured = horizonValue; // Save for "use saved" prompt
+        state.minAltitude = horizonValue;
+        
+        // Keep directional values if they exist (user can switch back)
+        
+        // Update saved locations array
+        const locIndex = state.savedLocations.findIndex(loc => 
+          loc.latitude === state.location.latitude && 
+          loc.longitude === state.location.longitude
+        );
+        if (locIndex >= 0) {
+          state.savedLocations[locIndex].horizon = horizonValue;
+          state.savedLocations[locIndex].horizonCaptured = horizonValue;
+        }
+        
+        saveState();
+        closeHorizonModal();
+        
+        // Update all UI elements
+        document.getElementById('altitudeText').textContent = `Horizon: ${horizonValue}°`;
+        
+        // Update dropdown selection
+        updateHorizonDropdownSelection('single');
+        
+        renderObjects();
+        
+        // Show toast
+        const toast = document.getElementById('horizonToast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      }
+    }
+    
+    // === DIRECTIONAL HORIZON FUNCTIONS ===
+    
+    function requestCompassPermission() {
+      compassHeadingHistory = [];
+      
+      if ('DeviceOrientationEvent' in window) {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(permission => {
+              if (permission === 'granted') {
+                window.addEventListener('deviceorientation', handleCompassOrientation);
+              } else {
+                showCompassError('Compass permission denied');
+              }
+            })
+            .catch(err => {
+              showCompassError('Could not access compass');
+            });
+        } else {
+          window.addEventListener('deviceorientation', handleCompassOrientation);
+        }
+      } else {
+        showCompassError('Compass not available');
+      }
+    }
+    
+    function showCompassError(msg) {
+      document.getElementById('horizonCompassStatus').textContent = msg;
+      document.getElementById('horizonCompassStatus').style.color = '#d4574a';
+      document.getElementById('horizonCompassBtn').classList.add('ready');
+    }
+    
+    function handleCompassOrientation(event) {
+      let heading;
+      
+      if (event.webkitCompassHeading !== undefined) {
+        heading = event.webkitCompassHeading;
+      } else if (event.alpha !== null) {
+        heading = (360 - event.alpha) % 360;
+      } else {
+        return;
+      }
+      
+      // Smooth the heading using circular mean
+      compassHeadingHistory.push(heading);
+      if (compassHeadingHistory.length > COMPASS_SMOOTHING_SAMPLES) {
+        compassHeadingHistory.shift();
+      }
+      
+      let sinSum = 0, cosSum = 0;
+      for (let h of compassHeadingHistory) {
+        sinSum += Math.sin(h * Math.PI / 180);
+        cosSum += Math.cos(h * Math.PI / 180);
+      }
+      let smoothedHeading = Math.atan2(sinSum, cosSum) * 180 / Math.PI;
+      if (smoothedHeading < 0) smoothedHeading += 360;
+      
+      // Rotate needle
+      const needle = document.getElementById('horizonCompassNeedle');
+      if (needle) {
+        needle.style.transform = `translate(-50%, -50%) rotate(${-smoothedHeading}deg)`;
+      }
+      
+      // Check if aligned with North
+      const isNorth = smoothedHeading <= 15 || smoothedHeading >= 345;
+      const status = document.getElementById('horizonCompassStatus');
+      const btn = document.getElementById('horizonCompassBtn');
+      
+      if (isNorth) {
+        status.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M20 6L9 17l-5-5"/></svg> Facing North';
+        status.classList.add('aligned');
+        btn.classList.add('ready');
+      } else {
+        status.textContent = 'Turn to face North';
+        status.classList.remove('aligned');
+        btn.classList.remove('ready');
+      }
+    }
+    
+    function confirmCompassNorth() {
+      window.removeEventListener('deviceorientation', handleCompassOrientation);
+      document.getElementById('horizonCompassScreen').classList.remove('active');
+      startDirectionalCapture();
+    }
+    
+    function startDirectionalCapture() {
+      const direction = horizonDirectionOrder[horizonCurrentDirectionIndex];
+      const directionName = horizonDirectionNames[direction];
+      
+      // Show direction label
+      document.getElementById('horizonDirectionLabel').classList.add('visible');
+      document.getElementById('horizonDirectionName').textContent = directionName;
+      document.getElementById('horizonDirectionStep').textContent = `${horizonCurrentDirectionIndex + 1} of 4`;
+      
+      // Update save button
+      document.getElementById('horizonSaveBtn').textContent = `Save ${directionName}`;
+      
+      // Set slider value
+      horizonValue = horizonDirections[direction] !== null ? horizonDirections[direction] : 25;
+      document.getElementById('horizonSlider').value = horizonValue;
+      document.getElementById('horizonSliderValue').textContent = `${horizonValue}°`;
+      
+      // Setup canvas and motion
+      resizeHorizonCanvas();
+      window.addEventListener('resize', resizeHorizonCanvas);
+      checkHorizonOrientation();
+      window.addEventListener('resize', checkHorizonOrientation);
+      requestHorizonMotion();
+      drawHorizonOverlay();
+    }
+    
+    function continueDirectionalCapture() {
+      document.getElementById('horizonTurnPrompt').classList.remove('active');
+      startDirectionalCapture();
+    }
+    
+    function showDirectionalResults() {
+      // Stop motion tracking
+      window.removeEventListener('deviceorientation', handleHorizonOrientation);
+      window.removeEventListener('resize', resizeHorizonCanvas);
+      window.removeEventListener('resize', checkHorizonOrientation);
+      
+      // Stop camera
+      if (horizonVideo && horizonVideo.srcObject) {
+        horizonVideo.srcObject.getTracks().forEach(track => track.stop());
+        horizonVideo.srcObject = null;
+      }
+      horizonCameraActive = false;
+      
+      // Hide direction label and other AR elements
+      document.getElementById('horizonDirectionLabel').classList.remove('visible');
+      document.getElementById('horizonRotatePrompt').classList.remove('active');
+      
+      // Clear the canvas so it doesn't show through
+      if (horizonCtx && horizonCanvas) {
+        horizonCtx.clearRect(0, 0, horizonCanvas.width, horizonCanvas.height);
+      }
+      
+      // Show results
+      document.getElementById('horizonResultN').textContent = `${horizonDirections.N}°`;
+      document.getElementById('horizonResultE').textContent = `${horizonDirections.E}°`;
+      document.getElementById('horizonResultS').textContent = `${horizonDirections.S}°`;
+      document.getElementById('horizonResultW').textContent = `${horizonDirections.W}°`;
+      document.getElementById('horizonResultsScreen').classList.add('active');
+    }
+    
+    function restartDirectionalCapture() {
+      document.getElementById('horizonResultsScreen').classList.remove('active');
+      horizonDirections = { N: null, E: null, S: null, W: null };
+      horizonCurrentDirectionIndex = 0;
+      document.getElementById('horizonCompassScreen').classList.add('active');
+      requestCompassPermission();
+    }
+    
+    function applyDirectionalHorizon() {
+      // Save directional horizons
+      state.location.horizonDirectional = { ...horizonDirections };
+      
+      // Calculate min value for backwards compatibility
+      const values = Object.values(horizonDirections);
+      const minVal = Math.min(...values);
+      const maxVal = Math.max(...values);
+      state.location.horizon = minVal;
+      state.minAltitude = minVal;
       
       // Update saved locations array
       const locIndex = state.savedLocations.findIndex(loc => 
@@ -3775,22 +4781,18 @@
         loc.longitude === state.location.longitude
       );
       if (locIndex >= 0) {
-        state.savedLocations[locIndex].horizon = horizonValue;
+        state.savedLocations[locIndex].horizonDirectional = { ...horizonDirections };
+        state.savedLocations[locIndex].horizon = minVal;
       }
       
       saveState();
       closeHorizonModal();
       
-      // Update all UI elements
-      document.getElementById('altitudeText').textContent = `Horizon: ${horizonValue}°`;
+      // Update UI to show range
+      document.getElementById('altitudeText').textContent = `Horizon: ${minVal}-${maxVal}°`;
       
       // Update dropdown selection
-      document.querySelectorAll('#altitudeSelector .dropdown-option').forEach(opt => {
-        opt.classList.remove('selected');
-        if (opt.textContent.includes(`${horizonValue}°`) && !opt.textContent.includes('Camera')) {
-          opt.classList.add('selected');
-        }
-      });
+      updateHorizonDropdownSelection('directional');
       
       renderObjects();
       
@@ -3799,6 +4801,35 @@
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2000);
     }
+    
+    function updateHorizonDropdownSelection(mode) {
+      document.querySelectorAll('#altitudeSelector .dropdown-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      
+      if (mode === 'directional') {
+        document.getElementById('horizonOptDirectional')?.classList.add('selected');
+      } else if (mode === 'single') {
+        document.getElementById('horizonOptSingle')?.classList.add('selected');
+      }
+    }
+    
+    // Update horizon display on load
+    function updateHorizonDisplay() {
+      const hd = state.location.horizonDirectional;
+      if (hd) {
+        const values = Object.values(hd);
+        const minVal = Math.min(...values);
+        const maxVal = Math.max(...values);
+        document.getElementById('altitudeText').textContent = `Horizon: ${minVal}-${maxVal}°`;
+        updateHorizonDropdownSelection('directional');
+      } else {
+        document.getElementById('altitudeText').textContent = `Horizon: ${state.minAltitude}°`;
+      }
+    }
+    
+    // Initialize horizon display on load
+    updateHorizonDisplay();
   </script>
   <!-- === END MODULE === -->
 </body>
