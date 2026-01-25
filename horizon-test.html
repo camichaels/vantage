@@ -1017,30 +1017,31 @@
       
       motionListener = (event) => {
         if (event.gamma !== null && isLandscape) {
-          // Debug: log actual values
-          console.log('gamma:', event.gamma, 'beta:', event.beta);
+          // Actual behavior in landscape (based on testing):
+          // Horizon: gamma = ±90 (fluctuates near boundary)
+          // Sky (pointing up): gamma = 0
+          // Ground (pointing down): gamma = 0
+          // Beta helps distinguish: sky has different beta than ground
           
-          // In landscape mode (home button on right):
-          // gamma = 0 when phone is vertical (pointing at horizon)
-          // gamma = negative when tilted up toward sky
-          // gamma = positive when tilted down toward ground
+          // gamma ranges from -90 to 90
+          // At horizon: |gamma| ≈ 90, so altitude = 90 - |gamma| ≈ 0
+          // At sky: gamma ≈ 0, so altitude = 90 - |gamma| ≈ 90
           
-          // We want: horizon = 0°, pointing straight up = 90°
-          let rawTilt;
-          if (event.gamma <= 0) {
-            // Phone tilted up (toward sky) - this is what we want
-            rawTilt = Math.abs(event.gamma); // 0 to 90
-          } else {
-            // Phone tilted down (toward ground) - below horizon
-            rawTilt = -event.gamma; // negative values
+          const absGamma = Math.abs(event.gamma);
+          let rawTilt = 90 - absGamma; // 0° at horizon, 90° at zenith
+          
+          // If beta indicates we're pointing down (toward ground), make negative
+          // In landscape, beta > 90 or beta < -90 typically means pointing down
+          if (event.beta !== null && (event.beta > 90 || event.beta < -90)) {
+            rawTilt = -rawTilt; // Below horizon
           }
           
           // Smooth the tilt
           smoothedTilt = smoothedTilt * 0.85 + rawTilt * 0.15;
           horizonTilt = smoothedTilt;
           
-          // Debug: show current tilt in direction label
-          document.getElementById('directionStep').textContent = `γ:${Math.round(event.gamma)} → ${Math.round(horizonTilt)}°`;
+          // Debug: show current tilt
+          document.getElementById('directionStep').textContent = `γ:${Math.round(event.gamma)} β:${Math.round(event.beta)} → ${Math.round(horizonTilt)}°`;
           
           drawHorizonOverlay();
         }
