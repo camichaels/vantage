@@ -976,21 +976,12 @@
       horizonCtx = canvas.getContext('2d');
       
       // Reset smoothed tilt
-      smoothedTilt = 45; // Start at reasonable middle value
+      smoothedTilt = 25; // Start at reasonable middle value
       
-      // Start camera
-      if (cameraOn && !videoStream) {
-        try {
-          videoStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' }
-          });
-          document.getElementById('horizonVideo').srcObject = videoStream;
-          document.getElementById('cameraToggle').classList.add('active');
-        } catch (err) {
-          cameraOn = false;
-          document.getElementById('cameraToggle').classList.remove('active');
-        }
-      }
+      // Don't auto-start camera - user clicks Camera button if they want it
+      // Camera button starts as inactive
+      document.getElementById('cameraToggle').classList.remove('active');
+      cameraOn = false;
       
       // Start motion tracking
       startMotionTracking();
@@ -1026,23 +1017,30 @@
       
       motionListener = (event) => {
         if (event.gamma !== null && isLandscape) {
-          // In landscape mode:
-          // gamma = 0 when phone is vertical (pointing at horizon) = 0° altitude
-          // gamma = -90 when phone points straight up = 90° altitude
-          // gamma = 90 when phone points straight down = below horizon
+          // Debug: log actual values
+          console.log('gamma:', event.gamma, 'beta:', event.beta);
           
+          // In landscape mode (home button on right):
+          // gamma = 0 when phone is vertical (pointing at horizon)
+          // gamma = negative when tilted up toward sky
+          // gamma = positive when tilted down toward ground
+          
+          // We want: horizon = 0°, pointing straight up = 90°
           let rawTilt;
-          if (event.gamma < 0) {
-            // Phone tilted up (toward sky)
+          if (event.gamma <= 0) {
+            // Phone tilted up (toward sky) - this is what we want
             rawTilt = Math.abs(event.gamma); // 0 to 90
           } else {
-            // Phone tilted down (toward ground)
-            rawTilt = -event.gamma; // negative values = below horizon
+            // Phone tilted down (toward ground) - below horizon
+            rawTilt = -event.gamma; // negative values
           }
           
           // Smooth the tilt
           smoothedTilt = smoothedTilt * 0.85 + rawTilt * 0.15;
           horizonTilt = smoothedTilt;
+          
+          // Debug: show current tilt in direction label
+          document.getElementById('directionStep').textContent = `γ:${Math.round(event.gamma)} → ${Math.round(horizonTilt)}°`;
           
           drawHorizonOverlay();
         }
