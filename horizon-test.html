@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Horizon Capture Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -11,10 +14,20 @@
       box-sizing: border-box;
     }
     
+    :root {
+      --font-display: 'DM Serif Display', serif;
+      --font-body: 'DM Sans', sans-serif;
+      --bg-primary: #1a1f2e;
+      --bg-secondary: #0d0f15;
+      --text-light: #f0ede6;
+      --text-muted: #9a958d;
+      --accent-warm: #d4a574;
+    }
+    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #1a1a2e;
-      color: #f0ede6;
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-light);
       min-height: 100vh;
       overflow: hidden;
     }
@@ -23,38 +36,61 @@
       display: none;
       flex-direction: column;
       height: 100vh;
-      padding: 20px;
+      height: 100dvh;
     }
     
     .screen.active {
       display: flex;
     }
     
-    /* Intro Screen */
+    /* ============ INTRO SCREEN ============ */
     .intro-screen {
       justify-content: center;
       align-items: center;
       text-align: center;
-      gap: 20px;
+      padding: 40px 30px;
+      gap: 24px;
+    }
+    
+    .intro-icon {
+      width: 80px;
+      height: 80px;
+      color: var(--accent-warm);
+      opacity: 0.8;
     }
     
     .intro-screen h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 400;
     }
     
     .intro-screen p {
       font-size: 1rem;
-      color: #9a958d;
+      color: var(--text-muted);
       max-width: 300px;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     
-    /* Compass Screen */
+    .btn {
+      padding: 16px 48px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    
+    /* ============ COMPASS SCREEN ============ */
     .compass-screen {
       justify-content: space-between;
       align-items: center;
-      padding: 40px 20px;
+      padding: 60px 30px 50px;
+      background: var(--bg-secondary);
     }
     
     .compass-instruction {
@@ -62,15 +98,18 @@
     }
     
     .compass-instruction h2 {
-      font-size: 1.25rem;
-      margin-bottom: 10px;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin-bottom: 8px;
     }
     
     .compass-instruction p {
       font-size: 0.9rem;
-      color: #9a958d;
+      color: var(--text-muted);
     }
     
+    /* Rotating ring compass */
     .compass-container {
       position: relative;
       width: 280px;
@@ -80,75 +119,63 @@
     .compass-ring {
       position: absolute;
       inset: 0;
-      border: 3px solid #3a3a5a;
+      border: 2px solid rgba(255,255,255,0.15);
       border-radius: 50%;
+      transition: transform 0.15s ease-out;
     }
     
-    .compass-direction {
+    .compass-marker {
       position: absolute;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 600;
-      color: #9a958d;
+      transition: color 0.2s, text-shadow 0.2s;
     }
     
-    .compass-direction.north {
-      top: 10px;
+    .compass-marker.north {
+      top: 15px;
       left: 50%;
       transform: translateX(-50%);
-      color: #d4a574;
+      color: var(--text-muted);
     }
     
-    .compass-direction.south {
-      bottom: 10px;
+    .compass-marker.east {
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+    
+    .compass-marker.south {
+      bottom: 15px;
       left: 50%;
       transform: translateX(-50%);
+      color: var(--text-muted);
     }
     
-    .compass-direction.east {
-      right: 10px;
+    .compass-marker.west {
+      left: 15px;
       top: 50%;
       transform: translateY(-50%);
+      color: var(--text-muted);
     }
     
-    .compass-direction.west {
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
+    .compass-marker.aligned {
+      color: var(--accent-warm);
+      text-shadow: 0 0 20px rgba(212, 165, 116, 0.6);
     }
     
-    .compass-needle {
+    /* Fixed indicator at top */
+    .compass-indicator {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 4px;
-      height: 120px;
-      transform-origin: bottom center;
-      transform: translate(-50%, -100%) rotate(0deg);
-      transition: transform 0.1s ease-out;
-    }
-    
-    .compass-needle::before {
-      content: '';
-      position: absolute;
-      top: 0;
+      top: -8px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 12px solid transparent;
-      border-right: 12px solid transparent;
-      border-bottom: 30px solid #d4574a;
-    }
-    
-    .compass-needle::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 4px;
-      height: 90px;
-      background: #6a6a8a;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 14px solid var(--accent-warm);
+      z-index: 10;
     }
     
     .compass-center {
@@ -156,34 +183,57 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 16px;
-      height: 16px;
-      background: #f0ede6;
+      width: 8px;
+      height: 8px;
+      background: rgba(255,255,255,0.3);
       border-radius: 50%;
-    }
-    
-    .compass-heading {
-      text-align: center;
-      font-size: 2rem;
-      font-weight: 300;
-      margin-top: 20px;
     }
     
     .compass-status {
       text-align: center;
-      font-size: 0.9rem;
-      color: #9a958d;
-      height: 24px;
     }
     
-    .compass-status.aligned {
+    .compass-status-text {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .compass-status-text.aligned {
       color: #7cb87c;
     }
     
-    /* AR Screen */
+    .compass-status-text svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .compass-confirm-btn {
+      padding: 16px 48px;
+      background: var(--accent-warm);
+      border: none;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+    }
+    
+    .compass-confirm-btn.ready {
+      opacity: 1;
+    }
+    
+    /* ============ AR CAPTURE SCREEN ============ */
     .ar-screen {
-      padding: 0;
       position: relative;
+      background: var(--bg-secondary);
     }
     
     .ar-video {
@@ -201,185 +251,302 @@
       flex-direction: column;
     }
     
-    .ar-header {
-      padding: 60px 20px 20px;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
-      text-align: center;
+    /* Top controls */
+    .ar-top-controls {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 25;
     }
     
-    .ar-header h2 {
-      font-size: 1.25rem;
-      margin-bottom: 5px;
+    .ar-ctrl-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: rgba(13, 15, 21, 0.85);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: #a09a92;
+      font-size: 0.75rem;
+      cursor: pointer;
     }
     
-    .ar-header p {
-      font-size: 0.85rem;
-      color: #ccc;
+    .ar-ctrl-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .ar-ctrl-btn.active {
+      border-color: rgba(107, 155, 107, 0.5);
+      background: rgba(107, 155, 107, 0.15);
+      color: #8bbb8b;
+    }
+    
+    /* Direction header */
+    .ar-direction-header {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 100px;
+      z-index: 20;
+    }
+    
+    .ar-direction-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(13, 15, 21, 0.9);
+      border-radius: 10px;
+    }
+    
+    .ar-direction-badge h2 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 400;
+    }
+    
+    .ar-direction-step {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    /* Horizon line and degree markers */
+    .ar-horizon-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    
+    .ar-degree-markers {
+      position: absolute;
+      right: 20px;
+      top: 15%;
+      bottom: 25%;
+      width: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .ar-degree-mark {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .ar-degree-mark::before {
+      content: '';
+      width: 12px;
+      height: 1px;
+      background: rgba(255,255,255,0.3);
     }
     
     .ar-horizon-line {
       position: absolute;
       left: 0;
-      right: 0;
-      height: 3px;
-      background: #d4a574;
-      box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
+      right: 70px;
+      height: 2px;
+      background: var(--accent-warm);
+      box-shadow: 0 0 12px rgba(212, 165, 116, 0.5);
       top: 50%;
-      transform: translateY(-50%);
     }
     
-    .ar-horizon-label {
+    .ar-horizon-value {
       position: absolute;
-      right: 20px;
-      background: rgba(0,0,0,0.6);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 1.5rem;
-      font-weight: 600;
+      right: 80px;
+      padding: 6px 14px;
+      background: rgba(13, 15, 21, 0.85);
+      border: 1px solid var(--accent-warm);
+      border-radius: 8px;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: var(--accent-warm);
       top: 50%;
       transform: translateY(-50%);
     }
     
-    .ar-controls {
+    /* Bottom controls */
+    .ar-bottom-controls {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 20px;
-      padding-bottom: 40px;
-      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      padding: 16px 20px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 20px));
+      background: rgba(13, 15, 21, 0.92);
+      z-index: 10;
     }
     
-    .ar-slider-container {
+    .ar-slider-row {
       display: flex;
       align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin-bottom: 16px;
     }
     
-    .ar-slider-container span {
-      font-size: 0.85rem;
-      color: #9a958d;
-      width: 30px;
+    .ar-slider-label {
+      font-size: 0.65rem;
+      color: #6b6560;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .ar-slider-display {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--accent-warm);
+      min-width: 45px;
     }
     
     .ar-slider {
       flex: 1;
       -webkit-appearance: none;
       appearance: none;
-      height: 40px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 20px;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
       outline: none;
     }
     
     .ar-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 50px;
-      height: 50px;
-      background: #d4a574;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
+      background: var(--accent-warm);
       cursor: pointer;
     }
     
-    .ar-btn {
+    .ar-save-btn {
       width: 100%;
-      padding: 16px;
-      background: #d4a574;
+      padding: 14px;
+      background: var(--accent-warm);
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       color: #1a1a1a;
+      font-family: var(--font-body);
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
     }
     
-    /* Results Screen */
+    /* ============ TURN PROMPT OVERLAY ============ */
+    .turn-prompt {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg-secondary);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      z-index: 100;
+    }
+    
+    .turn-prompt.active {
+      display: flex;
+    }
+    
+    .turn-prompt-icon {
+      width: 80px;
+      height: 80px;
+      color: var(--accent-warm);
+      margin-bottom: 24px;
+    }
+    
+    .turn-prompt h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+    
+    .turn-prompt p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    
+    .turn-prompt .btn {
+      padding: 14px 40px;
+    }
+    
+    /* ============ RESULTS SCREEN ============ */
     .results-screen {
       justify-content: center;
       align-items: center;
       text-align: center;
-      gap: 30px;
+      padding: 40px 30px;
+      gap: 32px;
     }
     
     .results-screen h2 {
+      font-family: var(--font-display);
       font-size: 1.5rem;
+      font-weight: 400;
     }
     
     .results-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 12px;
       width: 100%;
-      max-width: 300px;
+      max-width: 280px;
     }
     
     .result-card {
-      background: #2a3148;
-      padding: 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 20px 16px;
       border-radius: 12px;
     }
     
     .result-card .direction {
-      font-size: 0.85rem;
-      color: #9a958d;
-      margin-bottom: 5px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
     }
     
     .result-card .value {
+      font-family: var(--font-display);
       font-size: 2rem;
-      font-weight: 600;
-      color: #d4a574;
+      color: var(--accent-warm);
     }
     
-    .results-visual {
-      position: relative;
-      width: 200px;
-      height: 200px;
-    }
-    
-    .results-visual svg {
-      width: 100%;
-      height: 100%;
-    }
-    
-    /* Common button */
-    .btn {
-      padding: 16px 40px;
-      background: #d4a574;
-      border: none;
-      border-radius: 12px;
-      color: #1a1a1a;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
+    .results-note {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      max-width: 260px;
     }
     
     .btn-secondary {
       background: transparent;
-      border: 2px solid #d4a574;
-      color: #d4a574;
-    }
-    
-    /* Error/status messages */
-    .error-message {
-      background: rgba(212, 87, 74, 0.2);
-      border: 1px solid #d4574a;
-      padding: 15px 20px;
-      border-radius: 10px;
-      color: #f0ede6;
-      text-align: center;
-      margin: 20px;
+      border: 2px solid var(--accent-warm);
+      color: var(--accent-warm);
     }
   </style>
 </head>
 <body>
   <!-- Intro Screen -->
   <div class="screen intro-screen active" id="introScreen">
-    <h1>Horizon Capture</h1>
-    <p>Set your horizon for each direction to filter out objects blocked by trees, buildings, or hills.</p>
-    <p>You'll use the compass to face North, then capture 4 horizons.</p>
+    <svg class="intro-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+      <path d="M12 8v8" stroke-width="2"/>
+    </svg>
+    <h1>Set Your Horizon</h1>
+    <p>Capture how much sky is blocked in each direction by trees, buildings, or hills.</p>
+    <p>First, you'll use the compass to face North.</p>
     <button class="btn" onclick="startCompass()">Get Started</button>
   </div>
   
@@ -387,65 +554,90 @@
   <div class="screen compass-screen" id="compassScreen">
     <div class="compass-instruction">
       <h2>Hold phone flat</h2>
-      <p>Rotate your body until the red needle points to N</p>
+      <p>Rotate your body until N is at the top</p>
     </div>
     
     <div class="compass-container">
-      <div class="compass-ring"></div>
-      <div class="compass-direction north">N</div>
-      <div class="compass-direction east">E</div>
-      <div class="compass-direction south">S</div>
-      <div class="compass-direction west">W</div>
-      <div class="compass-needle" id="compassNeedle"></div>
+      <div class="compass-indicator"></div>
+      <div class="compass-ring" id="compassRing">
+        <span class="compass-marker north" id="markerN">N</span>
+        <span class="compass-marker east" id="markerE">E</span>
+        <span class="compass-marker south" id="markerS">S</span>
+        <span class="compass-marker west" id="markerW">W</span>
+      </div>
       <div class="compass-center"></div>
     </div>
     
-    <div>
-      <div class="compass-heading" id="compassHeading">---°</div>
-      <div class="compass-status" id="compassStatus">Rotate to face North</div>
+    <div class="compass-status">
+      <div class="compass-status-text" id="compassStatus">Rotate to align N with the arrow</div>
+      <button class="compass-confirm-btn" id="compassConfirmBtn" onclick="confirmNorth()">I'm Facing North</button>
     </div>
-    
-    <button class="btn" id="compassConfirmBtn" onclick="confirmNorth()" disabled>I'm Facing North</button>
   </div>
   
   <!-- AR Capture Screen -->
   <div class="screen ar-screen" id="arScreen">
     <video class="ar-video" id="arVideo" autoplay playsinline></video>
+    
     <div class="ar-overlay">
-      <div class="ar-header">
-        <h2 id="arDirection">North Horizon</h2>
-        <p>Adjust the line to match your horizon</p>
+      <!-- Top right controls -->
+      <div class="ar-top-controls">
+        <button class="ar-ctrl-btn" onclick="cancelCapture()">Cancel</button>
+        <button class="ar-ctrl-btn" id="cameraToggle" onclick="toggleCamera()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          Camera
+        </button>
       </div>
       
-      <div class="ar-horizon-line" id="arHorizonLine"></div>
-      <div class="ar-horizon-label" id="arHorizonLabel">25°</div>
-      
-      <div class="ar-controls">
-        <div class="ar-slider-container">
-          <span>0°</span>
-          <input type="range" class="ar-slider" id="arSlider" min="0" max="90" value="25">
-          <span>90°</span>
+      <!-- Direction badge -->
+      <div class="ar-direction-header">
+        <div class="ar-direction-badge">
+          <h2 id="arDirectionName">North</h2>
+          <span class="ar-direction-step" id="arDirectionStep">1 of 4</span>
         </div>
-        <button class="ar-btn" id="arSaveBtn" onclick="saveHorizon()">Save North</button>
+      </div>
+      
+      <!-- Horizon visualization -->
+      <div class="ar-horizon-container">
+        <div class="ar-degree-markers">
+          <div class="ar-degree-mark">90°</div>
+          <div class="ar-degree-mark">60°</div>
+          <div class="ar-degree-mark">30°</div>
+          <div class="ar-degree-mark">0°</div>
+        </div>
+        <div class="ar-horizon-line" id="arHorizonLine"></div>
+        <div class="ar-horizon-value" id="arHorizonValue">25°</div>
+      </div>
+      
+      <!-- Bottom controls -->
+      <div class="ar-bottom-controls">
+        <div class="ar-slider-row">
+          <span class="ar-slider-label">Altitude</span>
+          <span class="ar-slider-display" id="arSliderDisplay">25°</span>
+          <input type="range" class="ar-slider" id="arSlider" min="0" max="70" value="25" oninput="updateHorizon(this.value)">
+        </div>
+        <button class="ar-save-btn" id="arSaveBtn" onclick="saveHorizon()">Save North</button>
       </div>
     </div>
+  </div>
+  
+  <!-- Turn Prompt Overlay -->
+  <div class="turn-prompt" id="turnPrompt">
+    <svg class="turn-prompt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M17 1l4 4-4 4"/>
+      <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+      <circle cx="12" cy="18" r="3"/>
+    </svg>
+    <h3 id="turnPromptTitle">Turn Right to Face East</h3>
+    <p id="turnPromptText">Rotate 90° clockwise, then raise your phone to see the horizon.</p>
+    <button class="btn" onclick="continueCaptureAfterTurn()">Continue</button>
   </div>
   
   <!-- Results Screen -->
   <div class="screen results-screen" id="resultsScreen">
     <h2>Horizon Profile Set!</h2>
-    
-    <div class="results-visual">
-      <svg viewBox="0 0 200 200" id="resultsSvg">
-        <circle cx="100" cy="100" r="90" fill="none" stroke="#3a3a5a" stroke-width="2"/>
-        <text x="100" y="25" text-anchor="middle" fill="#d4a574" font-size="14">N</text>
-        <text x="180" y="105" text-anchor="middle" fill="#9a958d" font-size="14">E</text>
-        <text x="100" y="190" text-anchor="middle" fill="#9a958d" font-size="14">S</text>
-        <text x="20" y="105" text-anchor="middle" fill="#9a958d" font-size="14">W</text>
-        <!-- Horizon shape will be drawn here -->
-        <polygon id="horizonShape" fill="rgba(212, 165, 116, 0.3)" stroke="#d4a574" stroke-width="2"/>
-      </svg>
-    </div>
     
     <div class="results-grid">
       <div class="result-card">
@@ -466,7 +658,10 @@
       </div>
     </div>
     
-    <button class="btn" onclick="restart()">Start Over</button>
+    <p class="results-note">Objects below these altitudes in each direction will be filtered from recommendations.</p>
+    
+    <button class="btn" onclick="finishSetup()">Done</button>
+    <button class="btn btn-secondary" onclick="restart()" style="margin-top: 12px;">Start Over</button>
   </div>
 
   <script>
@@ -477,6 +672,7 @@
     let currentDirectionIndex = 0;
     let currentHeading = 0;
     let videoStream = null;
+    let cameraOn = true;
     
     // Screen management
     function showScreen(id) {
@@ -484,26 +680,24 @@
       document.getElementById(id).classList.add('active');
     }
     
-    // Start compass
+    // ============ COMPASS ============
     function startCompass() {
       showScreen('compassScreen');
       
       if ('DeviceOrientationEvent' in window) {
-        // iOS 13+ requires permission
         if (typeof DeviceOrientationEvent.requestPermission === 'function') {
           DeviceOrientationEvent.requestPermission()
             .then(permission => {
               if (permission === 'granted') {
                 window.addEventListener('deviceorientation', handleOrientation);
               } else {
-                showCompassError('Compass permission denied');
+                showCompassError('Compass permission denied. Please enable in Settings.');
               }
             })
             .catch(err => {
-              showCompassError('Could not access compass');
+              showCompassError('Could not access compass: ' + err.message);
             });
         } else {
-          // Non-iOS or older iOS
           window.addEventListener('deviceorientation', handleOrientation);
         }
       } else {
@@ -514,92 +708,124 @@
     function showCompassError(msg) {
       document.getElementById('compassStatus').textContent = msg;
       document.getElementById('compassStatus').style.color = '#d4574a';
+      // Allow continuing anyway for testing
+      document.getElementById('compassConfirmBtn').classList.add('ready');
     }
     
     function handleOrientation(event) {
       let heading;
       
-      // iOS uses webkitCompassHeading
       if (event.webkitCompassHeading !== undefined) {
         heading = event.webkitCompassHeading;
       } else if (event.alpha !== null) {
-        // Android - alpha is relative to arbitrary direction
-        // This is less accurate but we'll use it
-        heading = 360 - event.alpha;
+        heading = (360 - event.alpha) % 360;
       } else {
         return;
       }
       
       currentHeading = Math.round(heading);
       
-      // Update needle (rotate opposite to heading so N stays at top when facing N)
-      const needle = document.getElementById('compassNeedle');
-      needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+      // Rotate the ring (opposite direction so N aligns with top when facing N)
+      const ring = document.getElementById('compassRing');
+      ring.style.transform = `rotate(${-heading}deg)`;
       
-      // Update heading display
-      document.getElementById('compassHeading').textContent = `${currentHeading}°`;
+      // Check if aligned with North (within 15 degrees)
+      const isNorth = currentHeading <= 15 || currentHeading >= 345;
       
-      // Check if aligned with North (within 10 degrees)
-      const isNorth = currentHeading <= 10 || currentHeading >= 350;
       const status = document.getElementById('compassStatus');
       const btn = document.getElementById('compassConfirmBtn');
+      const markerN = document.getElementById('markerN');
       
+      // Update N marker highlight
       if (isNorth) {
-        status.textContent = '✓ Facing North';
+        markerN.classList.add('aligned');
+        status.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Facing North';
         status.classList.add('aligned');
-        btn.disabled = false;
+        btn.classList.add('ready');
       } else {
-        status.textContent = 'Rotate to face North';
+        markerN.classList.remove('aligned');
+        status.textContent = 'Rotate to align N with the arrow';
         status.classList.remove('aligned');
-        btn.disabled = false; // Allow anyway for testing
+        btn.classList.remove('ready');
       }
     }
     
-    // Confirm facing North and start AR capture
     function confirmNorth() {
       window.removeEventListener('deviceorientation', handleOrientation);
       currentDirectionIndex = 0;
       startARCapture();
     }
     
-    // AR Capture
+    // ============ AR CAPTURE ============
     async function startARCapture() {
       showScreen('arScreen');
       
       const direction = directions[currentDirectionIndex];
       const directionName = directionNames[direction];
       
-      document.getElementById('arDirection').textContent = `${directionName} Horizon`;
+      document.getElementById('arDirectionName').textContent = directionName;
+      document.getElementById('arDirectionStep').textContent = `${currentDirectionIndex + 1} of 4`;
       document.getElementById('arSaveBtn').textContent = `Save ${directionName}`;
       
-      // Start camera if not already running
-      if (!videoStream) {
+      // Set slider to previous value or default
+      const slider = document.getElementById('arSlider');
+      slider.value = horizons[direction] !== null ? horizons[direction] : 25;
+      updateHorizon(slider.value);
+      
+      // Start camera
+      if (cameraOn && !videoStream) {
         try {
           videoStream = await navigator.mediaDevices.getUserMedia({
             video: { facingMode: 'environment' }
           });
           document.getElementById('arVideo').srcObject = videoStream;
+          document.getElementById('cameraToggle').classList.add('active');
         } catch (err) {
           console.error('Camera error:', err);
-          alert('Could not access camera');
-          return;
+          cameraOn = false;
+          document.getElementById('cameraToggle').classList.remove('active');
         }
       }
-      
-      // Reset slider to default or previous value
-      const slider = document.getElementById('arSlider');
-      slider.value = horizons[direction] || 25;
-      updateHorizonLine(slider.value);
-      
-      // Slider event
-      slider.oninput = (e) => updateHorizonLine(e.target.value);
     }
     
-    function updateHorizonLine(value) {
-      const percent = 80 - (value / 90 * 60); // Map 0-90 to 80%-20% from top
+    function updateHorizon(value) {
+      // Update display
+      document.getElementById('arSliderDisplay').textContent = `${value}°`;
+      document.getElementById('arHorizonValue').textContent = `${value}°`;
+      
+      // Position line (0° at bottom ~85%, 70° at top ~20%)
+      const percent = 85 - (value / 70 * 65);
       document.getElementById('arHorizonLine').style.top = `${percent}%`;
-      document.getElementById('arHorizonLabel').style.top = `${percent}%`;
-      document.getElementById('arHorizonLabel').textContent = `${value}°`;
+      document.getElementById('arHorizonValue').style.top = `${percent}%`;
+    }
+    
+    function toggleCamera() {
+      const video = document.getElementById('arVideo');
+      const btn = document.getElementById('cameraToggle');
+      
+      if (cameraOn) {
+        // Turn off
+        if (videoStream) {
+          videoStream.getTracks().forEach(track => track.stop());
+          videoStream = null;
+        }
+        video.srcObject = null;
+        cameraOn = false;
+        btn.classList.remove('active');
+      } else {
+        // Turn on
+        cameraOn = true;
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+          .then(stream => {
+            videoStream = stream;
+            video.srcObject = stream;
+            btn.classList.add('active');
+          })
+          .catch(err => {
+            console.error('Camera error:', err);
+            cameraOn = false;
+          });
+      }
     }
     
     function saveHorizon() {
@@ -610,15 +836,26 @@
       currentDirectionIndex++;
       
       if (currentDirectionIndex < directions.length) {
-        // Show instruction to turn
+        // Show turn prompt
         const nextDirection = directionNames[directions[currentDirectionIndex]];
-        alert(`Turn 90° right to face ${nextDirection}`);
-        startARCapture();
+        document.getElementById('turnPromptTitle').textContent = `Turn Right to Face ${nextDirection}`;
+        document.getElementById('turnPrompt').classList.add('active');
       } else {
         // All done
         stopCamera();
         showResults();
       }
+    }
+    
+    function continueCaptureAfterTurn() {
+      document.getElementById('turnPrompt').classList.remove('active');
+      startARCapture();
+    }
+    
+    function cancelCapture() {
+      stopCamera();
+      showScreen('introScreen');
+      resetState();
     }
     
     function stopCamera() {
@@ -628,6 +865,7 @@
       }
     }
     
+    // ============ RESULTS ============
     function showResults() {
       showScreen('resultsScreen');
       
@@ -635,55 +873,25 @@
       document.getElementById('resultE').textContent = `${horizons.E}°`;
       document.getElementById('resultS').textContent = `${horizons.S}°`;
       document.getElementById('resultW').textContent = `${horizons.W}°`;
-      
-      // Draw horizon shape
-      drawHorizonShape();
     }
     
-    function drawHorizonShape() {
-      const svg = document.getElementById('resultsSvg');
-      const polygon = document.getElementById('horizonShape');
-      
-      // Center of SVG
-      const cx = 100, cy = 100;
-      const maxRadius = 80;
-      
-      // Calculate points for each direction
-      // Higher horizon = smaller radius (more blocked)
-      const points = [];
-      const values = [horizons.N, horizons.E, horizons.S, horizons.W];
-      const angles = [-90, 0, 90, 180]; // Degrees from right (E)
-      
-      // Create smooth curve with intermediate points
-      for (let i = 0; i < 4; i++) {
-        const startVal = values[i];
-        const endVal = values[(i + 1) % 4];
-        const startAngle = angles[i];
-        const endAngle = angles[(i + 1) % 4] || 270;
-        
-        // Add 3 points per quadrant for smoothness
-        for (let j = 0; j < 3; j++) {
-          const t = j / 3;
-          const angle = (startAngle + (endAngle - startAngle) * t) * Math.PI / 180;
-          const val = startVal + (endVal - startVal) * t;
-          const radius = maxRadius * (1 - val / 120); // Normalize so 90° isn't at center
-          
-          const x = cx + Math.cos(angle) * radius;
-          const y = cy + Math.sin(angle) * radius;
-          points.push(`${x},${y}`);
-        }
-      }
-      
-      polygon.setAttribute('points', points.join(' '));
+    function finishSetup() {
+      // In the real app, this would save to state and close
+      alert('Horizons saved!\n\nN: ' + horizons.N + '°\nE: ' + horizons.E + '°\nS: ' + horizons.S + '°\nW: ' + horizons.W + '°');
     }
     
     function restart() {
+      resetState();
+      showScreen('introScreen');
+    }
+    
+    function resetState() {
       horizons.N = null;
       horizons.E = null;
       horizons.S = null;
       horizons.W = null;
       currentDirectionIndex = 0;
-      showScreen('introScreen');
+      cameraOn = true;
     }
   </script>
 </body>
