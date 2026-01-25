@@ -1016,32 +1016,43 @@
       if (motionListener) return;
       
       motionListener = (event) => {
-        if (event.gamma !== null && isLandscape) {
+        if (event.beta !== null && isLandscape) {
           // Actual behavior in landscape (based on testing):
-          // Horizon: gamma = ±90 (fluctuates near boundary)
-          // Sky (pointing up): gamma = 0
-          // Ground (pointing down): gamma = 0
-          // Beta helps distinguish: sky has different beta than ground
+          // Horizon: beta ≈ 178 (or -178)
+          // Sky (pointing up): beta ≈ -178 (crosses from +180 to -180)
+          // Ground (pointing down): beta ≈ 0
           
-          // gamma ranges from -90 to 90
-          // At horizon: |gamma| ≈ 90, so altitude = 90 - |gamma| ≈ 0
-          // At sky: gamma ≈ 0, so altitude = 90 - |gamma| ≈ 90
+          // Beta ranges from -180 to 180
+          // At horizon: |beta| ≈ 180, altitude = 0°
+          // At zenith (up): beta crosses ±180, altitude = 90°
+          // At ground (down): beta ≈ 0, altitude = negative (below horizon)
           
-          const absGamma = Math.abs(event.gamma);
-          let rawTilt = 90 - absGamma; // 0° at horizon, 90° at zenith
+          const beta = event.beta;
+          let rawTilt;
           
-          // If beta indicates we're pointing down (toward ground), make negative
-          // In landscape, beta > 90 or beta < -90 typically means pointing down
-          if (event.beta !== null && (event.beta > 90 || event.beta < -90)) {
-            rawTilt = -rawTilt; // Below horizon
+          // Calculate altitude from beta
+          // |beta| = 180 → horizon (0°)
+          // |beta| = 90 → 45° up
+          // |beta| ≈ 0 → pointing down (below horizon)
+          
+          const absBeta = Math.abs(beta);
+          
+          if (absBeta >= 90) {
+            // Above horizon: 90-180 maps to 0-90° altitude
+            rawTilt = 180 - absBeta; // 180→0°, 90→90°... wait that's wrong
+            // Actually: absBeta=180 → 0°, absBeta=90 → 90°
+            rawTilt = 180 - absBeta;
+          } else {
+            // Below horizon: 0-90 maps to negative altitude
+            rawTilt = -(90 - absBeta); // 0→-90°, 90→0°
           }
           
           // Smooth the tilt
           smoothedTilt = smoothedTilt * 0.85 + rawTilt * 0.15;
           horizonTilt = smoothedTilt;
           
-          // Debug: show current tilt
-          document.getElementById('directionStep').textContent = `γ:${Math.round(event.gamma)} β:${Math.round(event.beta)} → ${Math.round(horizonTilt)}°`;
+          // Debug: show values
+          document.getElementById('directionStep').textContent = `β:${Math.round(beta)} → ${Math.round(horizonTilt)}°`;
           
           drawHorizonOverlay();
         }
