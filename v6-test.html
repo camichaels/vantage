@@ -4389,6 +4389,23 @@
       gpsBtn.onclick = useGpsForNewLocation;
       gpsText.textContent = 'Use current GPS location';
       
+      // Auto-detect GPS in background for search biasing (if we don't already have location)
+      if (!gpsLocation && !state.location && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            gpsLocation = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            };
+            console.log('GPS detected for search bias:', gpsLocation);
+          },
+          (error) => {
+            console.log('GPS detection for bias failed:', error.message);
+          },
+          { enableHighAccuracy: false, timeout: 5000 }
+        );
+      }
+      
       setTimeout(() => document.getElementById('locationSearchInput').focus(), 100);
     }
     
