@@ -4584,20 +4584,11 @@
       
       searchTimeout = setTimeout(async () => {
         try {
-          // Get user's location for biasing
-          const biasLat = gpsLocation?.latitude || state.location?.latitude;
-          const biasLon = gpsLocation?.longitude || state.location?.longitude;
-          
-          // Build URL
-          let url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`;
-          
-          // Add countrycodes bias for US if user is in US (rough check)
-          if (biasLat && biasLon && biasLat > 24 && biasLat < 50 && biasLon > -125 && biasLon < -66) {
-            url += `&countrycodes=us`;
-          }
+          // Simple search
+          const url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`;
           
           const response = await fetch(url, {
-            headers: { 'User-Agent': 'Vantage Astronomy App' }
+            headers: { 'User-Agent': 'VantageAstronomyApp/1.0' }
           });
           
           if (!response.ok) {
@@ -4608,7 +4599,7 @@
           
           document.getElementById('searchSpinner').classList.remove('active');
           
-          if (results.length === 0) {
+          if (!results || results.length === 0) {
             document.getElementById('searchResults').innerHTML = `
               <div class="search-no-results">No results found. Try a city name or zip code.</div>
             `;
@@ -4616,6 +4607,8 @@
           }
           
           // Sort by distance if we have user location
+          const biasLat = gpsLocation?.latitude || state.location?.latitude;
+          const biasLon = gpsLocation?.longitude || state.location?.longitude;
           if (biasLat && biasLon) {
             results.sort((a, b) => {
               const distA = Math.sqrt(Math.pow(parseFloat(a.lat) - biasLat, 2) + Math.pow(parseFloat(a.lon) - biasLon, 2));
