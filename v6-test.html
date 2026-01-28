@@ -4584,8 +4584,19 @@
       
       searchTimeout = setTimeout(async () => {
         try {
-          // Simple search without viewbox - let Nominatim rank by relevance
-          const url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=8&addressdetails=1`;
+          // Get user's location for biasing
+          const biasLat = gpsLocation?.latitude || state.location?.latitude;
+          const biasLon = gpsLocation?.longitude || state.location?.longitude;
+          
+          // Build URL - use viewbox to bias toward user's location if available
+          let url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`;
+          
+          if (biasLat && biasLon) {
+            // Create a bounding box around user (~1000km)
+            // viewbox format: left,top,right,bottom (lon,lat,lon,lat)
+            const delta = 8;
+            url += `&viewbox=${biasLon - delta},${biasLat + delta},${biasLon + delta},${biasLat - delta}&bounded=0`;
+          }
           
           const response = await fetch(url, {
             headers: { 'User-Agent': 'Vantage Astronomy App' }
@@ -4601,9 +4612,7 @@
             return;
           }
           
-          // If we have user location, sort by distance but don't filter
-          const biasLat = gpsLocation?.latitude || state.location?.latitude;
-          const biasLon = gpsLocation?.longitude || state.location?.longitude;
+          // Sort by distance if we have user location
           if (biasLat && biasLon) {
             results.sort((a, b) => {
               const distA = Math.sqrt(Math.pow(parseFloat(a.lat) - biasLat, 2) + Math.pow(parseFloat(a.lon) - biasLon, 2));
