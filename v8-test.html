@@ -465,6 +465,142 @@
       color: #cc3333;
     }
     
+    /* Night mode - rotate prompt screen */
+    body.night-mode .horizon-rotate-prompt {
+      background: #0a0000;
+    }
+    
+    body.night-mode .horizon-rotate-prompt h3 {
+      color: #cc3333;
+    }
+    
+    body.night-mode .horizon-rotate-prompt p {
+      color: #992222;
+    }
+    
+    body.night-mode .horizon-rotate-prompt .rotate-icon {
+      color: #cc3333;
+    }
+    
+    body.night-mode .horizon-rotate-prompt .horizon-cancel-btn {
+      border-color: #992222;
+      color: #cc3333;
+    }
+    
+    /* Night mode - AR horizon screen */
+    body.night-mode .horizon-controls {
+      background: rgba(10, 0, 0, 0.9);
+    }
+    
+    body.night-mode .horizon-slider-label {
+      color: #661515;
+    }
+    
+    body.night-mode .horizon-slider-value {
+      color: #cc3333;
+    }
+    
+    body.night-mode .horizon-slider {
+      background: rgba(204, 51, 51, 0.2);
+    }
+    
+    body.night-mode .horizon-slider::-webkit-slider-thumb {
+      background: #cc3333;
+    }
+    
+    body.night-mode .horizon-save-btn {
+      background: #cc3333;
+      color: #0a0000;
+    }
+    
+    body.night-mode .horizon-crosshair svg {
+      color: #cc3333;
+    }
+    
+    body.night-mode .horizon-top-controls button {
+      background: rgba(10, 0, 0, 0.6);
+      color: #cc3333;
+    }
+    
+    body.night-mode .horizon-camera-toggle {
+      border-color: #cc3333;
+      color: #cc3333;
+    }
+    
+    body.night-mode .horizon-help-popup {
+      background: rgba(10, 0, 0, 0.95);
+      border-color: rgba(204, 51, 51, 0.3);
+    }
+    
+    body.night-mode .horizon-help-popup h4 {
+      color: #cc3333;
+    }
+    
+    body.night-mode .horizon-help-popup p {
+      color: #992222;
+    }
+    
+    body.night-mode .horizon-toast {
+      background: rgba(153, 51, 51, 0.95);
+    }
+    
+    /* Night mode - directional horizon screens */
+    body.night-mode .direction-prompt h3 {
+      color: #cc3333;
+    }
+    
+    body.night-mode .direction-prompt p {
+      color: #992222;
+    }
+    
+    body.night-mode .compass-indicator {
+      color: #cc3333;
+    }
+    
+    body.night-mode .compass-arrow {
+      color: #cc3333;
+    }
+    
+    body.night-mode .direction-value {
+      color: #cc3333;
+    }
+    
+    body.night-mode .direction-label {
+      color: #661515;
+    }
+    
+    body.night-mode .direction-next-btn {
+      background: #cc3333;
+      color: #0a0000;
+    }
+    
+    body.night-mode .results-direction-value {
+      color: #cc3333;
+    }
+    
+    body.night-mode .results-direction-label {
+      color: #661515;
+    }
+    
+    body.night-mode .horizon-modal h3 {
+      color: #cc3333;
+    }
+    
+    /* Night mode - Top Pick badge */
+    body.night-mode .top-pick-badge {
+      background: rgba(204, 51, 51, 0.15);
+      color: #cc3333;
+    }
+    
+    /* Night mode - empty state */
+    body.night-mode .empty-state h3 {
+      color: #cc3333;
+    }
+    
+    body.night-mode .empty-state p {
+      color: #992222;
+    }
+
     /* Help modal */
     .help-modal-overlay {
       display: none;
@@ -5633,17 +5769,39 @@
       const centerY = canvas.height / 2;
       const leftPadding = 24;
       
+      // Check if night mode is active
+      const isNightMode = document.body.classList.contains('night-mode');
+      
+      // Color schemes
+      const colors = isNightMode ? {
+        warning: 'rgba(102, 21, 21, 0.6)',
+        masked: 'rgba(102, 21, 21, 0.5)',
+        textPrimary: '#cc3333',
+        textSecondary: '#992222',
+        accent: '#cc3333',
+        gridLine: 'rgba(204, 51, 51, 0.4)',
+        gridText: 'rgba(204, 51, 51, 0.7)'
+      } : {
+        warning: 'rgba(140, 90, 90, 0.6)',
+        masked: 'rgba(140, 90, 90, 0.5)',
+        textPrimary: '#f0ede6',
+        textSecondary: '#a09a92',
+        accent: '#d4a574',
+        gridLine: 'rgba(255,255,255,0.4)',
+        gridText: 'rgba(255,255,255,0.7)'
+      };
+      
       // Below horizon warning - only show if significantly below (more than 10° down)
       if (horizonTilt < -10) {
-        ctx.fillStyle = 'rgba(140, 90, 90, 0.6)';
+        ctx.fillStyle = colors.warning;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        ctx.fillStyle = '#f0ede6';
+        ctx.fillStyle = colors.textPrimary;
         ctx.font = '500 18px "DM Sans", sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('Point camera toward horizon or sky', canvas.width / 2, canvas.height / 2);
         ctx.font = '400 14px "DM Sans", sans-serif';
-        ctx.fillStyle = '#a09a92';
+        ctx.fillStyle = colors.textSecondary;
         ctx.fillText('Tilt phone up to see altitude overlay', canvas.width / 2, canvas.height / 2 + 28);
         return;
       }
@@ -5654,11 +5812,11 @@
       const horizonY = centerY + horizonOffset;
       
       // Draw masked area (below horizon) - darker
-      ctx.fillStyle = 'rgba(140, 90, 90, 0.5)';
+      ctx.fillStyle = colors.masked;
       ctx.fillRect(0, horizonY, canvas.width, canvas.height - horizonY);
       
       // Draw horizon line (thicker)
-      ctx.strokeStyle = '#d4a574';
+      ctx.strokeStyle = colors.accent;
       ctx.lineWidth = 4;
       ctx.setLineDash([]);
       ctx.beginPath();
@@ -5667,16 +5825,16 @@
       ctx.stroke();
       
       // Draw horizon label
-      ctx.fillStyle = '#d4a574';
+      ctx.fillStyle = colors.accent;
       ctx.font = '600 14px "DM Sans", sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText(`${horizonValue}° min`, leftPadding, horizonY - 10);
       
       // Draw degree markers (thicker lines, bigger text)
-      ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+      ctx.strokeStyle = colors.gridLine;
       ctx.lineWidth = 2;
       ctx.setLineDash([6, 6]);
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.fillStyle = colors.gridText;
       ctx.font = '500 13px "DM Sans", sans-serif';
       ctx.textAlign = 'right';
       
