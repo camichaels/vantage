@@ -444,26 +444,29 @@
     }
     
     .gps-btn {
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 0.8rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
       font-family: var(--font-body);
       cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: transparent;
-      color: var(--text-light-secondary);
       transition: var(--transition-fast);
     }
     
-    .gps-btn:hover {
-      background: rgba(255,255,255,0.05);
-    }
-    
-    .gps-btn:first-child {
+    .gps-btn-primary {
       background: var(--accent-warm);
-      border-color: var(--accent-warm);
+      border: none;
       color: #1a1a1a;
       font-weight: 500;
+    }
+    
+    .gps-btn-secondary {
+      background: transparent;
+      border: 1px solid var(--accent-warm);
+      color: var(--accent-warm);
+    }
+    
+    .gps-btn-secondary:hover {
+      background: rgba(212, 165, 116, 0.1);
     }
     
     .gps-detect-btn {
@@ -471,14 +474,14 @@
       align-items: center;
       gap: 10px;
       padding: 12px var(--space-md);
-      color: var(--accent-info);
+      color: var(--accent-warm);
       font-size: 0.9rem;
       cursor: pointer;
       transition: var(--transition-fast);
     }
     
     .gps-detect-btn:hover {
-      background: rgba(100, 149, 237, 0.08);
+      background: rgba(212, 165, 116, 0.08);
     }
     
     .gps-detect-btn svg {
@@ -587,17 +590,17 @@
       gap: 12px;
       padding: 14px;
       margin: 12px 0;
-      background: rgba(100, 149, 237, 0.08);
-      border: 1px solid rgba(100, 149, 237, 0.2);
+      background: rgba(212, 165, 116, 0.08);
+      border: 1px solid rgba(212, 165, 116, 0.3);
       border-radius: 10px;
-      color: var(--accent-info);
+      color: var(--accent-warm);
       font-size: 0.9rem;
       cursor: pointer;
       transition: var(--transition-fast);
     }
     
     .location-gps-option:hover {
-      background: rgba(100, 149, 237, 0.12);
+      background: rgba(212, 165, 116, 0.12);
     }
     
     .location-gps-option svg {
@@ -654,7 +657,7 @@
       width: 100%;
       padding: 12px 14px;
       background: var(--bg-tertiary);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 8px;
       color: var(--text-light);
       font-family: var(--font-body);
@@ -685,9 +688,9 @@
       flex: 1;
       padding: 14px;
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid var(--accent-warm);
       border-radius: 10px;
-      color: var(--text-light-secondary);
+      color: var(--accent-warm);
       font-family: var(--font-body);
       font-size: 0.95rem;
       cursor: pointer;
@@ -2235,8 +2238,8 @@
                   <span class="gps-coords" id="gpsCoords">Tap to detect</span>
                 </div>
                 <div class="gps-buttons">
-                  <button class="gps-btn" id="gpsUseBtn" onclick="useGpsLocation()">Use</button>
-                  <button class="gps-btn" id="gpsSaveBtn" onclick="saveGpsLocation()" style="display: none;">Save</button>
+                  <button class="gps-btn gps-btn-primary" id="gpsUseBtn" onclick="useGpsLocation()">Use</button>
+                  <button class="gps-btn gps-btn-secondary" id="gpsSaveBtn" onclick="saveGpsLocation()" style="display: none;">Save</button>
                 </div>
               </div>
               <div class="gps-detect-btn" id="gpsDetectBtn" onclick="detectGpsLocation()">
@@ -3635,20 +3638,9 @@
     
     // Render info cards
     function renderInfoCards() {
-      // Check if location is set
+      // Check if location is set - hide cards entirely
       if (!state.location) {
-        document.getElementById('infoCards').innerHTML = `
-          <div class="info-card highlights-card">
-            <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            <div class="info-card-content">
-              <div class="info-card-headline">Set your location</div>
-              <div class="info-card-details">Tap the location setting above to see tonight's sky</div>
-            </div>
-          </div>
-        `;
+        document.getElementById('infoCards').innerHTML = '';
         return;
       }
       
@@ -4088,6 +4080,21 @@
     // Altitude selection
     function selectAltitude(alt) {
       state.minAltitude = alt;
+      
+      // Save to current location if we have one
+      if (state.location) {
+        state.location.horizon = alt;
+        
+        // Update saved locations array
+        const locIndex = state.savedLocations.findIndex(loc => 
+          loc.latitude === state.location.latitude && 
+          loc.longitude === state.location.longitude
+        );
+        if (locIndex >= 0) {
+          state.savedLocations[locIndex].horizon = alt;
+        }
+      }
+      
       document.getElementById('altitudeText').textContent = `Horizon: ${alt}°`;
       
       document.querySelectorAll('#altitudeSelector .dropdown-option').forEach(opt => {
@@ -4340,6 +4347,7 @@
       };
       
       document.getElementById('locationSelector').classList.remove('open');
+      document.getElementById('addLocationModal').classList.add('open');
       showAddLocationStep2();
     }
     
@@ -4366,6 +4374,7 @@
       if (event && event.target !== event.currentTarget) return;
       document.getElementById('addLocationModal').classList.remove('open');
       pendingNewLocation = null;
+      window.scrollTo(0, 0);
     }
     
     function useGpsForNewLocation() {
@@ -4494,6 +4503,7 @@
       if (event && event.target !== event.currentTarget) return;
       document.getElementById('editLocationModal').classList.remove('open');
       editingLocationIndex = null;
+      window.scrollTo(0, 0);
     }
     
     function confirmEditLocation() {
@@ -4519,11 +4529,6 @@
       
       const loc = state.savedLocations[editingLocationIndex];
       
-      if (state.savedLocations.length === 1) {
-        alert("Can't delete your only saved location");
-        return;
-      }
-      
       if (!confirm(`Delete "${loc.customName || loc.displayName || loc.name}"?`)) {
         return;
       }
@@ -4534,8 +4539,19 @@
       
       state.savedLocations.splice(editingLocationIndex, 1);
       
-      if (isCurrentLocation && state.savedLocations.length > 0) {
-        selectSavedLocation(0);
+      if (isCurrentLocation) {
+        if (state.savedLocations.length > 0) {
+          selectSavedLocation(0);
+        } else {
+          // No more saved locations - go to "Set location" state
+          state.location = null;
+          state.minAltitude = VantageConfig.DEFAULT_MIN_ALTITUDE;
+          updateLocationDisplay();
+          updateHorizonDisplay();
+          fetchWeather();
+          renderInfoCards();
+          renderObjects();
+        }
       }
       
       saveState();
@@ -4556,7 +4572,22 @@
       
       searchTimeout = setTimeout(async () => {
         try {
-          const url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=5&addressdetails=1`;
+          // Build URL with location bias if we have GPS
+          let url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=5&addressdetails=1`;
+          
+          // Add viewbox bias if we have current location or GPS
+          const biasLat = gpsLocation?.latitude || state.location?.latitude;
+          const biasLon = gpsLocation?.longitude || state.location?.longitude;
+          if (biasLat && biasLon) {
+            // Create a ~500km bounding box around user
+            const delta = 4; // roughly 4 degrees = ~450km
+            const minLat = biasLat - delta;
+            const maxLat = biasLat + delta;
+            const minLon = biasLon - delta;
+            const maxLon = biasLon + delta;
+            url += `&viewbox=${minLon},${maxLat},${maxLon},${minLat}&bounded=0`;
+          }
+          
           const response = await fetch(url, {
             headers: { 'User-Agent': 'Vantage Astronomy App' }
           });
@@ -4569,6 +4600,15 @@
               <div class="search-no-results">No results found</div>
             `;
             return;
+          }
+          
+          // Sort by distance if we have a reference point
+          if (biasLat && biasLon) {
+            results.sort((a, b) => {
+              const distA = Math.sqrt(Math.pow(parseFloat(a.lat) - biasLat, 2) + Math.pow(parseFloat(a.lon) - biasLon, 2));
+              const distB = Math.sqrt(Math.pow(parseFloat(b.lat) - biasLat, 2) + Math.pow(parseFloat(b.lon) - biasLon, 2));
+              return distA - distB;
+            });
           }
           
           document.getElementById('searchResults').innerHTML = results.map((r, i) => {
