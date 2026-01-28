@@ -528,8 +528,9 @@
     }
     
     .saved-location-name {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--text-light);
+      font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -630,15 +631,15 @@
       flex: 1;
     }
     
-    .new-location-name {
-      font-size: 1rem;
+    .new-location-display {
+      font-size: 1.05rem;
       color: var(--text-light);
       font-weight: 500;
     }
     
     .new-location-coords {
       font-size: 0.85rem;
-      color: var(--text-light-muted);
+      color: var(--text-light-secondary);
       margin-top: 4px;
     }
     
@@ -648,8 +649,8 @@
     
     .name-input-label {
       display: block;
-      font-size: 0.85rem;
-      color: var(--text-light-secondary);
+      font-size: 0.9rem;
+      color: var(--text-light);
       margin-bottom: 8px;
     }
     
@@ -657,11 +658,11 @@
       width: 100%;
       padding: 12px 14px;
       background: var(--bg-tertiary);
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 8px;
       color: var(--text-light);
       font-family: var(--font-body);
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
     
     .name-input:focus {
@@ -673,10 +674,9 @@
       color: var(--text-light-muted);
     }
     
-    .name-input-hint {
-      font-size: 0.8rem;
-      color: var(--text-light-muted);
-      margin-top: 6px;
+    .name-input-editable {
+      border-color: rgba(255,255,255,0.3);
+      background: var(--bg-secondary);
     }
     
     .add-location-actions {
@@ -2511,14 +2511,14 @@
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
             <input type="text" class="search-input" id="locationSearchInput" 
-                   placeholder="Search city or address..." 
+                   placeholder="Search city or zip code..." 
                    oninput="handleLocationSearch(this.value)">
             <div class="search-spinner" id="searchSpinner"></div>
           </div>
           
           <div id="searchResults" class="search-results"></div>
           
-          <div class="location-gps-option" onclick="useGpsForNewLocation()">
+          <div class="location-gps-option" id="gpsOptionBtn" onclick="useGpsForNewLocation()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/>
               <circle cx="12" cy="12" r="3"/>
@@ -2527,7 +2527,7 @@
               <line x1="2" y1="12" x2="6" y2="12"/>
               <line x1="18" y1="12" x2="22" y2="12"/>
             </svg>
-            Use current GPS location
+            <span id="gpsOptionText">Use current GPS location</span>
           </div>
           
           <div class="coords-section">
@@ -2537,11 +2537,11 @@
             <div class="coords-inputs">
               <div class="coord-field">
                 <label>Latitude</label>
-                <input type="number" step="0.0001" id="latInput" placeholder="37.52">
+                <input type="number" step="0.0001" id="latInput" placeholder="e.g. 40.7128">
               </div>
               <div class="coord-field">
                 <label>Longitude</label>
-                <input type="number" step="0.0001" id="lonInput" placeholder="-122.28">
+                <input type="number" step="0.0001" id="lonInput" placeholder="e.g. -74.0060">
               </div>
             </div>
             <button class="coords-submit" onclick="useManualCoordsForNew()">Use these coordinates</button>
@@ -2556,7 +2556,7 @@
               <circle cx="12" cy="10" r="3"/>
             </svg>
             <div class="new-location-details">
-              <div class="new-location-name" id="newLocationDisplayName">Oakland, CA</div>
+              <div class="new-location-display" id="newLocationDisplayName">Oakland, CA</div>
               <div class="new-location-coords" id="newLocationCoords">37.52°N, 122.28°W</div>
             </div>
           </div>
@@ -2564,7 +2564,6 @@
           <div class="name-input-section">
             <label class="name-input-label">Name (optional)</label>
             <input type="text" class="name-input" id="newLocationNameInput" placeholder="e.g. Backyard, Dark sky spot...">
-            <div class="name-input-hint">Give it a memorable name</div>
           </div>
           
           <div class="add-location-actions">
@@ -2590,14 +2589,14 @@
               <circle cx="12" cy="10" r="3"/>
             </svg>
             <div class="new-location-details">
-              <div class="new-location-name" id="editLocationDisplayName">Oakland, CA</div>
+              <div class="new-location-display" id="editLocationDisplayName">Oakland, CA</div>
               <div class="new-location-coords" id="editLocationCoords">37.52°N, 122.28°W</div>
             </div>
           </div>
           
           <div class="name-input-section">
-            <label class="name-input-label">Name</label>
-            <input type="text" class="name-input" id="editLocationNameInput" placeholder="e.g. Backyard">
+            <label class="name-input-label">Custom name</label>
+            <input type="text" class="name-input name-input-editable" id="editLocationNameInput" placeholder="e.g. Backyard, Dark sky spot...">
           </div>
           
           <div class="edit-location-actions">
@@ -4367,6 +4366,12 @@
       document.getElementById('latInput').value = '';
       document.getElementById('lonInput').value = '';
       
+      // Reset GPS option button to default state
+      const gpsBtn = document.getElementById('gpsOptionBtn');
+      const gpsText = document.getElementById('gpsOptionText');
+      gpsBtn.onclick = useGpsForNewLocation;
+      gpsText.textContent = 'Use current GPS location';
+      
       setTimeout(() => document.getElementById('locationSearchInput').focus(), 100);
     }
     
@@ -4383,11 +4388,8 @@
         return;
       }
       
-      const btn = document.querySelector('.location-gps-option');
-      btn.innerHTML = `
-        <div class="search-spinner active" style="position: static; width: 22px; height: 22px;"></div>
-        Detecting location...
-      `;
+      const gpsText = document.getElementById('gpsOptionText');
+      gpsText.innerHTML = '<div class="search-spinner active" style="position: static; width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 8px;"></div>Detecting location...';
       
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -4407,17 +4409,7 @@
           showAddLocationStep2();
         },
         (error) => {
-          btn.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <circle cx="12" cy="12" r="3"/>
-              <line x1="12" y1="2" x2="12" y2="6"/>
-              <line x1="12" y1="18" x2="12" y2="22"/>
-              <line x1="2" y1="12" x2="6" y2="12"/>
-              <line x1="18" y1="12" x2="22" y2="12"/>
-            </svg>
-            Use current GPS location
-          `;
+          gpsText.textContent = 'Use current GPS location';
           alert('Unable to get your location: ' + error.message);
         },
         { enableHighAccuracy: true, timeout: 10000 }
@@ -4442,18 +4434,8 @@
       document.getElementById('addLocationStep2').style.display = 'none';
       
       // Reset GPS button
-      const btn = document.querySelector('.location-gps-option');
-      btn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <circle cx="12" cy="12" r="3"/>
-          <line x1="12" y1="2" x2="12" y2="6"/>
-          <line x1="12" y1="18" x2="12" y2="22"/>
-          <line x1="2" y1="12" x2="6" y2="12"/>
-          <line x1="18" y1="12" x2="22" y2="12"/>
-        </svg>
-        Use current GPS location
-      `;
+      const gpsText = document.getElementById('gpsOptionText');
+      gpsText.textContent = 'Use current GPS location';
     }
     
     function confirmAddLocation() {
@@ -4539,24 +4521,37 @@
       
       state.savedLocations.splice(editingLocationIndex, 1);
       
+      // Close the modal first
+      document.getElementById('editLocationModal').classList.remove('open');
+      editingLocationIndex = null;
+      
       if (isCurrentLocation) {
         if (state.savedLocations.length > 0) {
-          selectSavedLocation(0);
+          // Select first remaining location
+          state.location = { ...state.savedLocations[0] };
+          if (state.location.horizonDirectional) {
+            const vals = Object.values(state.location.horizonDirectional);
+            state.minAltitude = Math.min(...vals);
+          } else if (state.location.horizon !== undefined) {
+            state.minAltitude = state.location.horizon;
+          } else {
+            state.minAltitude = VantageConfig.DEFAULT_MIN_ALTITUDE;
+          }
         } else {
           // No more saved locations - go to "Set location" state
           state.location = null;
           state.minAltitude = VantageConfig.DEFAULT_MIN_ALTITUDE;
-          updateLocationDisplay();
-          updateHorizonDisplay();
-          fetchWeather();
-          renderInfoCards();
-          renderObjects();
         }
+        updateLocationDisplay();
+        updateHorizonDisplay();
+        fetchWeather();
+        renderInfoCards();
+        renderObjects();
       }
       
       saveState();
-      closeEditLocationModal();
       renderSavedLocations();
+      window.scrollTo(0, 0);
     }
     
     // Search functions
