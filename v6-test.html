@@ -313,9 +313,9 @@
       top: calc(100% + 4px);
       left: -8px;
       right: -8px;
-      background: white;
+      background: var(--bg-secondary);
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
       z-index: 100;
       overflow: hidden;
     }
@@ -326,7 +326,7 @@
     
     .dropdown-section {
       padding: var(--space-sm) 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
     
     .dropdown-section:last-child {
@@ -335,7 +335,7 @@
     
     .dropdown-label {
       font-size: var(--text-xs);
-      color: #666;
+      color: var(--text-light-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       padding: var(--space-xs) var(--space-md);
@@ -352,13 +352,13 @@
     }
     
     .dropdown-option:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: rgba(255, 255, 255, 0.05);
     }
     
     .dropdown-option-icon {
       width: 18px;
       height: 18px;
-      color: #666;
+      color: var(--text-light-muted);
       flex-shrink: 0;
     }
     
@@ -369,13 +369,13 @@
     
     .dropdown-option-name {
       font-size: var(--text-sm);
-      color: #1a1a1a;
+      color: var(--text-light);
       font-weight: 500;
     }
     
     .dropdown-option-detail {
       font-size: var(--text-xs);
-      color: #666;
+      color: var(--text-light-muted);
     }
     
     .dropdown-option-check {
@@ -388,6 +388,14 @@
     
     .dropdown-option.selected .dropdown-option-check {
       opacity: 1;
+    }
+    
+    .dropdown-option.selected {
+      background: rgba(212, 165, 116, 0.1);
+    }
+    
+    .dropdown-option.selected .dropdown-option-icon {
+      color: var(--accent-warm);
     }
     
     .delete-location-btn {
@@ -756,10 +764,10 @@
     
     .time-option {
       padding: 8px 4px;
-      background: rgba(0, 0, 0, 0.04);
+      background: rgba(255, 255, 255, 0.05);
       border: none;
       border-radius: 8px;
-      color: #666;
+      color: var(--text-light-muted);
       font-family: var(--font-body);
       font-size: var(--text-sm);
       font-weight: 500;
@@ -769,13 +777,13 @@
     }
     
     .time-option:hover {
-      background: rgba(0, 0, 0, 0.08);
-      color: #1a1a1a;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-light);
     }
     
     .time-option.selected {
-      background: var(--accent-info);
-      color: white;
+      background: var(--accent-warm);
+      color: #1a1a1a;
     }
     
     .time-option.now.selected {
@@ -1269,7 +1277,7 @@
     }
     
     .modal-sheet {
-      background: white;
+      background: var(--bg-secondary);
       border-radius: 16px 16px 0 0;
       width: 100%;
       max-width: 430px;
@@ -1284,23 +1292,23 @@
       justify-content: space-between;
       align-items: center;
       padding: var(--space-md) var(--space-lg);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .modal-title {
       font-family: var(--font-display);
       font-size: var(--text-lg);
-      color: var(--text-dark);
+      color: var(--text-light);
     }
     
     .modal-close {
       width: 32px;
       height: 32px;
       border: none;
-      background: rgba(0, 0, 0, 0.05);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 50%;
       font-size: 20px;
-      color: #666;
+      color: var(--text-light-muted);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -1325,24 +1333,28 @@
       transform: translateY(-50%);
       width: 18px;
       height: 18px;
-      color: #999;
+      color: var(--text-light-muted);
     }
     
     .search-input {
       width: 100%;
       padding: 12px 40px 12px 40px;
-      border: 1px solid rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 10px;
       font-family: var(--font-body);
       font-size: var(--text-base);
-      color: var(--text-dark);
-      background: #f8f8f8;
+      color: var(--text-light);
+      background: var(--bg-tertiary);
+    }
+    
+    .search-input::placeholder {
+      color: var(--text-light-muted);
     }
     
     .search-input:focus {
       outline: none;
-      border-color: var(--accent-info);
-      background: white;
+      border-color: var(--accent-warm);
+      background: var(--bg-card);
     }
     
     .search-spinner {
@@ -1353,8 +1365,8 @@
       transform: translateY(-50%);
       width: 18px;
       height: 18px;
-      border: 2px solid #ddd;
-      border-top-color: var(--accent-info);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: var(--accent-warm);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -1382,13 +1394,13 @@
     }
     
     .search-result:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: rgba(255, 255, 255, 0.05);
     }
     
     .search-result-icon {
       width: 18px;
       height: 18px;
-      color: #666;
+      color: var(--text-light-muted);
       flex-shrink: 0;
     }
     
@@ -1400,18 +1412,18 @@
     .search-result-name {
       font-size: var(--text-sm);
       font-weight: 500;
-      color: var(--text-dark);
+      color: var(--text-light);
     }
     
     .search-result-detail {
       font-size: var(--text-xs);
-      color: #666;
+      color: var(--text-light-muted);
     }
     
     .search-no-results {
       padding: var(--space-md);
       text-align: center;
-      color: #666;
+      color: var(--text-light-muted);
       font-size: var(--text-sm);
     }
     
@@ -1424,7 +1436,7 @@
       align-items: center;
       gap: var(--space-md);
       margin-bottom: var(--space-md);
-      color: #999;
+      color: var(--text-light-muted);
       font-size: var(--text-sm);
     }
     
@@ -1433,7 +1445,7 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.1);
     }
     
     .coords-inputs {
@@ -1449,41 +1461,46 @@
     .coord-field label {
       display: block;
       font-size: var(--text-xs);
-      color: #666;
+      color: var(--text-light-secondary);
       margin-bottom: 4px;
     }
     
     .coord-field input {
       width: 100%;
       padding: 10px 12px;
-      border: 1px solid rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
       font-family: var(--font-body);
       font-size: var(--text-sm);
-      color: var(--text-dark);
+      color: var(--text-light);
+      background: var(--bg-tertiary);
+    }
+    
+    .coord-field input::placeholder {
+      color: var(--text-light-muted);
     }
     
     .coord-field input:focus {
       outline: none;
-      border-color: var(--accent-info);
+      border-color: var(--accent-warm);
     }
     
     .coords-submit {
       width: 100%;
       padding: 12px;
-      background: var(--accent-info);
-      color: white;
+      background: var(--accent-warm);
+      color: #1a1a1a;
       border: none;
       border-radius: 10px;
       font-family: var(--font-body);
       font-size: var(--text-sm);
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       transition: var(--transition-fast);
     }
     
     .coords-submit:hover {
-      background: #6a8ca8;
+      background: var(--accent-warm-dim);
     }
     
     /* Horizon Setup Modal */
@@ -2398,7 +2415,7 @@
           <div class="dropdown-panel">
             <div class="dropdown-section">
               <div class="dropdown-label">Minimum altitude</div>
-              <div class="dropdown-label" style="font-size: 0.7rem; margin-top: 8px; margin-bottom: 4px; color: var(--text-muted);">Use camera</div>
+              <div class="dropdown-label" style="font-size: 0.7rem; margin-top: 8px; margin-bottom: 4px;">Use camera</div>
               <div class="dropdown-option" id="horizonOptDirectional" onclick="openHorizonModal('directional'); toggleDropdown('altitudeSelector');">
                 <div class="dropdown-option-content">
                   <div>
@@ -2421,7 +2438,7 @@
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
               </div>
-              <div class="dropdown-label" style="font-size: 0.7rem; margin-bottom: 4px; color: var(--text-muted);">Presets</div>
+              <div class="dropdown-label" style="font-size: 0.7rem; margin-bottom: 4px;">Presets</div>
               <div class="dropdown-option" onclick="selectAltitude(0)">
                 <div class="dropdown-option-content">
                   <div class="dropdown-option-name">0°</div>
@@ -4567,21 +4584,8 @@
       
       searchTimeout = setTimeout(async () => {
         try {
-          // Build URL with location bias if we have GPS
-          let url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=5&addressdetails=1`;
-          
-          // Add viewbox bias if we have current location or GPS
-          const biasLat = gpsLocation?.latitude || state.location?.latitude;
-          const biasLon = gpsLocation?.longitude || state.location?.longitude;
-          if (biasLat && biasLon) {
-            // Create a ~500km bounding box around user
-            const delta = 4; // roughly 4 degrees = ~450km
-            const minLat = biasLat - delta;
-            const maxLat = biasLat + delta;
-            const minLon = biasLon - delta;
-            const maxLon = biasLon + delta;
-            url += `&viewbox=${minLon},${maxLat},${maxLon},${minLat}&bounded=0`;
-          }
+          // Simple search without viewbox - let Nominatim rank by relevance
+          const url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=8&addressdetails=1`;
           
           const response = await fetch(url, {
             headers: { 'User-Agent': 'Vantage Astronomy App' }
@@ -4592,12 +4596,14 @@
           
           if (results.length === 0) {
             document.getElementById('searchResults').innerHTML = `
-              <div class="search-no-results">No results found</div>
+              <div class="search-no-results">No results found. Try a city name or zip code.</div>
             `;
             return;
           }
           
-          // Sort by distance if we have a reference point
+          // If we have user location, sort by distance but don't filter
+          const biasLat = gpsLocation?.latitude || state.location?.latitude;
+          const biasLon = gpsLocation?.longitude || state.location?.longitude;
           if (biasLat && biasLon) {
             results.sort((a, b) => {
               const distA = Math.sqrt(Math.pow(parseFloat(a.lat) - biasLat, 2) + Math.pow(parseFloat(a.lon) - biasLon, 2));
