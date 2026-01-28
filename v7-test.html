@@ -908,7 +908,6 @@
       font-size: var(--text-sm);
       color: var(--text-light-muted);
       margin-top: 8px;
-      font-style: italic;
       line-height: 1.4;
     }
     
@@ -984,22 +983,6 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-lg);
-      transition: opacity 0.3s ease;
-    }
-    
-    .object-list.dimmed {
-      opacity: 0.5;
-    }
-    
-    .object-list.dimmed::before {
-      content: 'If skies clear...';
-      display: block;
-      text-align: center;
-      font-size: var(--text-sm);
-      color: var(--text-light-muted);
-      font-style: italic;
-      padding: var(--space-sm) 0;
-      margin-bottom: var(--space-sm);
     }
     
     .object-card {
@@ -3878,16 +3861,7 @@
             <p>Tap the location setting above to see what's visible tonight.</p>
           </div>
         `;
-        document.getElementById('objectList').classList.remove('dimmed');
         return;
-      }
-      
-      // Check weather rating and add/remove dimming
-      const objectList = document.getElementById('objectList');
-      if (state.currentWeatherRating === 'poor') {
-        objectList.classList.add('dimmed');
-      } else {
-        objectList.classList.remove('dimmed');
       }
       
       const obsTime = getObservationTime();
@@ -4685,16 +4659,8 @@
           const biasLat = gpsLocation?.latitude || state.location?.latitude;
           const biasLon = gpsLocation?.longitude || state.location?.longitude;
           
-          // Build URL
-          let url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`;
-          
-          // If user appears to be in the US, bias toward US results
-          if (biasLat && biasLon) {
-            const inUS = biasLat > 24 && biasLat < 50 && biasLon > -125 && biasLon < -66;
-            if (inUS) {
-              url += `&countrycodes=us`;
-            }
-          }
+          // Build URL - no country restriction, just use distance sorting
+          const url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`;
           
           const response = await fetch(url, {
             headers: { 'User-Agent': 'Vantage Astronomy App' }
