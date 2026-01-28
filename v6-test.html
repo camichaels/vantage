@@ -4584,15 +4584,10 @@
       
       searchTimeout = setTimeout(async () => {
         try {
-          // Simple search - no custom headers to avoid CORS preflight
-          const url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`;
-          
-          const response = await fetch(url);
-          
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
-          
+          const url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=5&addressdetails=1`;
+          const response = await fetch(url, {
+            headers: { 'User-Agent': 'Vantage Astronomy App' }
+          });
           const results = await response.json();
           
           document.getElementById('searchSpinner').classList.remove('active');
@@ -4710,7 +4705,9 @@
     
     async function reverseGeocode(lat, lon) {
       const url = `${VantageConfig.GEOCODE_API}/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`;
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: { 'User-Agent': 'Vantage Astronomy App' }
+      });
       const data = await response.json();
       
       return buildLocationDisplayName(data);
