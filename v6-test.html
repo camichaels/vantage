@@ -4588,14 +4588,15 @@
           const biasLat = gpsLocation?.latitude || state.location?.latitude;
           const biasLon = gpsLocation?.longitude || state.location?.longitude;
           
-          // Build URL with location bias if available
-          let url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=8&addressdetails=1`;
+          // Build URL
+          let url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`;
           
-          // Add viewbox bias if we have location (prioritizes but doesn't exclude)
+          // If user appears to be in the US, bias toward US results
           if (biasLat && biasLon) {
-            const delta = 10; // ~1000km box
-            url += `&viewbox=${(biasLon - delta).toFixed(4)},${(biasLat + delta).toFixed(4)},${(biasLon + delta).toFixed(4)},${(biasLat - delta).toFixed(4)}`;
-            url += `&bounded=0`; // Don't exclude results outside box
+            const inUS = biasLat > 24 && biasLat < 50 && biasLon > -125 && biasLon < -66;
+            if (inUS) {
+              url += `&countrycodes=us`;
+            }
           }
           
           const response = await fetch(url, {
