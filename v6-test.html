@@ -4584,12 +4584,10 @@
       
       searchTimeout = setTimeout(async () => {
         try {
-          // Simple search
+          // Simple search - no custom headers to avoid CORS preflight
           const url = `${VantageConfig.GEOCODE_API}/search?q=${encodeURIComponent(query)}&format=json&limit=10&addressdetails=1`;
           
-          const response = await fetch(url, {
-            headers: { 'User-Agent': 'VantageAstronomyApp/1.0' }
-          });
+          const response = await fetch(url);
           
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -4712,9 +4710,7 @@
     
     async function reverseGeocode(lat, lon) {
       const url = `${VantageConfig.GEOCODE_API}/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`;
-      const response = await fetch(url, {
-        headers: { 'User-Agent': 'Vantage Astronomy App' }
-      });
+      const response = await fetch(url);
       const data = await response.json();
       
       return buildLocationDisplayName(data);
@@ -5484,6 +5480,11 @@
     
     // Update horizon display on load
     function updateHorizonDisplay() {
+      if (!state.location) {
+        document.getElementById('altitudeText').textContent = `Horizon: ${state.minAltitude}°`;
+        return;
+      }
+      
       const hd = state.location.horizonDirectional;
       if (hd) {
         const values = Object.values(hd);
