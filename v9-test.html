@@ -121,31 +121,66 @@
       visibility: hidden;
     }
     
+    .splash-stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    
+    .splash-star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #f0ede6;
+      border-radius: 50%;
+      opacity: 0;
+      animation: starTwinkle 2s ease-in-out forwards;
+    }
+    
+    .splash-star:nth-child(1) { top: 8%; left: 15%; animation-delay: 0.3s; }
+    .splash-star:nth-child(2) { top: 12%; left: 78%; animation-delay: 0.5s; }
+    .splash-star:nth-child(3) { top: 20%; left: 45%; animation-delay: 0.7s; }
+    .splash-star:nth-child(4) { top: 15%; left: 92%; animation-delay: 0.4s; width: 1px; height: 1px; }
+    .splash-star:nth-child(5) { top: 28%; left: 8%; animation-delay: 0.6s; }
+    .splash-star:nth-child(6) { top: 5%; left: 55%; animation-delay: 0.8s; width: 1px; height: 1px; }
+    .splash-star:nth-child(7) { top: 35%; left: 70%; animation-delay: 0.9s; }
+    .splash-star:nth-child(8) { top: 22%; left: 25%; animation-delay: 0.4s; width: 3px; height: 3px; }
+    .splash-star:nth-child(9) { top: 18%; left: 62%; animation-delay: 1.0s; width: 1px; height: 1px; }
+    .splash-star:nth-child(10) { top: 40%; left: 88%; animation-delay: 0.6s; }
+    .splash-star:nth-child(11) { top: 10%; left: 35%; animation-delay: 0.7s; width: 1px; height: 1px; }
+    .splash-star:nth-child(12) { top: 32%; left: 52%; animation-delay: 0.5s; }
+    
+    @keyframes starTwinkle {
+      0% { opacity: 0; }
+      50% { opacity: 0.7; }
+      100% { opacity: 0.4; }
+    }
+    
     .splash-horizon {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      height: 80px;
+      height: 33%;
       background: #08090c;
       clip-path: polygon(
         0% 100%,
-        0% 60%,
-        5% 55%,
-        12% 58%,
-        18% 45%,
-        25% 50%,
-        32% 40%,
-        38% 48%,
-        45% 35%,
-        52% 42%,
-        58% 38%,
-        65% 50%,
-        72% 45%,
-        78% 55%,
-        85% 48%,
-        92% 52%,
-        100% 45%,
+        0% 30%,
+        5% 25%,
+        12% 28%,
+        18% 15%,
+        25% 20%,
+        32% 10%,
+        38% 18%,
+        45% 5%,
+        52% 12%,
+        58% 8%,
+        65% 20%,
+        72% 15%,
+        78% 25%,
+        85% 18%,
+        92% 22%,
+        100% 15%,
         100% 100%
       );
     }
@@ -155,6 +190,7 @@
       opacity: 0;
       animation: starFadeIn 1.5s ease-out forwards;
       animation-delay: 0.2s;
+      z-index: 1;
     }
     
     .splash-logo {
@@ -1648,6 +1684,7 @@
       color: var(--accent-warm);
       margin-top: 8px;
       cursor: pointer;
+      text-align: right;
     }
     
     .weather-card {
@@ -2991,6 +3028,20 @@
 <body>
   <!-- Splash Screen -->
   <div class="splash-screen" id="splashScreen">
+    <div class="splash-stars">
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+      <div class="splash-star"></div>
+    </div>
     <div class="splash-content">
       <div class="splash-logo">Vantage</div>
       <div class="splash-tagline">Your skies. Your space.</div>
@@ -3344,11 +3395,11 @@
             <div class="coords-inputs">
               <div class="coord-field">
                 <label>Latitude</label>
-                <input type="number" step="0.0001" id="latInput" placeholder="e.g. 40.7128">
+                <input type="number" step="0.0001" id="latInput" placeholder="e.g. 37.7749">
               </div>
               <div class="coord-field">
                 <label>Longitude</label>
-                <input type="number" step="0.0001" id="lonInput" placeholder="e.g. -74.0060">
+                <input type="number" step="0.0001" id="lonInput" placeholder="e.g. -122.4194">
               </div>
             </div>
             <button class="coords-submit" onclick="useManualCoordsForNew()">Use these coordinates</button>
@@ -4515,13 +4566,8 @@
     function getMoonPhaseSVG(illumination, phase) {
       // Determine if waxing or waning based on phase name
       const isWaxing = phase.toLowerCase().includes('waxing') || phase.toLowerCase() === 'first quarter';
-      const isWaning = phase.toLowerCase().includes('waning') || phase.toLowerCase() === 'last quarter' || phase.toLowerCase() === 'third quarter';
       const isNew = phase.toLowerCase().includes('new');
       const isFull = phase.toLowerCase().includes('full');
-      
-      // For a simple crescent/gibbous effect, we'll use a clip path or overlay
-      // illumination: 0 = new moon, 100 = full moon
-      const illum = illumination / 100;
       
       if (isNew || illumination < 5) {
         // New moon - just an outline
@@ -4537,43 +4583,47 @@
         </svg>`;
       }
       
-      // For crescents and gibbous, use two overlapping circles
-      // The terminator position depends on illumination
-      // Map illumination to curve position: 0.5 = half, <0.5 = crescent, >0.5 = gibbous
-      const curveOffset = (illum - 0.5) * 18; // -9 to +9
+      // Use a simpler approach: draw the lit portion using an arc path
+      // illumination 0-100 maps to how much is lit
+      const illum = illumination / 100;
+      
+      // Calculate the terminator curve (the edge between light and dark)
+      // For crescent (illum < 0.5): curve bends inward
+      // For gibbous (illum > 0.5): curve bends outward
+      const curveX = 12 + (illum - 0.5) * 18; // 3 to 21
       
       if (isWaxing) {
-        // Light on right side
-        return `<svg class="info-card-icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1">
-          <defs>
-            <clipPath id="moonClip">
-              <rect x="12" y="0" width="12" height="24"/>
-            </clipPath>
-            <mask id="moonMask">
-              <rect width="24" height="24" fill="white"/>
-              <ellipse cx="${12 + curveOffset}" cy="12" rx="${Math.abs(9 - Math.abs(curveOffset))}" ry="9" fill="black"/>
-            </mask>
-          </defs>
-          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
-          <circle cx="12" cy="12" r="9" clip-path="url(#moonClip)" mask="${illum < 0.5 ? 'url(#moonMask)' : ''}"/>
-          ${illum >= 0.5 ? `<ellipse cx="${12 - curveOffset}" cy="12" rx="${Math.abs(curveOffset)}" ry="9"/>` : ''}
-        </svg>`;
+        // Waxing: lit on RIGHT side
+        if (illum <= 0.5) {
+          // Crescent - right side lit, left curve cuts in
+          return `<svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 3 Q${curveX} 12 12 21" fill="currentColor" stroke="none"/>
+            <path d="M12 3 A9 9 0 0 1 12 21" fill="currentColor" stroke="none"/>
+          </svg>`;
+        } else {
+          // Gibbous - right side lit plus some left
+          return `<svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 3 Q${curveX} 12 12 21 A9 9 0 0 1 12 3" fill="currentColor" stroke="none"/>
+          </svg>`;
+        }
       } else {
-        // Waning - light on left side
-        return `<svg class="info-card-icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1">
-          <defs>
-            <clipPath id="moonClipW">
-              <rect x="0" y="0" width="12" height="24"/>
-            </clipPath>
-            <mask id="moonMaskW">
-              <rect width="24" height="24" fill="white"/>
-              <ellipse cx="${12 - curveOffset}" cy="12" rx="${Math.abs(9 - Math.abs(curveOffset))}" ry="9" fill="black"/>
-            </mask>
-          </defs>
-          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
-          <circle cx="12" cy="12" r="9" clip-path="url(#moonClipW)" mask="${illum < 0.5 ? 'url(#moonMaskW)' : ''}"/>
-          ${illum >= 0.5 ? `<ellipse cx="${12 + curveOffset}" cy="12" rx="${Math.abs(curveOffset)}" ry="9"/>` : ''}
-        </svg>`;
+        // Waning: lit on LEFT side
+        if (illum <= 0.5) {
+          // Crescent - left side lit
+          return `<svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 3 Q${24 - curveX} 12 12 21" fill="currentColor" stroke="none"/>
+            <path d="M12 3 A9 9 0 0 0 12 21" fill="currentColor" stroke="none"/>
+          </svg>`;
+        } else {
+          // Gibbous - left side lit plus some right
+          return `<svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 3 Q${24 - curveX} 12 12 21 A9 9 0 0 0 12 3" fill="currentColor" stroke="none"/>
+          </svg>`;
+        }
       }
     }
     
@@ -4612,8 +4662,8 @@
                 <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
               </svg>
               <div class="info-card-content">
-                <div class="info-card-headline">Cloudy tonight</div>
-                <div class="info-card-details">${description}, ${cloudCover}% cloud cover · ${temp}°F</div>
+                <div class="info-card-headline">${description}</div>
+                <div class="info-card-details">${cloudCover}% cloud cover · ${temp}°F</div>
                 <div class="info-card-cozy">${getRandomCozyActivity()}</div>
                 <div class="info-card-outlook">7-day outlook ›</div>
               </div>
@@ -4626,8 +4676,8 @@
                 <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
               </svg>
               <div class="info-card-content">
-                <div class="info-card-headline">Partly cloudy</div>
-                <div class="info-card-details">${description}, ${cloudCover}% cloud cover · ${temp}°F</div>
+                <div class="info-card-headline">${description}</div>
+                <div class="info-card-details">${cloudCover}% cloud cover · ${temp}°F</div>
                 <div class="info-card-outlook">7-day outlook ›</div>
               </div>
             </div>
@@ -4640,8 +4690,8 @@
                 <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
               </svg>
               <div class="info-card-content">
-                <div class="info-card-headline">Clear skies!</div>
-                <div class="info-card-details">${description}, ${cloudCover}% cloud cover · ${temp}°F</div>
+                <div class="info-card-headline">${description}</div>
+                <div class="info-card-details">${cloudCover}% cloud cover · ${temp}°F</div>
                 <div class="info-card-outlook">7-day outlook ›</div>
               </div>
             </div>
@@ -5189,7 +5239,7 @@
       }).join('');
     }
     
-    function selectSavedLocation(index) {
+    async function selectSavedLocation(index) {
       state.location = { ...state.savedLocations[index] };
       
       // Load location-specific horizon
@@ -5208,7 +5258,10 @@
       saveState();
       updateLocationDisplay();
       document.getElementById('locationSelector').classList.remove('open');
-      fetchWeather();
+      
+      // Clear cards while loading, fetch weather, then render
+      document.getElementById('infoCards').innerHTML = '';
+      await fetchWeather();
       renderInfoCards();
       renderObjects();
     }
